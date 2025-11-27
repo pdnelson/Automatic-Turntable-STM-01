@@ -1,0 +1,7 @@
+code/.pio
+code/.vscode/.browse.c_cpp.db*
+code/.vscode/c_cpp_properties.json
+code/.vscode/extensions.json
+code/.vscode/launch.json
+code/.vscode/ipch
+code/.gitignore
