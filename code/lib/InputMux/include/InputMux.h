@@ -63,6 +63,7 @@ class InputMux {
         boolean* inputLast;
         boolean* inputCurrent;
         uint8_t currentIndex;
+        unsigned long lastIterationClockMicros;
 };
 
 #endif

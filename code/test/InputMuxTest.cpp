@@ -135,6 +135,20 @@ void test_inputMux_2ChFourthIterationBeforePropDelay_muxAAndBHigh() {
     testMux.releaseMemory();
 }
 
+void test_inputMux_2ChFourthIterationAfterPropDelay_muxAAndBLow() {
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, DEFAULT_PROP_DELAY, DEFAULT_BUTTON_HOLD_INTERVAL, DEFAULT_DEBOUNCE_INTERVAL);
+
+    testMux.monitor(DEFAULT_PROP_DELAY);
+    testMux.monitor(DEFAULT_PROP_DELAY * 2);
+    testMux.monitor(DEFAULT_PROP_DELAY * 3);
+    testMux.monitor(DEFAULT_PROP_DELAY * 4);
+
+    TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_A));
+    TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_B));
+
+    testMux.releaseMemory();
+}
+
 int runUnityTests() {
     UNITY_BEGIN();
     RUN_TEST(test_inputMux_2ChConstructor_allSelectLow);
@@ -147,6 +161,7 @@ int runUnityTests() {
     RUN_TEST(test_inputMux_2ChThirdIterationBeforePropDelay_muxBHigh);
     RUN_TEST(test_inputMux_2ChThirdIterationAfterPropDelay_muxAAndBHigh);
     RUN_TEST(test_inputMux_2ChFourthIterationBeforePropDelay_muxAAndBHigh);
+    RUN_TEST(test_inputMux_2ChFourthIterationAfterPropDelay_muxAAndBLow);
     return UNITY_END();
 }
 

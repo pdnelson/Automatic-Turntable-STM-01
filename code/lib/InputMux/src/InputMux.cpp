@@ -9,6 +9,7 @@ InputMux::InputMux(uint8_t muxA, uint8_t muxB, uint8_t muxOutput, uint8_t propag
     this->propagationDelay = propagationDelay;
     this->holdInterval = holdInterval;
     this->currentIndex = 0;
+    this->lastIterationClockMicros = 0;
     this->selectorCount = 2;
     this->allocateMemory(4);
 }
@@ -24,6 +25,7 @@ InputMux::InputMux(uint8_t muxA, uint8_t muxB, uint8_t muxC, uint8_t muxOutput, 
     this->propagationDelay = propagationDelay;
     this->holdInterval = holdInterval;
     this->currentIndex = 0;
+    this->lastIterationClockMicros = 0;
     this->selectorCount = 3;
     this->allocateMemory(8);
 }
@@ -41,6 +43,7 @@ InputMux::InputMux(uint8_t muxA, uint8_t muxB, uint8_t muxC, uint8_t muxD, uint8
     this->propagationDelay = propagationDelay;
     this->holdInterval = holdInterval;
     this->currentIndex = 0;
+    this->lastIterationClockMicros = 0;
     this->selectorCount = 4;
     this->allocateMemory(16);
 }
@@ -76,10 +79,30 @@ void InputMux::releaseMemory() {
 }
 
 void InputMux::monitor(unsigned long clockMicros) {
+    if(clockMicros - this->lastIterationClockMicros >= this->propagationDelay) {
+        this->lastIterationClockMicros = clockMicros;
 
-    // TODO: Write the implementation
-    this->currentIndex++;
-    
+        // TODO: Do something with this value
+        boolean result = digitalRead(this->muxOutput);
+
+        // Increment index, or set it to 0 if we are at the last index
+        if(this->currentIndex - 1 < this->arraySize) {
+            this->currentIndex++;
+        } else {
+            this->currentIndex = 0;
+        }
+
+        digitalWrite(this->muxA, this->currentIndex & 1);
+        digitalWrite(this->muxB, (this->currentIndex >> 1) & 1);
+        
+        if(this->selectorCount >= 3) {
+            digitalWrite(this->muxC, (this->currentIndex >> 2) & 1);
+
+            if(this->selectorCount >= 4) {
+                digitalWrite(this->muxD, (this->currentIndex >> 3) & 1);
+            }
+        }
+    }
 }
 
 ButtonResult InputMux::getValue(uint8_t index) {
