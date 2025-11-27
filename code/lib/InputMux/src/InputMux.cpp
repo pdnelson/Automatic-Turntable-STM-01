@@ -1,50 +1,17 @@
 #include <InputMux.h>
 
 InputMux::InputMux(uint8_t muxA, uint8_t muxB, uint8_t muxOutput, uint8_t propagationDelay, uint16_t holdInterval, uint8_t debounceInterval) {
-    this->muxA = muxA;
-    this->muxB = muxB;
-    digitalWrite(this->muxA, LOW);
-    digitalWrite(this->muxB, LOW);
-    this->muxOutput = muxOutput;
-    this->propagationDelay = propagationDelay;
-    this->holdInterval = holdInterval;
-    this->currentIndex = 0;
-    this->lastIterationClockMicros = 0;
-    this->selectorCount = 2;
+    this->initializeBaseValues(muxA, muxB, muxC, muxD, muxOutput, 2, propagationDelay, holdInterval, debounceInterval);
     this->allocateMemory(4);
 }
 
 InputMux::InputMux(uint8_t muxA, uint8_t muxB, uint8_t muxC, uint8_t muxOutput, uint8_t propagationDelay, uint16_t holdInterval, uint8_t debounceInterval) {
-    this->muxA = muxA;
-    this->muxB = muxB;
-    this->muxC = muxC;
-    digitalWrite(this->muxA, LOW);
-    digitalWrite(this->muxB, LOW);
-    digitalWrite(this->muxC, LOW);
-    this->muxOutput = muxOutput;
-    this->propagationDelay = propagationDelay;
-    this->holdInterval = holdInterval;
-    this->currentIndex = 0;
-    this->lastIterationClockMicros = 0;
-    this->selectorCount = 3;
+    this->initializeBaseValues(muxA, muxB, muxC, muxD, muxOutput, 3, propagationDelay, holdInterval, debounceInterval);
     this->allocateMemory(8);
 }
 
 InputMux::InputMux(uint8_t muxA, uint8_t muxB, uint8_t muxC, uint8_t muxD, uint8_t muxOutput, uint8_t propagationDelay, uint16_t holdInterval, uint8_t debounceInterval) {
-    this->muxA = muxA;
-    this->muxB = muxB;
-    this->muxC = muxC;
-    this->muxD = muxD;
-    digitalWrite(this->muxA, LOW);
-    digitalWrite(this->muxB, LOW);
-    digitalWrite(this->muxC, LOW);
-    digitalWrite(this->muxD, LOW);
-    this->muxOutput = muxOutput;
-    this->propagationDelay = propagationDelay;
-    this->holdInterval = holdInterval;
-    this->currentIndex = 0;
-    this->lastIterationClockMicros = 0;
-    this->selectorCount = 4;
+    this->initializeBaseValues(muxA, muxB, muxC, muxD, muxOutput, 4, propagationDelay, holdInterval, debounceInterval);
     this->allocateMemory(16);
 }
 
@@ -69,6 +36,33 @@ void InputMux::allocateMemory(uint8_t arraySize) {
     this->inputCurrent = (boolean*)malloc(arraySize * sizeof(boolean));
     for(i = 0; i < arraySize; i++) {
         this->inputCurrent[i] = false;
+    }
+}
+
+void InputMux::initializeBaseValues(uint8_t muxA, uint8_t muxB, uint8_t muxC, uint8_t muxD, uint8_t muxOutput, uint8_t selectorCount, uint8_t propagationDelay, uint16_t holdInterval, uint8_t debounceInterval) {
+    this->currentIndex = 0;
+    this->lastIterationClockMicros = 0;
+    this->selectorCount = selectorCount;
+    this->muxOutput = muxOutput;
+    this->propagationDelay = propagationDelay;
+    this->holdInterval = holdInterval;
+    this->debounceInterval = debounceInterval;
+
+    this->muxA = muxA;
+    digitalWrite(this->muxA, LOW);
+    if(this->selectorCount >= 2) {
+        this->muxB = muxB;
+        digitalWrite(this->muxB, LOW);
+
+        if(this->selectorCount >= 3) {
+            this->muxC = muxC;
+            digitalWrite(this->muxC, LOW);
+
+            if(this->selectorCount >= 4) {
+                this->muxD = muxD;
+                digitalWrite(this->muxD, LOW);
+            }
+        }
     }
 }
 
@@ -106,6 +100,12 @@ void InputMux::monitor(unsigned long clockMicros) {
 }
 
 ButtonResult InputMux::getValue(uint8_t index) {
+    if(index < this->arraySize) {
+        
+    } else {
+        return ButtonResult::Released;
+    }
+
     if(this->inputCurrent && !this->inputLast) {
         return ButtonResult::Pressed;
     } else if(this->inputCurrent && this->inputLast) {

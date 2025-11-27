@@ -53,11 +53,13 @@ class InputMux {
         uint8_t muxOutput;
         uint8_t propagationDelay;
         uint16_t holdInterval;
+        uint8_t debounceInterval;
 
         uint8_t arraySize;
         uint8_t selectorCount;
 
         void allocateMemory(uint8_t arraySize);
+        void initializeBaseValues(uint8_t muxA, uint8_t muxB, uint8_t muxC, uint8_t muxD, uint8_t muxOutput, uint8_t selectorCount, uint8_t propagationDelay, uint16_t holdInterval, uint8_t debounceInterval);
 
         unsigned long* inputLastMs;
         boolean* inputLast;

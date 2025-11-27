@@ -9,7 +9,7 @@
 
 #define DEFAULT_BUTTON_HOLD_INTERVAL 2000
 #define DEFAULT_DEBOUNCE_INTERVAL 20
-#define DEFAULT_PROP_DELAY 5
+#define DEFAULT_PROP_DELAY 10
 
 void setUp() {
 
@@ -149,6 +149,27 @@ void test_inputMux_2ChFourthIterationAfterPropDelay_muxAAndBLow() {
     testMux.releaseMemory();
 }
 
+void test_inputMux_2ChClockOverflow_nextSelectPinsAllHigh() {
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, DEFAULT_PROP_DELAY, DEFAULT_BUTTON_HOLD_INTERVAL, DEFAULT_DEBOUNCE_INTERVAL);
+    
+    // Normal iteration
+    testMux.monitor(DEFAULT_PROP_DELAY);
+
+    // Jump to right before overflow is about to occur. Adding DEFAULT_PROP_DELAY to this value will overflow.
+    unsigned long almostOverflowed = ULONG_MAX - (DEFAULT_PROP_DELAY / 2);
+    testMux.monitor(almostOverflowed);
+
+    // Overflow
+    unsigned long overflowed = almostOverflowed + DEFAULT_PROP_DELAY;
+    testMux.monitor(overflowed);
+
+    unsigned long expectedOverflowedValue = (DEFAULT_PROP_DELAY / 2) - 1;
+
+    TEST_ASSERT_EQUAL(HIGH, digitalRead(MUX_A));
+    TEST_ASSERT_EQUAL(HIGH, digitalRead(MUX_B));
+    TEST_ASSERT_EQUAL(expectedOverflowedValue, overflowed);
+}
+
 int runUnityTests() {
     UNITY_BEGIN();
     RUN_TEST(test_inputMux_2ChConstructor_allSelectLow);
@@ -162,6 +183,7 @@ int runUnityTests() {
     RUN_TEST(test_inputMux_2ChThirdIterationAfterPropDelay_muxAAndBHigh);
     RUN_TEST(test_inputMux_2ChFourthIterationBeforePropDelay_muxAAndBHigh);
     RUN_TEST(test_inputMux_2ChFourthIterationAfterPropDelay_muxAAndBLow);
+    RUN_TEST(test_inputMux_2ChClockOverflow_nextSelectPinsAllHigh);
     return UNITY_END();
 }
 
