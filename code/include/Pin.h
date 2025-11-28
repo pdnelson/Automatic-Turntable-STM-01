@@ -43,7 +43,6 @@ enum Pin : uint8_t {
 
     // Unused pins
     Unused33 = 33,
-
     Unused34 = 34,
     Unused35 = 35,
     Unused36 = 36,
