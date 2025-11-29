@@ -79,18 +79,56 @@ void loop() {
 void monitorCommandInput() {
   inputMux.monitor(clockMicros);
 
-  if(actionCommand == ActionCommand::NoAction && inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
-    actionCommand = ActionCommand::PauseUnPause;
+  // Only read action command values if there is currently no action running
+  if(actionCommand == ActionCommand::NoAction) {
+
+    if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
+      actionCommand = ActionCommand::PauseUnPause;
+    } 
+    
+    else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
+      actionCommand = ActionCommand::PlayHome;
+    }
+
+    else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {
+      actionCommand = ActionCommand::Calibration;
+    }
+
+    else if(inputMux.getValue(MuxPin::BtnTestMode) == ButtonResult::OnRelease) {
+      actionCommand = ActionCommand::TestMode;
+    }
+
+    // Though reset settings is a settings button, we only want to do this if a command
+    // isn't running, because the command could depend on one of those settings.
+    else if(inputMux.getValue(MuxPin::BtnResetSettings) == ButtonResult::Held) {
+      // todo: reset settings
+    }
+  }
+
+  // Settings buttons 
+  if(inputMux.getValue(MuxPin::BtnSizeSelect) == ButtonResult::OnRelease) {
+    // todo: rotate through size buttons
+  }
+
+  else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnRelease) {
+    // todo: rotate through size buttons
   }
 }
 
 void executeCommand() {
   switch(actionCommand) {
-    case ActionCommand::NoAction:
-      // Do nothing.
-      break;
+    case ActionCommand::NoAction: break;
     case ActionCommand::PauseUnPause:
-      // todo: pause code
+      // todo: pause/unpause code
+      break;
+    case ActionCommand::PlayHome:
+      // todo: play/home code
+      break;
+    case ActionCommand::Calibration:
+      // todo: calibration code
+      break;
+    case ActionCommand::TestMode:
+      // todo: test mode code
       break;
   }
 }
