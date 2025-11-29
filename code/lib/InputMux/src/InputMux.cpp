@@ -77,23 +77,23 @@ void InputMux::monitor(unsigned long clockMicros) {
         this->lastIterationClockMicros = clockMicros;
 
         // TODO: Do something with this value
-        boolean result = digitalRead(this->muxOutput);
+        //boolean result = digitalRead(this->muxOutput);
 
         // Increment index, or set it to 0 if we are at the last index
-        if(this->currentIndex - 1 < this->arraySize) {
+        if(this->currentIndex + 1 < this->arraySize) {
             this->currentIndex++;
         } else {
             this->currentIndex = 0;
         }
 
-        digitalWrite(this->muxA, this->currentIndex & 1);
-        digitalWrite(this->muxB, (this->currentIndex >> 1) & 1);
+        digitalWrite(this->muxA, this->currentIndex & 0x01);
+        digitalWrite(this->muxB, (this->currentIndex >> 1) & 0x01);
         
         if(this->selectorCount >= 3) {
-            digitalWrite(this->muxC, (this->currentIndex >> 2) & 1);
+            digitalWrite(this->muxC, (this->currentIndex >> 2) & 0x01);
 
             if(this->selectorCount >= 4) {
-                digitalWrite(this->muxD, (this->currentIndex >> 3) & 1);
+                digitalWrite(this->muxD, (this->currentIndex >> 3) & 0x01);
             }
         }
     }
