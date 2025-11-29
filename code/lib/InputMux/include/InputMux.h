@@ -6,6 +6,15 @@
 
 class InputMux {
     public:
+        // 1-channel constructor
+        InputMux(
+            uint8_t muxA,
+            uint8_t muxOutput, 
+            uint8_t propagationDelay,
+            uint16_t holdInterval,
+            uint8_t debounceInterval
+        );
+
         // 2-channel constructor
         InputMux(
             uint8_t muxA, 
@@ -60,10 +69,10 @@ class InputMux {
 
         void allocateMemory(uint8_t arraySize);
         void initializeBaseValues(uint8_t muxA, uint8_t muxB, uint8_t muxC, uint8_t muxD, uint8_t muxOutput, uint8_t selectorCount, uint8_t propagationDelay, uint16_t holdInterval, uint8_t debounceInterval);
+        void setValue(uint8_t index, ButtonResult value);
 
-        unsigned long* inputLastMs;
-        boolean* inputLast;
-        boolean* inputCurrent;
+        unsigned long* inputPressMs;
+        ButtonResult* currentValue;
         uint8_t currentIndex;
         unsigned long lastIterationClockMicros;
 };
