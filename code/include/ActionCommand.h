@@ -2,7 +2,7 @@
 #define ACTIONCOMMAND_H
 
 enum ActionCommand : uint8_t {
-    None,
+    NoAction,
     PauseUnPause
 };
 

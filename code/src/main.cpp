@@ -20,7 +20,7 @@ InputMux inputMux = InputMux(
 );
 unsigned long clockMicros = 0;
 
-ActionCommand runningCommand = ActionCommand::None;
+ActionCommand actionCommand = ActionCommand::NoAction;
 
 void setup() {
   // Input mux
@@ -68,89 +68,25 @@ void setup() {
   pinMode(Pin::PowerOnStatusIn, INPUT);
   pinMode(Pin::LiftStatus, INPUT);
   pinMode(Pin::HomeStatus, INPUT);
-
-
-  // MUX TESTING ONLY! TODO: REMOVE WHEN FINISHED TESTING
-  pinMode(33, OUTPUT);
-  pinMode(34, OUTPUT);
-  pinMode(35, OUTPUT);
-  pinMode(36, OUTPUT);
-  pinMode(37, OUTPUT);
-  pinMode(38, OUTPUT);
-  pinMode(39, OUTPUT);
-
-  digitalWrite(33, LOW);
-  digitalWrite(34, LOW);
-  digitalWrite(35, LOW);
-  digitalWrite(36, LOW);
-  digitalWrite(37, LOW);
-  digitalWrite(38, LOW);
-  digitalWrite(39, LOW);
 }
 
 void loop() {
   updateClockMicros();
   monitorCommandInput();
-  //executeCommand();
+  executeCommand();
 }
 
 void monitorCommandInput() {
   inputMux.monitor(clockMicros);
 
-  ButtonResult sizeSelect = inputMux.getValue(MuxPin::BtnSizeSelect);
-  ButtonResult speedSelect = inputMux.getValue(MuxPin::BtnSpeedSelect);
-  ButtonResult play = inputMux.getValue(MuxPin::BtnPlay);
-  ButtonResult pause = inputMux.getValue(MuxPin::BtnPause);
-  ButtonResult testMode = inputMux.getValue(MuxPin::BtnTestMode);
-  ButtonResult resetSettings = inputMux.getValue(MuxPin::BtnResetSettings);
-  ButtonResult calibration = inputMux.getValue(MuxPin::BtnCalibration);
-
-  if(sizeSelect == ButtonResult::Pressed) {
-    digitalWrite(33, HIGH);
-  } else {
-    digitalWrite(33, LOW);
-  }
-
-  if(speedSelect == ButtonResult::Pressed) {
-    digitalWrite(34, HIGH);
-  } else {
-    digitalWrite(34, LOW);
-  }
-
-  if(play == ButtonResult::Pressed) {
-    digitalWrite(35, HIGH);
-  } else {
-    digitalWrite(35, LOW);
-  }
-
-  if(pause == ButtonResult::Pressed) {
-    digitalWrite(36, HIGH);
-  } else {
-    digitalWrite(36, LOW);
-  }
-
-  if(testMode == ButtonResult::Pressed) {
-    digitalWrite(37, HIGH);
-  } else {
-    digitalWrite(37, LOW);
-  }
-
-  if(resetSettings == ButtonResult::Pressed) {
-    digitalWrite(38, HIGH);
-  } else {
-    digitalWrite(38, LOW);
-  }
-
-  if(calibration == ButtonResult::Pressed) {
-    digitalWrite(39, HIGH);
-  } else {
-    digitalWrite(39, LOW);
+  if(actionCommand == ActionCommand::NoAction && inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
+    actionCommand = ActionCommand::PauseUnPause;
   }
 }
 
 void executeCommand() {
-  switch(runningCommand) {
-    case ActionCommand::None:
+  switch(actionCommand) {
+    case ActionCommand::NoAction:
       // Do nothing.
       break;
     case ActionCommand::PauseUnPause:
