@@ -7,8 +7,12 @@
 #define MUX_D 6
 #define MUX_OUTPUT 7
 
-#define BUTTON_HOLD_INTERVAL 2000
-#define DEBOUNCE_INTERVAL 20
+#define BUTTON_HOLD_INTERVAL_MS 2000
+#define BUTTON_HOLD_INTERVAL_MICROS BUTTON_HOLD_INTERVAL_MS * 1000
+
+#define DEBOUNCE_INTERVAL_MS 20
+#define DEBOUNCE_INTERVAL_MICROS DEBOUNCE_INTERVAL_MS * 1000
+
 #define PROP_DELAY 10
 
 void setUp() {
@@ -26,7 +30,7 @@ void test_inputMux_1ChConstructor_ALow() {
     digitalWrite(MUX_B, HIGH);
     digitalWrite(MUX_C, HIGH);
     digitalWrite(MUX_D, HIGH);
-    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_A));
 
@@ -43,7 +47,7 @@ void test_inputMux_2ChConstructor_ABLow() {
     digitalWrite(MUX_B, HIGH);
     digitalWrite(MUX_C, HIGH);
     digitalWrite(MUX_D, HIGH);
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_A));
     TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_B));
@@ -60,7 +64,7 @@ void test_inputMux_3ChConstructor_ABCLow() {
     digitalWrite(MUX_B, HIGH);
     digitalWrite(MUX_C, HIGH);
     digitalWrite(MUX_D, HIGH);
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_C, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_C, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_A));
     TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_B));
@@ -77,7 +81,7 @@ void test_inputMux_4ChConstructor_ABCDLow() {
     digitalWrite(MUX_B, HIGH);
     digitalWrite(MUX_C, HIGH);
     digitalWrite(MUX_D, HIGH);
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_C, MUX_D, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_C, MUX_D, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_A));
     TEST_ASSERT_EQUAL(LOW, digitalRead(MUX_B));
@@ -88,7 +92,7 @@ void test_inputMux_4ChConstructor_ABCDLow() {
 }
 
 void test_inputMux_firstIterationBeforePropDelay_allSelectLow() {
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     testMux.monitor(0);
 
@@ -99,7 +103,7 @@ void test_inputMux_firstIterationBeforePropDelay_allSelectLow() {
 }
 
 void test_inputMux_secondIterationBeforePropDelay_muxAHigh() {
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     testMux.monitor(PROP_DELAY);
     testMux.monitor(PROP_DELAY * 2 - 1);
@@ -111,7 +115,7 @@ void test_inputMux_secondIterationBeforePropDelay_muxAHigh() {
 }
 
 void test_inputMux_thirdIterationBeforePropDelay_muxBHigh() {
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     testMux.monitor(PROP_DELAY);
     testMux.monitor(PROP_DELAY * 2);
@@ -124,7 +128,7 @@ void test_inputMux_thirdIterationBeforePropDelay_muxBHigh() {
 }
 
 void test_inputMux_clockOverflow_nextSelectPinsAllHigh() {
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
     
     // Normal iteration
     testMux.monitor(PROP_DELAY);
@@ -145,7 +149,7 @@ void test_inputMux_clockOverflow_nextSelectPinsAllHigh() {
 }
 
 void test_inputMux_2ChSixteenIterations_selectPinsAlignWithBinaryValues() {
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     testMux.monitor(PROP_DELAY);        // 01
     TEST_ASSERT_EQUAL(HIGH, digitalRead(MUX_A));
@@ -279,7 +283,7 @@ void test_inputMux_2ChSixteenIterations_selectPinsAlignWithBinaryValues() {
 }
 
 void test_inputMux_3ChSixteenIterations_selectPinsAlignWithBinaryValues() {
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_C, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_C, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     testMux.monitor(PROP_DELAY);        // 001
     TEST_ASSERT_EQUAL(HIGH, digitalRead(MUX_A));
@@ -413,7 +417,7 @@ void test_inputMux_3ChSixteenIterations_selectPinsAlignWithBinaryValues() {
 }
 
 void test_inputMux_4ChSixteenIterations_selectPinsAlignWithBinaryValues() {
-    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_C, MUX_D, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_B, MUX_C, MUX_D, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     testMux.monitor(PROP_DELAY);        // 0001
     TEST_ASSERT_EQUAL(HIGH, digitalRead(MUX_A));
@@ -519,7 +523,7 @@ void test_inputMux_4ChSixteenIterations_selectPinsAlignWithBinaryValues() {
 /* Begin value tests */
 
 void test_inputMux_justInitialized_released() {
-    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     ButtonResult result = testMux.getValue(0);
 
@@ -529,10 +533,10 @@ void test_inputMux_justInitialized_released() {
 }
 
 void test_inputMux_transitioningFromLowToHighBeforeDebounce_released() {
-    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     digitalWrite(MUX_OUTPUT, HIGH);
-    testMux.monitor(DEBOUNCE_INTERVAL - 1);
+    testMux.monitor(DEBOUNCE_INTERVAL_MICROS - 1);
 
     ButtonResult result = testMux.getValue(0);
 
@@ -542,10 +546,10 @@ void test_inputMux_transitioningFromLowToHighBeforeDebounce_released() {
 }
 
 void test_inputMux_transitioningFromLowToHighAfterDebounce_onPress() {
-    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     digitalWrite(MUX_OUTPUT, HIGH);
-    testMux.monitor(DEBOUNCE_INTERVAL);
+    testMux.monitor(DEBOUNCE_INTERVAL_MICROS);
 
     ButtonResult result = testMux.getValue(0);
 
@@ -555,13 +559,13 @@ void test_inputMux_transitioningFromLowToHighAfterDebounce_onPress() {
 }
 
 void test_inputMux_statusOnPressNextIterationStillHigh_pressed() {
-    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     unsigned long totalClock = 0;
 
     // Set index 0 to OnPress
     digitalWrite(MUX_OUTPUT, HIGH);
-    totalClock += DEBOUNCE_INTERVAL;
+    totalClock += DEBOUNCE_INTERVAL_MICROS;
     testMux.monitor(totalClock);
 
     // Pass index 1
@@ -580,14 +584,14 @@ void test_inputMux_statusOnPressNextIterationStillHigh_pressed() {
 }
 
 void test_inputMux_buttonHeldHighJustUnderHoldInterval_pressed() {
-    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     unsigned long totalClock = 0;
-    unsigned long pressStartTime = DEBOUNCE_INTERVAL;
+    unsigned long pressStartTime = DEBOUNCE_INTERVAL_MICROS;
 
     // Set index 0 to OnPress
     digitalWrite(MUX_OUTPUT, HIGH);
-    totalClock += DEBOUNCE_INTERVAL;
+    totalClock += DEBOUNCE_INTERVAL_MICROS;
     testMux.monitor(totalClock);
 
     // Pass index 1
@@ -603,7 +607,7 @@ void test_inputMux_buttonHeldHighJustUnderHoldInterval_pressed() {
     testMux.monitor(totalClock);
 
     // Set index 0 to just below the hold time
-    totalClock += (BUTTON_HOLD_INTERVAL - (totalClock - pressStartTime)) - 1;
+    totalClock += (BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime)) - 1;
     testMux.monitor(totalClock);
 
     ButtonResult result = testMux.getValue(0);
@@ -614,14 +618,14 @@ void test_inputMux_buttonHeldHighJustUnderHoldInterval_pressed() {
 }
 
 void test_inputMux_buttonHeldHighForHoldInterval_held() {
-    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     unsigned long totalClock = 0;
-    unsigned long pressStartTime = DEBOUNCE_INTERVAL;
+    unsigned long pressStartTime = DEBOUNCE_INTERVAL_MICROS;
 
     // Set index 0 to OnPress
     digitalWrite(MUX_OUTPUT, HIGH);
-    totalClock += DEBOUNCE_INTERVAL;
+    totalClock += DEBOUNCE_INTERVAL_MICROS;
     testMux.monitor(totalClock);
 
     // Pass index 1
@@ -637,7 +641,7 @@ void test_inputMux_buttonHeldHighForHoldInterval_held() {
     testMux.monitor(totalClock);
 
     // Set index 0 to the hold time
-    totalClock += BUTTON_HOLD_INTERVAL - (totalClock - pressStartTime);
+    totalClock += BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime);
     testMux.monitor(totalClock);
 
     ButtonResult result = testMux.getValue(0);
@@ -648,14 +652,14 @@ void test_inputMux_buttonHeldHighForHoldInterval_held() {
 }
 
 void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromReleasedToOnPressToPressedToHeldToReleased() {
-    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     unsigned long totalClock = 0;
-    unsigned long pressStartTime = DEBOUNCE_INTERVAL;
+    unsigned long pressStartTime = DEBOUNCE_INTERVAL_MICROS;
 
     // Set index 0 to OnPress
     digitalWrite(MUX_OUTPUT, HIGH);
-    totalClock += DEBOUNCE_INTERVAL;
+    totalClock += DEBOUNCE_INTERVAL_MICROS;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::OnPress, testMux.getValue(0));
 
@@ -673,7 +677,7 @@ void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromRel
     testMux.monitor(totalClock);
 
     // Set index 0 to just below the hold time
-    totalClock += (BUTTON_HOLD_INTERVAL - (totalClock - pressStartTime)) - 1;
+    totalClock += (BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime)) - 1;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::Pressed, testMux.getValue(0));
 
@@ -700,14 +704,14 @@ void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromRel
 }
 
 void test_inputMux_fullButtonCycleFromReleasedToPressedToReleased_transitionFromReleasedToOnPressToPressedToOnReleasedToReleased() {
-        InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL, DEBOUNCE_INTERVAL);
+        InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     unsigned long totalClock = 0;
-    unsigned long pressStartTime = DEBOUNCE_INTERVAL;
+    unsigned long pressStartTime = DEBOUNCE_INTERVAL_MICROS;
 
     // Set index 0 to OnPress
     digitalWrite(MUX_OUTPUT, HIGH);
-    totalClock += DEBOUNCE_INTERVAL;
+    totalClock += DEBOUNCE_INTERVAL_MICROS;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::OnPress, testMux.getValue(0));
 
@@ -725,7 +729,7 @@ void test_inputMux_fullButtonCycleFromReleasedToPressedToReleased_transitionFrom
     testMux.monitor(totalClock);
 
     // Set index 0 to just below the hold time
-    totalClock += (BUTTON_HOLD_INTERVAL - (totalClock - pressStartTime)) - 1;
+    totalClock += (BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime)) - 1;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::Pressed, testMux.getValue(0));
 
