@@ -8,7 +8,8 @@
 #include <LiftStatus.h>
 #include <VerticalDirection.h>
 #include <MovementAxis.h>
-#include <PauseStep.h>
+#include <step/PauseStep.h>
+#include <step/UnPauseStep.h>
 
 void monitorCommandInput();
 void executeCommand();
@@ -105,23 +106,6 @@ void monitorCommandInput() {
 
     if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
       initPauseUnpauseAction();
-      //digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-//
-      //LiftStatus ls = readLiftStatus();
-      //VerticalDirection direction = (ls == LiftStatus::Lifted) ? VerticalDirection::Down : VerticalDirection::Up;
-      //movementStepper.setSpeed(8);
-//
-      //while(ls == readLiftStatus()) {
-      //  movementStepper.step(direction);
-      //}
-//
-      //long c = 0;
-      //while(c <= 100) {
-      //  c++;
-      //  movementStepper.step(direction);
-      //}
-//
-      //actionCommand = ActionCommand::NoAction;
     } 
     
     else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
@@ -189,27 +173,49 @@ void initPauseUnpauseAction() {
 }
 
 void runPauseAction() {
-  if(readLiftStatus() == LiftStatus::Lifted) {
-    actionCounter++;
+  // TODO: Error/stall checking.
+  // To check: 
+  //   - Correct number of steps per encoder tick
+  //   - Encoder is moving the correct direction
+  //   - At the end of the routine, lift status should be lifted
 
-    if(actionCounter >= TICKS_ABOVE_RECORD) {
-      endActionCommand();
-    }
+  switch(actionStep) {
+    case PauseStep::LiftToCalibratedPosition:
+      movementStepper.step(VerticalDirection::Up);
+
+      // Keep stepping until we are at position 800
+      if(analogRead(Pin::VerticalPosition) >= 800) {
+        endActionCommand();
+      }
+      break;
   }
-
-  movementStepper.step(VerticalDirection::Up);
 }
 
 void runUnPauseAction() {
-    if(readLiftStatus() == LiftStatus::SetDown) {
-    actionCounter++;
+  // TODO: Error/stall checking
+  // To check:
+  //  - Correct number of steps per encoder tick
+  //  - Encoder is moving the correct direction
+  //  - Stop if we reach the lower limit determined by calibration (i.e. unpause was initiated while the tonearm is not over a record)
 
-    if(actionCounter >= TICKS_BELOW_RECORD) {
-      endActionCommand();
-    }
+  switch(actionStep) {
+    case UnPauseStep::LowerUntilToneArmReleased:
+      movementStepper.step(VerticalDirection::Down);
+
+      // Once the tonearm is set down, initiate the next step
+      if(readLiftStatus() == LiftStatus::SetDown) {
+        actionVariable = analogRead(Pin::VerticalPosition);
+        actionStep = UnPauseStep::LowerBelowRecord;
+      }
+      break;
+    case UnPauseStep::LowerBelowRecord:
+      movementStepper.step(VerticalDirection::Down);
+
+      if(actionVariable - analogRead(Pin::VerticalPosition) >= TICKS_BELOW_RECORD) {
+        endActionCommand();
+      }
+      break;
   }
-
-  movementStepper.step(VerticalDirection::Down);
 }
 
 void endActionCommand() {

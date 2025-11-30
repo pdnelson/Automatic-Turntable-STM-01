@@ -6,6 +6,7 @@
 
 #define STEPS_PER_REVOLUTION 2048
 
+#define ENCODER_DELTA 5
+
 // Vertical movement constnats
-#define TICKS_ABOVE_RECORD 100
 #define TICKS_BELOW_RECORD 100
