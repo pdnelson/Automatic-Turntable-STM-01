@@ -3,7 +3,8 @@
 
 enum ActionCommand : uint8_t {
     NoAction,
-    PauseUnPause,
+    Pause,
+    UnPause,
     PlayHome,
     Calibration,
     TestMode

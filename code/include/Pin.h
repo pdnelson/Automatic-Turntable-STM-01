@@ -32,7 +32,7 @@ enum Pin : uint8_t {
     OutputShiftScl = 27,
     Serial4Rx = 28,
     Serial4Tx = 29,
-    LiftStatus = 30,
+    Lift = 30,
     HorizontalPositionEncoderA = 31,
     HorizontalPositionEncoderB = 32,
     HomeStatus = 37,

@@ -4,10 +4,28 @@
 #include <InputMux.h>
 #include <Constants.h>
 #include <ActionCommand.h>
+#include <Stepper.h>
+#include <LiftStatus.h>
+#include <VerticalDirection.h>
+#include <MovementAxis.h>
+#include <PauseStep.h>
 
 void monitorCommandInput();
 void executeCommand();
 void updateClockMicros();
+void initPauseUnpauseAction();
+void runPauseAction();
+void runUnPauseAction();
+void endActionCommand();
+LiftStatus readLiftStatus();
+
+Stepper movementStepper = Stepper(
+  STEPS_PER_REVOLUTION,
+  Pin::MovementStep1,
+  Pin::MovementStep3,
+  Pin::MovementStep2,
+  Pin::MovementStep4
+);
 
 InputMux inputMux = InputMux(
   Pin::InputMuxA, 
@@ -21,6 +39,9 @@ InputMux inputMux = InputMux(
 unsigned long clockMicros = 0;
 
 ActionCommand actionCommand = ActionCommand::NoAction;
+uint8_t actionStep = 0;
+long actionCounter = 0;
+long actionVariable = 0;
 
 void setup() {
   // Input mux
@@ -66,8 +87,8 @@ void setup() {
 
   // Various Status
   pinMode(Pin::PowerOnStatusIn, INPUT);
-  pinMode(Pin::LiftStatus, INPUT);
-  pinMode(Pin::HomeStatus, INPUT);
+  pinMode(Pin::Lift, INPUT_PULLUP);
+  pinMode(Pin::HomeStatus, INPUT_PULLUP);
 }
 
 void loop() {
@@ -83,7 +104,24 @@ void monitorCommandInput() {
   if(actionCommand == ActionCommand::NoAction) {
 
     if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
-      actionCommand = ActionCommand::PauseUnPause;
+      initPauseUnpauseAction();
+      //digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
+//
+      //LiftStatus ls = readLiftStatus();
+      //VerticalDirection direction = (ls == LiftStatus::Lifted) ? VerticalDirection::Down : VerticalDirection::Up;
+      //movementStepper.setSpeed(8);
+//
+      //while(ls == readLiftStatus()) {
+      //  movementStepper.step(direction);
+      //}
+//
+      //long c = 0;
+      //while(c <= 100) {
+      //  c++;
+      //  movementStepper.step(direction);
+      //}
+//
+      //actionCommand = ActionCommand::NoAction;
     } 
     
     else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
@@ -118,8 +156,11 @@ void monitorCommandInput() {
 void executeCommand() {
   switch(actionCommand) {
     case ActionCommand::NoAction: break;
-    case ActionCommand::PauseUnPause:
-      // todo: pause/unpause code
+    case ActionCommand::Pause:
+      runPauseAction();
+      break;
+    case ActionCommand::UnPause:
+      runUnPauseAction();
       break;
     case ActionCommand::PlayHome:
       // todo: play/home code
@@ -133,6 +174,56 @@ void executeCommand() {
   }
 }
 
+void initPauseUnpauseAction() {
+  digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
+
+  // TODO: Should not determine pause/unpause using the lift status. Should determine this based
+  // on vertical pot calibration value.
+  if(readLiftStatus() == LiftStatus::SetDown) {
+    movementStepper.setSpeed(12);
+    actionCommand = ActionCommand::Pause;
+  } else {
+    movementStepper.setSpeed(5);
+    actionCommand = ActionCommand::UnPause;
+  }
+}
+
+void runPauseAction() {
+  if(readLiftStatus() == LiftStatus::Lifted) {
+    actionCounter++;
+
+    if(actionCounter >= TICKS_ABOVE_RECORD) {
+      endActionCommand();
+    }
+  }
+
+  movementStepper.step(VerticalDirection::Up);
+}
+
+void runUnPauseAction() {
+    if(readLiftStatus() == LiftStatus::SetDown) {
+    actionCounter++;
+
+    if(actionCounter >= TICKS_BELOW_RECORD) {
+      endActionCommand();
+    }
+  }
+
+  movementStepper.step(VerticalDirection::Down);
+}
+
+void endActionCommand() {
+  actionCommand = ActionCommand::NoAction;
+  actionCounter = 0;
+  actionStep = 0;
+  actionVariable = 0;
+  movementStepper.releaseMotorCurrent();
+}
+
 void updateClockMicros() {
   clockMicros = micros();
+}
+
+LiftStatus readLiftStatus() {
+  return digitalRead(Pin::Lift) ? LiftStatus::SetDown : LiftStatus::Lifted;
 }
