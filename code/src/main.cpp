@@ -147,13 +147,13 @@ void executeCommand() {
       runUnPauseAction();
       break;
     case ActionCommand::PlayHome:
-      // todo: play/home code
+      endActionCommand(); // TODO: Implement.
       break;
     case ActionCommand::Calibration:
-      // todo: calibration code
+      endActionCommand(); // TODO: Implement.
       break;
     case ActionCommand::TestMode:
-      // todo: test mode code
+      endActionCommand(); // TODO: Implement.
       break;
   }
 }
@@ -164,10 +164,11 @@ void initPauseUnpauseAction() {
 
   // If the tonearm is not making contact with the lift (implying it's on a record or home), OR the tonearm is at the lower limit (below a record), then "pause" (or lift it up)
   // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-  if(readLiftStatus() == LiftStatus::SetDown || verticalPosition + ENCODER_DELTA <= TEST_VERTICAL_LOWER_LIMIT) {
+  if(readLiftStatus() == LiftStatus::SetDown || verticalPosition - ENCODER_DELTA <= TEST_VERTICAL_LOWER_LIMIT) {
     movementStepper.setSpeed(12);
     actionCommand = ActionCommand::Pause;
   } else {
+    // TODO: Go fast when over home, go slow when not over home
     movementStepper.setSpeed(5);
     actionCommand = ActionCommand::UnPause;
   }

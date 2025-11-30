@@ -19,7 +19,7 @@
 #define TICKS_BELOW_RECORD 100
 
 // A hard-coded test value for the lower vertical encoder limit. This will eventually be replaced by a calibration value.
-#define TEST_VERTICAL_LOWER_LIMIT 50
+#define TEST_VERTICAL_LOWER_LIMIT 20
 
 // A hard-coded test value for the upper vertical encoder limit. This will eventually be replaced by a calibration value.
-#define TEST_VERTICAL_UPPER_LIMIT 800
+#define TEST_VERTICAL_UPPER_LIMIT 1000
