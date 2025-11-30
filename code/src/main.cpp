@@ -33,7 +33,7 @@ InputMux inputMux = InputMux(
   Pin::InputMuxB, 
   Pin::InputMuxC, 
   Pin::InputMuxResult,
-  MUX_PROPAGATION_DELAY,
+  MUX_POLL_INTERVAL,
   BUTTON_HOLD_INTERVAL,
   BUTTON_DEBOUNCE_INTERVAL
 );
@@ -160,10 +160,11 @@ void executeCommand() {
 
 void initPauseUnpauseAction() {
   digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
+  int verticalPosition = analogRead(Pin::VerticalPosition);
 
-  // TODO: Should not determine pause/unpause using the lift status. Should determine this based
-  // on vertical pot calibration value.
-  if(readLiftStatus() == LiftStatus::SetDown) {
+  // If the tonearm is not making contact with the lift (implying it's on a record or home), OR the tonearm is at the lower limit (below a record), then "pause" (or lift it up)
+  // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
+  if(readLiftStatus() == LiftStatus::SetDown || verticalPosition + ENCODER_DELTA <= TEST_VERTICAL_LOWER_LIMIT) {
     movementStepper.setSpeed(12);
     actionCommand = ActionCommand::Pause;
   } else {
@@ -183,8 +184,9 @@ void runPauseAction() {
     case PauseStep::LiftToCalibratedPosition:
       movementStepper.step(VerticalDirection::Up);
 
-      // Keep stepping until we are at position 800
-      if(analogRead(Pin::VerticalPosition) >= 800) {
+      // Keep stepping until we are at position TEST_VERTICAL_UPPER_LIMIT. 
+      // TODO: Pull this value from home calibration. TEST_VERTICAL_UPPER_LIMIT is only for testing.
+      if(analogRead(Pin::VerticalPosition) >= TEST_VERTICAL_UPPER_LIMIT) {
         endActionCommand();
       }
       break;
@@ -196,7 +198,6 @@ void runUnPauseAction() {
   // To check:
   //  - Correct number of steps per encoder tick
   //  - Encoder is moving the correct direction
-  //  - Stop if we reach the lower limit determined by calibration (i.e. unpause was initiated while the tonearm is not over a record)
 
   switch(actionStep) {
     case UnPauseStep::LowerUntilToneArmReleased:
@@ -206,12 +207,21 @@ void runUnPauseAction() {
       if(readLiftStatus() == LiftStatus::SetDown) {
         actionVariable = analogRead(Pin::VerticalPosition);
         actionStep = UnPauseStep::LowerBelowRecord;
+      } 
+      
+      // If the tonearm reaches the bottom limit, then end the routine.
+      // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
+      else if(analogRead(Pin::VerticalPosition) <= TEST_VERTICAL_LOWER_LIMIT) {
+        endActionCommand();
       }
       break;
     case UnPauseStep::LowerBelowRecord:
       movementStepper.step(VerticalDirection::Down);
 
-      if(actionVariable - analogRead(Pin::VerticalPosition) >= TICKS_BELOW_RECORD) {
+      int verticalPosition = analogRead(Pin::VerticalPosition);
+
+      // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
+      if(actionVariable - verticalPosition >= TICKS_BELOW_RECORD || verticalPosition <= TEST_VERTICAL_LOWER_LIMIT) {
         endActionCommand();
       }
       break;
