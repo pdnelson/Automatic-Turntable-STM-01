@@ -568,10 +568,6 @@ void test_inputMux_statusOnPressNextIterationStillHigh_pressed() {
     totalClock += DEBOUNCE_INTERVAL_MICROS;
     testMux.monitor(totalClock);
 
-    // Pass index 1
-    totalClock += PROP_DELAY;
-    testMux.monitor(totalClock);
-
     // Set index 0 to Pressed
     totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
@@ -592,14 +588,6 @@ void test_inputMux_buttonHeldHighJustUnderHoldInterval_pressed() {
     // Set index 0 to OnPress
     digitalWrite(MUX_OUTPUT, HIGH);
     totalClock += DEBOUNCE_INTERVAL_MICROS;
-    testMux.monitor(totalClock);
-
-    // Pass index 1
-    totalClock += PROP_DELAY;
-    testMux.monitor(totalClock);
-
-    // Set index 0 to Pressed
-    totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
 
     // Pass index 1
@@ -632,14 +620,6 @@ void test_inputMux_buttonHeldHighForHoldInterval_held() {
     totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
 
-    // Set index 0 to Pressed
-    totalClock += PROP_DELAY;
-    testMux.monitor(totalClock);
-
-    // Pass index 1
-    totalClock += PROP_DELAY;
-    testMux.monitor(totalClock);
-
     // Set index 0 to the hold time
     totalClock += BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime);
     testMux.monitor(totalClock);
@@ -662,19 +642,11 @@ void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromRel
     totalClock += DEBOUNCE_INTERVAL_MICROS;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::OnPress, testMux.getValue(0));
-
-    // Pass index 1
-    totalClock += PROP_DELAY;
-    testMux.monitor(totalClock);
-
+    
     // Set index 0 to Pressed
     totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::Pressed, testMux.getValue(0));
-
-    // Pass index 1
-    totalClock += PROP_DELAY;
-    testMux.monitor(totalClock);
 
     // Set index 0 to just below the hold time
     totalClock += (BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime)) - 1;
@@ -704,7 +676,7 @@ void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromRel
 }
 
 void test_inputMux_fullButtonCycleFromReleasedToPressedToReleased_transitionFromReleasedToOnPressToPressedToOnReleasedToReleased() {
-        InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
+    InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     unsigned long totalClock = 0;
     unsigned long pressStartTime = DEBOUNCE_INTERVAL_MICROS;
@@ -715,14 +687,14 @@ void test_inputMux_fullButtonCycleFromReleasedToPressedToReleased_transitionFrom
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::OnPress, testMux.getValue(0));
 
-    // Pass index 1
+    // After 1 loop cycle, index 0 is now pressed
     totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
+    TEST_ASSERT_EQUAL(ButtonResult::Pressed, testMux.getValue(0));
 
     // Set index 0 to Pressed
     totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
-    TEST_ASSERT_EQUAL(ButtonResult::Pressed, testMux.getValue(0));
 
     // Pass index 1
     totalClock += PROP_DELAY;
@@ -743,10 +715,6 @@ void test_inputMux_fullButtonCycleFromReleasedToPressedToReleased_transitionFrom
     totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::OnRelease, testMux.getValue(0));
-
-    // Pass index 1
-    totalClock += PROP_DELAY;
-    testMux.monitor(totalClock);
 
     // After one cycle index 0 is now released
     totalClock += PROP_DELAY;

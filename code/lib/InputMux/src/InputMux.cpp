@@ -72,6 +72,9 @@ void InputMux::releaseMemory() {
 }
 
 void InputMux::monitor(unsigned long clockMicros) {
+    // Transition previous index. This assures that a transitional status will only be set for ONE loop cycle.
+    this->transitionValue(this->currentIndex > 0 ? (this->currentIndex - 1) : (this->arraySize - 1), clockMicros);
+
     if(clockMicros - this->lastIterationClockMicros >= this->propagationDelay) {
         this->lastIterationClockMicros = clockMicros;
         
@@ -145,20 +148,20 @@ void InputMux::setValue(uint8_t index, ButtonResult value) {
 }
 
 void InputMux::transitionValue(uint8_t index, unsigned long clockMicros) {
-        ButtonResult lastValue = getValue(index);
+    ButtonResult lastValue = getValue(index);
 
-        // If the button was last OnPress, then change it to Pressed
-        if(lastValue == ButtonResult::OnPress) {
-            setValue(index, ButtonResult::Pressed);
-        } 
-        
-        // If the button was last Pressed, and the hold interval has elapsed, then change it to Held
-        else if(lastValue == ButtonResult::Pressed && clockMicros - this->inputPressMicros[index] >= this->holdInterval) {
-            setValue(index, ButtonResult::Held);
-        }
+    // If the button was last OnPress, then change it to Pressed
+    if(lastValue == ButtonResult::OnPress) {
+        setValue(index, ButtonResult::Pressed);
+    } 
+    
+    // If the button was last Pressed, and the hold interval has elapsed, then change it to Held
+    else if(lastValue == ButtonResult::Pressed && clockMicros - this->inputPressMicros[index] >= this->holdInterval) {
+        setValue(index, ButtonResult::Held);
+    }
 
-        // If the button was last OnRelease, then set it to Released.
-        else if(lastValue == ButtonResult::OnRelease) {
-            setValue(index, ButtonResult::Released);
-        }
+    // If the button was last OnRelease, then set it to Released.
+    else if(lastValue == ButtonResult::OnRelease) {
+        setValue(index, ButtonResult::Released);
+    }
 }
