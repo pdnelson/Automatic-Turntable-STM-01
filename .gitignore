@@ -5,3 +5,5 @@ code/.vscode/extensions.json
 code/.vscode/launch.json
 code/.vscode/ipch
 code/.gitignore
+
+*.skb
