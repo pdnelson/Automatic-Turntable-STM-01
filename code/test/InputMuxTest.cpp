@@ -729,7 +729,8 @@ void test_inputMux_fullButtonCycleFromReleasedToPressedToReleased_transitionFrom
     testMux.monitor(totalClock);
 
     // Set index 0 to just below the hold time
-    totalClock += (BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime)) - 1;
+    // 2 prop delay is to account for the next two cycles
+    totalClock += (BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime)) - (PROP_DELAY * 2) - 1;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::Pressed, testMux.getValue(0));
 

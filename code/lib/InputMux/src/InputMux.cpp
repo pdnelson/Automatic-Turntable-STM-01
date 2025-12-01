@@ -74,6 +74,11 @@ void InputMux::releaseMemory() {
 void InputMux::monitor(unsigned long clockMicros) {
     if(clockMicros - this->lastIterationClockMicros >= this->propagationDelay) {
         this->lastIterationClockMicros = clockMicros;
+        
+        // Transitional operations (OnPress -> Pressed, OnRelease -> Released) do not depend on
+        // the debounce interval; they only depend on the last status that was set, so they 
+        // can run whenever.
+        this->transitionValue(this->currentIndex, clockMicros);
 
         ButtonResult lastValue = getValue(this->currentIndex);
 
@@ -103,25 +108,6 @@ void InputMux::monitor(unsigned long clockMicros) {
                 }
             }
         } 
-        
-        // Transitional operations (OnPress -> Pressed, OnRelease -> Released) do not depend on
-        // the debounce interval; they only depend on the last status that was set, so they 
-        // can run whenever.
-
-        // If the button was last OnPress, then change it to Pressed
-        if(lastValue == ButtonResult::OnPress) {
-            setValue(this->currentIndex, ButtonResult::Pressed);
-        } 
-        
-        // If the button was last Pressed, and the hold interval has elapsed, then change it to Held
-        else if(lastValue == ButtonResult::Pressed && clockMicros - this->inputPressMicros[this->currentIndex] >= this->holdInterval) {
-            setValue(this->currentIndex, ButtonResult::Held);
-        }
-
-        // If the button was last OnRelease, then set it to Released.
-        else if(lastValue == ButtonResult::OnRelease) {
-            setValue(this->currentIndex, ButtonResult::Released);
-        }
 
         // Increment index, or set it to 0 if we are at the last index
         if(this->currentIndex + 1 < this->arraySize) {
@@ -156,4 +142,23 @@ ButtonResult InputMux::getValue(uint8_t index) {
 
 void InputMux::setValue(uint8_t index, ButtonResult value) {
     this->currentValue[index] = value;
+}
+
+void InputMux::transitionValue(uint8_t index, unsigned long clockMicros) {
+        ButtonResult lastValue = getValue(index);
+
+        // If the button was last OnPress, then change it to Pressed
+        if(lastValue == ButtonResult::OnPress) {
+            setValue(index, ButtonResult::Pressed);
+        } 
+        
+        // If the button was last Pressed, and the hold interval has elapsed, then change it to Held
+        else if(lastValue == ButtonResult::Pressed && clockMicros - this->inputPressMicros[index] >= this->holdInterval) {
+            setValue(index, ButtonResult::Held);
+        }
+
+        // If the button was last OnRelease, then set it to Released.
+        else if(lastValue == ButtonResult::OnRelease) {
+            setValue(index, ButtonResult::Released);
+        }
 }

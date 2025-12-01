@@ -181,6 +181,19 @@ class InputMux {
         void setValue(uint8_t index, ButtonResult value);
 
         /**
+         * Transitions a value, at a particular index, while a button's state remains constant.
+         * 
+         * The following transitions will occur:
+         * - OnRelease -> Released
+         * - OnPress -> Pressed
+         * - Pressed -> Held (if the holdInterval has elapsed)
+         * 
+         * @param index The index of the value we are transitioning.
+         * @param clockMicros The current clock interval.
+         */
+        void transitionValue(uint8_t index, unsigned long clockMicros);
+
+        /**
          * The time at which a button press began. This is an array, so the current relevant value will correspond to the index in `currentIndex`.
          */
         unsigned long* inputPressMicros;
