@@ -122,7 +122,7 @@ void monitorCommandInput() {
 
     // Though reset settings is a settings button, we only want to do this if a command
     // isn't running, because the command could depend on one of those settings.
-    else if(inputMux.getValue(MuxPin::BtnResetSettings) == ButtonResult::Held) {
+    else if(inputMux.getValue(MuxPin::BtnResetSettings) == ButtonResult::OnHold) {
       // todo: reset settings
     }
   }

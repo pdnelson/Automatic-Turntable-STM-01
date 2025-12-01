@@ -154,14 +154,18 @@ void InputMux::transitionValue(uint8_t index, unsigned long clockMicros) {
     if(lastValue == ButtonResult::OnPress) {
         setValue(index, ButtonResult::Pressed);
     } 
-    
-    // If the button was last Pressed, and the hold interval has elapsed, then change it to Held
-    else if(lastValue == ButtonResult::Pressed && clockMicros - this->inputPressMicros[index] >= this->holdInterval) {
-        setValue(index, ButtonResult::Held);
-    }
 
     // If the button was last OnRelease, then set it to Released.
     else if(lastValue == ButtonResult::OnRelease) {
         setValue(index, ButtonResult::Released);
+    }
+
+    // If the button was last Pressed, and the hold interval has elapsed, then change it to Held
+    else if(lastValue == ButtonResult::Pressed && clockMicros - this->inputPressMicros[index] >= this->holdInterval) {
+        setValue(index, ButtonResult::OnHold);
+    }
+
+    else if(lastValue == ButtonResult::OnHold) {
+        setValue(index, ButtonResult::Held);
     }
 }

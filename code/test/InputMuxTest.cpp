@@ -623,15 +623,16 @@ void test_inputMux_buttonHeldHighForHoldInterval_held() {
     // Set index 0 to the hold time
     totalClock += BUTTON_HOLD_INTERVAL_MICROS - (totalClock - pressStartTime);
     testMux.monitor(totalClock);
+    TEST_ASSERT_EQUAL(ButtonResult::OnHold, testMux.getValue(0));
 
-    ButtonResult result = testMux.getValue(0);
-
-    TEST_ASSERT_EQUAL(ButtonResult::Held, result);
+    // Next iteration should advance status to Held
+    testMux.monitor(totalClock);
+    TEST_ASSERT_EQUAL(ButtonResult::Held, testMux.getValue(0));
 
     testMux.releaseMemory();
 }
 
-void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromReleasedToOnPressToPressedToHeldToReleased() {
+void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromReleasedToOnPressToPressedToOnHoldToHeldToReleased() {
     InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
 
     unsigned long totalClock = 0;
@@ -642,7 +643,7 @@ void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromRel
     totalClock += DEBOUNCE_INTERVAL_MICROS;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::OnPress, testMux.getValue(0));
-    
+
     // Set index 0 to Pressed
     totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
@@ -653,9 +654,10 @@ void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromRel
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::Pressed, testMux.getValue(0));
 
-    // Pass index 1
+    // Advance status to OnHold
     totalClock += PROP_DELAY;
     testMux.monitor(totalClock);
+    TEST_ASSERT_EQUAL(ButtonResult::OnHold, testMux.getValue(0));
 
     // Set index 0 to the hold time
     totalClock += PROP_DELAY;
@@ -749,7 +751,7 @@ int runUnityTests() {
     RUN_TEST(test_inputMux_statusOnPressNextIterationStillHigh_pressed);
     RUN_TEST(test_inputMux_buttonHeldHighJustUnderHoldInterval_pressed);
     RUN_TEST(test_inputMux_buttonHeldHighForHoldInterval_held);
-    RUN_TEST(test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromReleasedToOnPressToPressedToHeldToReleased);
+    RUN_TEST(test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromReleasedToOnPressToPressedToOnHoldToHeldToReleased);
     RUN_TEST(test_inputMux_fullButtonCycleFromReleasedToPressedToReleased_transitionFromReleasedToOnPressToPressedToOnReleasedToReleased);
 
     return UNITY_END();

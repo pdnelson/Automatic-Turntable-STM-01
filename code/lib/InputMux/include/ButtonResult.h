@@ -28,10 +28,15 @@ enum ButtonResult : uint8_t {
     Pressed = 3,
 
     /**
+     * The button is transitioning from Pressed to Held. This status will be set for one loop cycle before being set to `Held`.
+     */
+    OnHold = 4,
+
+    /**
      * The button is held. This will be set after the button is held for `holdInterval`
      * milliseconds
      */
-    Held = 4
+    Held = 5
 };
 
 #endif
