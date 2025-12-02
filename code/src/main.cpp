@@ -18,7 +18,6 @@ void initPauseUnpauseAction();
 void runPauseAction();
 void runUnPauseAction();
 void endActionCommand();
-LiftStatus readLiftStatus();
 
 Stepper movementStepper = Stepper(
   STEPS_PER_REVOLUTION,
@@ -109,7 +108,7 @@ void monitorCommandInput() {
     } 
     
     else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-      actionCommand = ActionCommand::PlayHome;
+      // todo: implement
     }
 
     else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {
@@ -146,7 +145,10 @@ void executeCommand() {
     case ActionCommand::UnPause:
       runUnPauseAction();
       break;
-    case ActionCommand::PlayHome:
+    case ActionCommand::Play:
+      endActionCommand(); // TODO: Implement.
+      break;
+    case ActionCommand::Home:
       endActionCommand(); // TODO: Implement.
       break;
     case ActionCommand::Calibration:
@@ -164,7 +166,7 @@ void initPauseUnpauseAction() {
 
   // If the tonearm is not making contact with the lift (implying it's on a record or home), OR the tonearm is at the lower limit (below a record), then "pause" (or lift it up)
   // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-  if(readLiftStatus() == LiftStatus::SetDown || verticalPosition - ENCODER_DELTA <= TEST_VERTICAL_LOWER_LIMIT) {
+  if(digitalRead(Pin::Lift) == LiftStatus::SetDown || verticalPosition - ENCODER_DELTA <= TEST_VERTICAL_LOWER_LIMIT) {
     movementStepper.setSpeed(12);
     actionCommand = ActionCommand::Pause;
   } else {
@@ -205,7 +207,7 @@ void runUnPauseAction() {
       movementStepper.step(VerticalDirection::Down);
 
       // Once the tonearm is set down, initiate the next step
-      if(readLiftStatus() == LiftStatus::SetDown) {
+      if(digitalRead(Pin::Lift) == LiftStatus::SetDown) {
         actionVariable = analogRead(Pin::VerticalPosition);
         actionStep = UnPauseStep::LowerBelowRecord;
       } 
@@ -239,8 +241,4 @@ void endActionCommand() {
 
 void updateClockMicros() {
   clockMicros = micros();
-}
-
-LiftStatus readLiftStatus() {
-  return digitalRead(Pin::Lift) ? LiftStatus::SetDown : LiftStatus::Lifted;
 }

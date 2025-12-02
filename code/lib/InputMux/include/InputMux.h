@@ -1,6 +1,16 @@
 #include <Arduino.h>
 #include "ButtonResult.h"
 
+/**
+ * 2025 Patrick Nelson (Statimatic Science)
+ * 
+ * This is a non-blocking multiplexer implementation with propagation delay, debounce logic, and different button events. See `ButtonResult.h` for a list of button events.
+ * This can be used with 1 to 4-channel multiplexers. More channels could be supported in the future, but I found no need for this right now.
+ * 
+ * Usage:
+ * After initializing your InputMux instance, place a call to InputMux::monitor in your super loop, and then read multiplexer values using getValue.
+ */
+
 #ifndef INPUTMUX_H
 #define INPUTMUX_H
 
