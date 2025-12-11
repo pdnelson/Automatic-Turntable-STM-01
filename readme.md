@@ -74,5 +74,4 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [ ] Finalized plinth using whatever material I decide to use
 - [ ] Design PCB
 - [ ] Etch PCB
-
 - [ ] Celebrate a complete STM-01 turntable
