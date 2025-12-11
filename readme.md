@@ -16,14 +16,14 @@ Built-in, the plan is to have two commands: Play and pause.
 The turntable will be able to automatically detect the end of the record, and pick itself up when it reaches that point.
 
 ## Size Selection
-THere will be four settings for size selection: 7", 10" and 12". The fourth option is "auto," where the turntable will use the built-in IR sensor to detect the record edge.
+There will be four settings for size selection: 7", 10" and 12". The fourth option is "auto," where the turntable will use the built-in IR sensor to detect the record edge.
 
 One caveat of using "auto" is that the record edge detection will likely be slower, while selecting a specific size will immediately know where to go.
 
 ## Speed Selection
 There will be four settings for speed selection: 33 1/3, 45, and 78 RPM. The fourth option is "auto," where the turntable will guess, based on the record size, what speed you want.
 
-For 12" records, the 33 1/3 RPM speed will be used. For 10" records, the 78 RPM speed will be used. For 7" records, the 45 RPM speed will be used.
+For 12" records, the 33 1/3 RPM speed will be used. For 10" records, the 78 RPM speed will be used. For 7" records, the 45 RPM speed will be used. If an unusual size is detected, the fallback will be 78 RPM. Why? There are a lot of unusual 78-RPM record sizes out there, so I feel like this one's fitting.
 
 ## Statistics
 The turntable will maintain a set of statistics that will be able to be viewed on the "Control Panel" module, or "Web Server" module.
@@ -74,4 +74,5 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [ ] Finalized plinth using whatever material I decide to use
 - [ ] Design PCB
 - [ ] Etch PCB
+
 - [ ] Celebrate a complete STM-01 turntable
