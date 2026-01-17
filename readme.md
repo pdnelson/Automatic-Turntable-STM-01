@@ -63,7 +63,7 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [x] Lift mechanism
 - [x] Pause/unpause routine
 - [x] Design pivoting mechanism
-- [ ] Design tonearm and headshell assembly
+- [x] Design tonearm and headshell assembly
 - [ ] Connect tonearm to electronics
 - [ ] Status shift register
 - [ ] Command Button UI
@@ -79,4 +79,5 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [ ] Design PCB
 - [ ] Etch PCB
 - [ ] Celebrate a complete STM-01 turntable
+
 
