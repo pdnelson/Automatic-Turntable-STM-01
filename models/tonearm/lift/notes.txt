@@ -1,0 +1,1 @@
+Must use, at most, 15mm layer height for tonearm-lift-attachment
