@@ -18,6 +18,7 @@ void initPauseUnpauseAction();
 void runPauseAction();
 void runUnPauseAction();
 void endActionCommand();
+LiftStatus getLiftStatus();
 
 Stepper movementStepper = Stepper(
   STEPS_PER_REVOLUTION,
@@ -42,6 +43,9 @@ ActionCommand actionCommand = ActionCommand::NoAction;
 uint8_t actionStep = 0;
 long actionCounter = 0;
 long actionVariable = 0;
+
+unsigned long liftDebounce = 0;
+uint8_t lastLiftStatus = LiftStatus::Lifted;
 
 void setup() {
   // Input mux
@@ -89,6 +93,9 @@ void setup() {
   pinMode(Pin::PowerOnStatusIn, INPUT);
   pinMode(Pin::Lift, INPUT_PULLUP);
   pinMode(Pin::HomeStatus, INPUT_PULLUP);
+
+  // Set initial values
+  lastLiftStatus = digitalRead(Pin::Lift);
 }
 
 void loop() {
@@ -166,7 +173,7 @@ void initPauseUnpauseAction() {
 
   // If the tonearm is not making contact with the lift (implying it's on a record or home), OR the tonearm is at the lower limit (below a record), then "pause" (or lift it up)
   // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-  if(digitalRead(Pin::Lift) == LiftStatus::SetDown || !(verticalPosition + ENCODER_DELTA >= TEST_VERTICAL_UPPER_LIMIT)) {
+  if(getLiftStatus() == LiftStatus::SetDown || !(verticalPosition + ENCODER_DELTA >= TEST_VERTICAL_UPPER_LIMIT)) {
     movementStepper.setSpeed(12);
     actionCommand = ActionCommand::Pause;
   } else {
@@ -207,7 +214,7 @@ void runUnPauseAction() {
       movementStepper.step(VerticalDirection::Down);
 
       // Once the tonearm is set down, initiate the next step
-      if(digitalRead(Pin::Lift) == LiftStatus::SetDown) {
+      if(getLiftStatus() == LiftStatus::SetDown) {
         actionVariable = analogRead(Pin::VerticalPosition);
         actionStep = UnPauseStep::LowerBelowRecord;
       } 
@@ -237,6 +244,19 @@ void endActionCommand() {
   actionStep = 0;
   actionVariable = 0;
   movementStepper.releaseMotorCurrent();
+}
+
+LiftStatus getLiftStatus() {
+  bool status = digitalRead(Pin::Lift);
+
+  if(status == lastLiftStatus) {
+    liftDebounce = clockMicros;
+    return (LiftStatus) status;
+  } else if(clockMicros - liftDebounce > LIFT_DEBOUNCE_MICROS) {
+    return (LiftStatus) status;
+  } else {
+    return (LiftStatus) !status;
+  }
 }
 
 void updateClockMicros() {
