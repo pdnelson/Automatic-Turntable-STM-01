@@ -16,7 +16,7 @@
 #define ENCODER_DELTA 5
 
 // The number of encoder ticks to move the tonearm down after contact with the lift has been terminated.
-#define TICKS_BELOW_RECORD 100
+#define TICKS_BELOW_RECORD 10
 
 // A hard-coded test value for the lower vertical encoder limit. This will eventually be replaced by a calibration value.
 #define TEST_VERTICAL_LOWER_LIMIT 20
