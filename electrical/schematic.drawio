@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="2_xUkdSttAsN_y-ex5HM" name="Page-1">
-        <mxGraphModel dx="2986" dy="1627" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="2488" dy="1306" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -1063,8 +1063,8 @@
                         <mxPoint x="-212" y="-660" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="777" value="+5v" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="-292" y="-700" width="20" height="10" as="geometry"/>
+                <mxCell id="777" value="+3.3&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;v&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="-292" y="-700" width="62" height="10" as="geometry"/>
                 </mxCell>
                 <mxCell id="778" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;" parent="1" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -1144,7 +1144,7 @@
                         <mxPoint x="-690" y="-660" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="795" value="+5v" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="795" value="+3.3v" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="-820" y="-680" width="20" height="10" as="geometry"/>
                 </mxCell>
                 <mxCell id="796" value="&lt;h1 class=&quot;tss-css-tgn1kn-tdBreak-manuProductNumber&quot;&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;SN74LVC1G18DBVR&lt;/font&gt;&lt;/span&gt;&lt;/h1&gt;" style="shadow=0;dashed=0;align=center;html=1;strokeWidth=1;shape=mxgraph.electrical.logic_gates.dual_inline_ic;labelNames=a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t;whiteSpace=wrap;" parent="1" vertex="1">
@@ -1903,6 +1903,60 @@
                 </mxCell>
                 <mxCell id="990" value="&lt;font style=&quot;font-size: 7px;&quot;&gt;10k&amp;nbsp;Ω&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="-650" y="-370" width="20" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="991" value="+3.3v" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="-880" y="145" width="40" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="992" value="" style="pointerEvents=1;verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.capacitors.capacitor_1;rotation=-180;" vertex="1" parent="1">
+                    <mxGeometry x="-900" y="146.5" width="21.5" height="7" as="geometry"/>
+                </mxCell>
+                <mxCell id="993" value="" style="pointerEvents=1;verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.signal_sources.signal_ground;" vertex="1" parent="1">
+                    <mxGeometry x="-905" y="149.5" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="994" value="0.1μF" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=5;" vertex="1" parent="1">
+                    <mxGeometry x="-903" y="139.5" width="27.5" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="995" value="" style="pointerEvents=1;verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.signal_sources.signal_ground;" vertex="1" parent="1">
+                    <mxGeometry x="-905" y="170" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="997" value="" style="endArrow=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0;entryDx=0;entryDy=190;entryPerimeter=0;" edge="1" parent="1" source="995" target="345">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-840" y="180" as="sourcePoint"/>
+                        <mxPoint x="-790" y="130" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="998" value="GND" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=5;" vertex="1" parent="1">
+                    <mxGeometry x="-858.75" y="160" width="27.5" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="1000" value="" style="endArrow=none;html=1;exitX=1;exitY=0;exitDx=0;exitDy=230;exitPerimeter=0;" edge="1" parent="1" source="345">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-540" y="180" as="sourcePoint"/>
+                        <mxPoint x="-650" y="210" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1001" value="" style="endArrow=none;html=1;exitX=1;exitY=0;exitDx=0;exitDy=250;exitPerimeter=0;" edge="1" parent="1" source="345">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-540" y="180" as="sourcePoint"/>
+                        <mxPoint x="-650" y="230" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1002" value="" style="endArrow=none;html=1;exitX=1;exitY=0;exitDx=0;exitDy=270;exitPerimeter=0;" edge="1" parent="1" source="345">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-540" y="180" as="sourcePoint"/>
+                        <mxPoint x="-650" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1003" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-650" y="210" as="sourcePoint"/>
+                        <mxPoint x="-650" y="260" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1004" value="" style="pointerEvents=1;verticalLabelPosition=bottom;shadow=0;dashed=0;align=center;html=1;verticalAlign=top;shape=mxgraph.electrical.signal_sources.signal_ground;" vertex="1" parent="1">
+                    <mxGeometry x="-655" y="260" width="10" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="1005" value="+3.3v" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="-675" y="185" width="40" height="10" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
