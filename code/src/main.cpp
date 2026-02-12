@@ -10,6 +10,8 @@
 #include <MovementAxis.h>
 #include <step/PauseStep.h>
 #include <step/UnPauseStep.h>
+#include <StmShift.h>
+#include <StmShiftPin.h>
 
 void monitorCommandInput();
 void executeCommand();
@@ -18,6 +20,7 @@ void initPauseUnpauseAction();
 void runPauseAction();
 void runUnPauseAction();
 void endActionCommand();
+void endUnPauseAction();
 LiftStatus getLiftStatus();
 
 Stepper movementStepper = Stepper(
@@ -37,6 +40,9 @@ InputMux inputMux = InputMux(
   BUTTON_HOLD_INTERVAL,
   BUTTON_DEBOUNCE_INTERVAL
 );
+
+StmShift outputShift = StmShift();
+
 unsigned long clockMicros = 0;
 
 ActionCommand actionCommand = ActionCommand::NoAction;
@@ -96,12 +102,15 @@ void setup() {
 
   // Set initial values
   lastLiftStatus = digitalRead(Pin::Lift);
+
+  outputShift.initialize();
 }
 
 void loop() {
   updateClockMicros();
   monitorCommandInput();
   executeCommand();
+  outputShift.monitor();
 }
 
 void monitorCommandInput() {
@@ -176,6 +185,8 @@ void initPauseUnpauseAction() {
   if(getLiftStatus() == LiftStatus::SetDown || !(verticalPosition + ENCODER_DELTA >= TEST_VERTICAL_UPPER_LIMIT)) {
     movementStepper.setSpeed(10);
     actionCommand = ActionCommand::Pause;
+    outputShift.setValue(StmShiftPin::LedPauseStatus, true);
+    outputShift.setValue(StmShiftPin::AudioCutOff, true);
   } else {
     // TODO: Go fast when over home, go slow when not over home
     movementStepper.setSpeed(3);
@@ -222,7 +233,7 @@ void runUnPauseAction() {
       // If the tonearm reaches the bottom limit, then end the routine.
       // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
       else if(analogRead(Pin::VerticalPosition) <= TEST_VERTICAL_LOWER_LIMIT) {
-        endActionCommand();
+        endUnPauseAction();
       }
       break;
     case UnPauseStep::LowerBelowRecord:
@@ -232,7 +243,7 @@ void runUnPauseAction() {
 
       // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
       if(actionVariable - verticalPosition >= TICKS_BELOW_RECORD || verticalPosition <= TEST_VERTICAL_LOWER_LIMIT) {
-        endActionCommand();
+        endUnPauseAction();
       }
       break;
   }
@@ -244,6 +255,12 @@ void endActionCommand() {
   actionStep = 0;
   actionVariable = 0;
   movementStepper.releaseMotorCurrent();
+}
+
+void endUnPauseAction() {
+  outputShift.setValue(StmShiftPin::LedPauseStatus, false);
+  outputShift.setValue(StmShiftPin::AudioCutOff, false);
+  endActionCommand();
 }
 
 LiftStatus getLiftStatus() {

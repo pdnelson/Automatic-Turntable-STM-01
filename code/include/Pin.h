@@ -26,15 +26,15 @@ enum Pin : uint8_t {
     TurntableMotorPhase1 = 21,
     HorizontalClutchPosition = 22,
     VerticalPosition = 23,
-    Serial3Tx = 24,
-    Serial3Rx = 25,
-    OutputShiftSda = 26,
-    OutputShiftScl = 27,
-    Serial4Rx = 28,
-    Serial4Tx = 29,
+    OutputShiftScl = 24, // Wire2
+    OutputShiftSda = 25, // Wire2
+    Serial3Rx = 28,
+    Serial3Tx = 29,
     Lift = 30,
     HorizontalPositionEncoderA = 31,
     HorizontalPositionEncoderB = 32,
+    Serial4Rx = 34,
+    Serial4Tx = 35,
     HomeStatus = 37,
     HorizontalClutchStep4 = 38,
     HorizontalClutchStep3 = 39,
@@ -42,9 +42,9 @@ enum Pin : uint8_t {
     HorizontalClutchStep1 = 41,
 
     // Unused pins
+    Unused26 = 26,
+    Unused27 = 27,
     Unused33 = 33,
-    Unused34 = 34,
-    Unused35 = 35,
     Unused36 = 36
 };
 
