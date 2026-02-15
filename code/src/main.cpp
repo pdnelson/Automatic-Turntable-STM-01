@@ -105,8 +105,6 @@ void setup() {
 
   outputShift.initialize();
   outputShift.setValue(StmShiftPin::LedPower, true);
-
-  Serial.begin(9600);
 }
 
 void loop() {
@@ -231,16 +229,12 @@ void runUnPauseAction() {
       if(getLiftStatus() == LiftStatus::SetDown) {
         actionVariable = analogRead(Pin::VerticalPosition);
         actionStep = UnPauseStep::LowerBelowRecord;
-        Serial.print("Going to unpause step 2 at position ");
-        Serial.print(actionVariable);
-        Serial.print("\n");
       } 
       
       // If the tonearm reaches the bottom limit, then end the routine.
       // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
       else if(analogRead(Pin::VerticalPosition) <= TEST_VERTICAL_LOWER_LIMIT) {
         endUnPauseAction();
-        Serial.println("Immediately ending unpause action");
       }
       break;
     case UnPauseStep::LowerBelowRecord:
@@ -250,9 +244,6 @@ void runUnPauseAction() {
 
       // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
       if(actionVariable - verticalPosition >= TICKS_BELOW_RECORD || verticalPosition <= TEST_VERTICAL_LOWER_LIMIT) {
-        Serial.print("Made it to position ");
-        Serial.print(verticalPosition);
-        Serial.print("\n");
         endUnPauseAction();
       }
       break;
