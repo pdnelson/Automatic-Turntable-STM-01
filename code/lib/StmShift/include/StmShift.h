@@ -16,16 +16,41 @@
 
  class StmShift {
     public:
+
+        /**
+         * Constructor to instantiate an instance of this class.
+         */
         StmShift();
 
+        /**
+         * Initializes base values. Call this in your `setup` routine.
+         */
         void initialize();
+
+        /**
+         * Monitors the values that should be written to the shift register, and writes them if a value needs to be changed. Place this at the end of your `loop`.
+         */
         void monitor();
 
+        /**
+         * Schedules a shift register pin to be set to the `value` next time `monitor` is called.
+         */
         void setValue(StmShiftPin pin, bool value);
+
+        /**
+         * Gets the requested shift register pin's value.
+         */
         bool getValue(StmShiftPin pin);
 
     private:
+        /**
+         * The current pin values that the shift register has set. This always has the most up-to-date data that the shift register is displaying.
+         */
         uint16_t currentValue;
+
+        /**
+         * Scheduled value changes to the shift register get stored in here, via the public `setValue` method.
+         */
         uint16_t nextValue;
  };
 

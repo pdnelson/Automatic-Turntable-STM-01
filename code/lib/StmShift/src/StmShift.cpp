@@ -34,11 +34,9 @@ void StmShift::initialize() {
 void StmShift::monitor() {
   // If what's currently on the shift doesn't match what's "next," then update it.
   if(this->nextValue != this->currentValue) {
-    uint8_t bankACurrValue = this->currentValue & 0x00FF;
-    uint8_t bankBCurrValue = (this->currentValue & 0xFF00) >> 8;
 
+    uint8_t bankACurrValue = this->currentValue & 0x00FF;
     uint8_t bankANextValue = this->nextValue & 0x00FF;
-    uint8_t bankBNextValue = (this->nextValue & 0xFF00) >> 8;
 
     // Rewrite bank A if it has changed at all
     if(bankACurrValue != bankANextValue) {
@@ -47,6 +45,9 @@ void StmShift::monitor() {
       Wire2.write(bankANextValue);
       Wire2.endTransmission();
     }
+
+    uint8_t bankBCurrValue = (this->currentValue & 0xFF00) >> 8;
+    uint8_t bankBNextValue = (this->nextValue & 0xFF00) >> 8;
 
     // Rewrite bank B if it has changed at all
     if(bankBCurrValue != bankBNextValue) {
