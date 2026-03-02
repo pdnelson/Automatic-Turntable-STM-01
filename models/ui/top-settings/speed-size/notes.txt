@@ -1,0 +1,8 @@
+Use 0.15mm layers for all parts, except for the bottom mount.
+
+Text:
+- Font: Yu Gothic UI Semibold
+- Height: 8.00mm
+- Extruded: 0.0mm
+- Form: Filled
+- Weight: Bold

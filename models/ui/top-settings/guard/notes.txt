@@ -1,0 +1,9 @@
+Model number text:
+- Font: Bahnschrift SemiLight SemiConde
+- Weight: Regular
+- Form: Filled
+- Height: 14mm
+- Extruded: 0.0mm
+
+Size/speed text:
+- Same as above, except height: 5.0mm
