@@ -8,7 +8,8 @@ enum ActionCommand : uint8_t {
     Play,
     Home,
     Calibration,
-    TestMode
+    TestMode,
+    Error
 };
 
 #endif

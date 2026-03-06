@@ -26,3 +26,6 @@
 
 // The amount of time, in microseconds, that must pass between status changes of the lift.
 #define LIFT_DEBOUNCE_MICROS 200000
+
+// One seconds, in microseconds.
+#define ONE_SECOND_MICROS 1000000

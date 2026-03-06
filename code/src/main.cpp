@@ -3,6 +3,7 @@
 #include <MuxPin.h>
 #include <InputMux.h>
 #include <Constants.h>
+#include <CommandError.h>
 #include <ActionCommand.h>
 #include <Stepper.h>
 #include <LiftStatus.h>
@@ -21,6 +22,9 @@ void runPauseAction();
 void runUnPauseAction();
 void endActionCommand();
 void endUnPauseAction();
+void initErrorAction(CommandError error);
+void errorActionCommand();
+void endErrorAction();
 LiftStatus getLiftStatus();
 
 Stepper movementStepper = Stepper(
@@ -48,7 +52,8 @@ unsigned long clockMicros = 0;
 ActionCommand actionCommand = ActionCommand::NoAction;
 uint8_t actionStep = 0;
 long actionCounter = 0;
-long actionVariable = 0;
+long actionVariable1 = 0;
+long actionVariable2 = 0;
 
 unsigned long liftDebounce = 0;
 uint8_t lastLiftStatus = LiftStatus::Lifted;
@@ -118,7 +123,7 @@ void monitorCommandInput() {
   inputMux.monitor(clockMicros);
 
   // Only read action command values if there is currently no action running
-  if(actionCommand == ActionCommand::NoAction) {
+  if(actionCommand == ActionCommand::NoAction || actionCommand == ActionCommand::Error) {
 
     if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
       initPauseUnpauseAction();
@@ -134,12 +139,6 @@ void monitorCommandInput() {
 
     else if(inputMux.getValue(MuxPin::BtnTestMode) == ButtonResult::OnRelease) {
       actionCommand = ActionCommand::TestMode;
-    }
-
-    // Though reset settings is a settings button, we only want to do this if a command
-    // isn't running, because the command could depend on one of those settings.
-    else if(inputMux.getValue(MuxPin::BtnResetSettings) == ButtonResult::OnHold) {
-      // todo: reset settings
     }
   }
 
@@ -173,6 +172,9 @@ void executeCommand() {
       break;
     case ActionCommand::TestMode:
       endActionCommand(); // TODO: Implement.
+      break;
+    case ActionCommand::Error: 
+      errorActionCommand();
       break;
   }
 }
@@ -227,7 +229,7 @@ void runUnPauseAction() {
 
       // Once the tonearm is set down, initiate the next step
       if(getLiftStatus() == LiftStatus::SetDown) {
-        actionVariable = analogRead(Pin::VerticalPosition);
+        actionVariable1 = analogRead(Pin::VerticalPosition);
         actionStep = UnPauseStep::LowerBelowRecord;
       } 
       
@@ -243,18 +245,43 @@ void runUnPauseAction() {
       int verticalPosition = analogRead(Pin::VerticalPosition);
 
       // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-      if(actionVariable - verticalPosition >= TICKS_BELOW_RECORD || verticalPosition <= TEST_VERTICAL_LOWER_LIMIT) {
+      if(actionVariable1 - verticalPosition >= TICKS_BELOW_RECORD || verticalPosition <= TEST_VERTICAL_LOWER_LIMIT) {
         endUnPauseAction();
       }
       break;
   }
 }
 
+void initErrorAction(CommandError error) {
+  endActionCommand();
+  actionVariable1 = error;
+  actionCommand = ActionCommand::Error;
+  outputShift.setValue(StmShiftPin::LedPauseStatus, false);
+  outputShift.setValue(StmShiftPin::LedPlayStatus, false);
+}
+
+void errorActionCommand() {
+  if(clockMicros - actionCounter > ONE_SECOND_MICROS) {
+    actionCounter = clockMicros;
+    outputShift.setValue(StmShiftPin::LedPower, !outputShift.getValue(StmShiftPin::LedPower));
+  }
+
+  if(inputMux.getValue(MuxPin::BtnPause) || inputMux.getValue(MuxPin::BtnPlay)) {
+    endErrorAction();
+  }
+}
+
+void endErrorAction() {
+  outputShift.setValue(StmShiftPin::LedPower, true);
+  endActionCommand();
+}
+
 void endActionCommand() {
   actionCommand = ActionCommand::NoAction;
   actionCounter = 0;
   actionStep = 0;
-  actionVariable = 0;
+  actionVariable1 = 0;
+  actionVariable2 = 0;
   movementStepper.releaseMotorCurrent();
 }
 

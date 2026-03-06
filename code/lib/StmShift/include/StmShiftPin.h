@@ -7,7 +7,7 @@ enum StmShiftPin : uint8_t {
     AudioCutOff = 3,
     LedHeadshellIR = 4,
     LedPower = 5,
-    LedMoveStatus = 6,
+    LedPlayStatus = 6,
     LedPauseStatus = 7,
 
     // Bank B
