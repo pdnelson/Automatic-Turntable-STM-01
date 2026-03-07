@@ -67,7 +67,7 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [x] Connect tonearm to electronics
 - [x] Status shift register
 - [ ] Command Button UI
-- [ ] Error handling
+- [x] Error handling
 - [ ] External Commands
 - [ ] Horizontal position tracking
 - [ ] Horizontal clutch mechanism
@@ -79,6 +79,7 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [ ] Design PCB
 - [ ] Etch PCB
 - [ ] Celebrate a complete STM-01 turntable
+
 
 
 
