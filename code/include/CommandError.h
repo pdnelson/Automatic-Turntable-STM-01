@@ -2,11 +2,11 @@
 #define COMMANDERROR_H
 
 enum CommandError : uint8_t {
-    LiftStalledMovingUp = 0,
-    LiftStalledMovingDown = 1,
+    LiftStalledMovingUp = 1,
+    LiftStalledMovingDown = 2,
 
     // The tonearm "pause" routine finished, though the tonearm's status is not lifted.
-    NotLifted = 2,
+    NotLifted = 3,
 };
 
 #endif

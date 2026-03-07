@@ -129,7 +129,7 @@ void monitorCommandInput() {
   inputMux.monitor(clockMicros);
 
   // Only read action command values if there is currently no action running
-  if(actionCommand == ActionCommand::NoAction || actionCommand == ActionCommand::Error) {
+  if(actionCommand == ActionCommand::NoAction) {
 
     if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
       initPauseUnpauseAction();
@@ -299,8 +299,20 @@ void initErrorAction(CommandError error) {
   actionVariable1 = error;
   actionVariable2 = clockMicros;
   actionCommand = ActionCommand::Error;
+
+  // Action lights get turned off
   outputShift.setValue(StmShiftPin::LedPauseStatus, false);
   outputShift.setValue(StmShiftPin::LedPlayStatus, false);
+
+  // Size and speed lights become a binary code, representing the current error
+  outputShift.setValue(StmShiftPin::LedAutoSize, error & 1);
+  outputShift.setValue(StmShiftPin::Led78Rpm, error >> 1 & 1);
+  outputShift.setValue(StmShiftPin::Led45Rpm, error >> 2 & 1);
+  outputShift.setValue(StmShiftPin::Led33Rpm, error >> 3 & 1);
+  outputShift.setValue(StmShiftPin::LedAutoSpeed, error >> 4 & 1);
+  outputShift.setValue(StmShiftPin::Led12In, error >> 5 & 1);
+  outputShift.setValue(StmShiftPin::Led10In, error >> 6 & 1);
+  outputShift.setValue(StmShiftPin::Led7In, error >> 7 & 1);
 }
 
 /**
@@ -322,6 +334,17 @@ void errorActionCommand() {
 
 void endErrorAction() {
   outputShift.setValue(StmShiftPin::LedPower, true);
+
+  // TODO: Return size/speed LEDs to what they were at before
+  outputShift.setValue(StmShiftPin::LedAutoSize, false);
+  outputShift.setValue(StmShiftPin::Led78Rpm, false);
+  outputShift.setValue(StmShiftPin::Led45Rpm, false);
+  outputShift.setValue(StmShiftPin::Led33Rpm, false);
+  outputShift.setValue(StmShiftPin::LedAutoSpeed, false);
+  outputShift.setValue(StmShiftPin::Led12In, false);
+  outputShift.setValue(StmShiftPin::Led10In, false);
+  outputShift.setValue(StmShiftPin::Led7In, false);
+
   endActionCommand();
 }
 
