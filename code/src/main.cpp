@@ -25,6 +25,7 @@ void endUnPauseAction();
 void initErrorAction(CommandError error);
 void errorActionCommand();
 void endErrorAction();
+void checkVerticalStall(VerticalDirection direction, int currentPosition);
 LiftStatus getLiftStatus();
 
 Stepper movementStepper = Stepper(
@@ -54,6 +55,9 @@ uint8_t actionStep = 0;
 long actionCounter = 0;
 long actionVariable1 = 0;
 long actionVariable2 = 0;
+
+int verticalStallPosition = 0;
+int verticalStallCounter = 0;
 
 unsigned long liftDebounce = 0;
 uint8_t lastLiftStatus = LiftStatus::Lifted;
@@ -110,6 +114,8 @@ void setup() {
 
   outputShift.initialize();
   outputShift.setValue(StmShiftPin::LedPower, true);
+
+  Serial.begin(SERIAL_SPEED);
 }
 
 void loop() {
@@ -181,11 +187,11 @@ void executeCommand() {
 
 void initPauseUnpauseAction() {
   digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-  int verticalPosition = analogRead(Pin::VerticalPosition);
+  verticalStallPosition = analogRead(Pin::VerticalPosition);
 
   // If the tonearm is not making contact with the lift (implying it's on a record or home), OR the tonearm is at the lower limit (below a record), then "pause" (or lift it up)
   // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-  if(getLiftStatus() == LiftStatus::SetDown || !(verticalPosition + ENCODER_DELTA >= TEST_VERTICAL_UPPER_LIMIT)) {
+  if(getLiftStatus() == LiftStatus::SetDown || !(verticalStallPosition + VERTICAL_ENCODER_DELTA >= TEST_VERTICAL_UPPER_LIMIT)) {
     movementStepper.setSpeed(10);
     actionCommand = ActionCommand::Pause;
     outputShift.setValue(StmShiftPin::LedPauseStatus, true);
@@ -198,75 +204,100 @@ void initPauseUnpauseAction() {
 }
 
 void runPauseAction() {
+  movementStepper.step(VerticalDirection::Up);
+  int currentPosition = analogRead(Pin::VerticalPosition);
+
   // TODO: Error/stall checking.
   // To check: 
-  //   - Correct number of steps per encoder tick
-  //   - Encoder is moving the correct direction
   //   - At the end of the routine, lift status should be lifted
 
   switch(actionStep) {
     case PauseStep::LiftToCalibratedPosition:
-      movementStepper.step(VerticalDirection::Up);
 
       // Keep stepping until we are at position TEST_VERTICAL_UPPER_LIMIT. 
       // TODO: Pull this value from home calibration. TEST_VERTICAL_UPPER_LIMIT is only for testing.
-      if(analogRead(Pin::VerticalPosition) >= TEST_VERTICAL_UPPER_LIMIT) {
+      if(currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
         endActionCommand();
       }
       break;
   }
+
+  checkVerticalStall(VerticalDirection::Up, currentPosition);
+}
+
+void checkVerticalStall(VerticalDirection direction, int currentPosition) {
+  verticalStallCounter++;
+
+  int greaterThan = direction == VerticalDirection::Down ? verticalStallPosition : currentPosition;
+  int lessThan = direction == VerticalDirection::Down ? currentPosition : verticalStallPosition;
+
+  if(greaterThan > lessThan) {
+    verticalStallPosition = currentPosition;
+    verticalStallCounter = 0;
+  } else if(verticalStallCounter >= VERTICAL_STALL_STEPS) {
+    initErrorAction(direction == VerticalDirection::Down ? CommandError::LiftStalledMovingDown : CommandError::LiftStalledMovingUp);
+  }
 }
 
 void runUnPauseAction() {
-  // TODO: Error/stall checking
-  // To check:
-  //  - Correct number of steps per encoder tick
-  //  - Encoder is moving the correct direction
+  movementStepper.step(VerticalDirection::Down);
+  int currentPosition = analogRead(Pin::VerticalPosition);
 
   switch(actionStep) {
-    case UnPauseStep::LowerUntilToneArmReleased:
-      movementStepper.step(VerticalDirection::Down);
+    case UnPauseStep::LowerUntilToneArmReleased: {
 
       // Once the tonearm is set down, initiate the next step
       if(getLiftStatus() == LiftStatus::SetDown) {
-        actionVariable1 = analogRead(Pin::VerticalPosition);
+        actionVariable1 = currentPosition;
         actionStep = UnPauseStep::LowerBelowRecord;
       } 
       
       // If the tonearm reaches the bottom limit, then end the routine.
       // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-      else if(analogRead(Pin::VerticalPosition) <= TEST_VERTICAL_LOWER_LIMIT) {
+      else if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT) {
         endUnPauseAction();
       }
-      break;
-    case UnPauseStep::LowerBelowRecord:
-      movementStepper.step(VerticalDirection::Down);
 
-      int verticalPosition = analogRead(Pin::VerticalPosition);
+      break;
+    }
+
+    /**
+     * Action variable 1: The encoder starting position when this step begins.
+     */
+    case UnPauseStep::LowerBelowRecord: {
 
       // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-      if(actionVariable1 - verticalPosition >= TICKS_BELOW_RECORD || verticalPosition <= TEST_VERTICAL_LOWER_LIMIT) {
+      if(actionVariable1 - currentPosition >= TICKS_BELOW_RECORD || currentPosition <= TEST_VERTICAL_LOWER_LIMIT) {
         endUnPauseAction();
       }
+
       break;
+    }
   }
+  
+  checkVerticalStall(VerticalDirection::Down, currentPosition);
 }
 
 void initErrorAction(CommandError error) {
   endActionCommand();
   actionVariable1 = error;
+  actionVariable2 = clockMicros;
   actionCommand = ActionCommand::Error;
   outputShift.setValue(StmShiftPin::LedPauseStatus, false);
   outputShift.setValue(StmShiftPin::LedPlayStatus, false);
 }
 
+/**
+ * actionVariable1: The error that occurred
+ * actionVariable2: The time the error occurred
+ */
 void errorActionCommand() {
   if(clockMicros - actionCounter > ONE_SECOND_MICROS) {
     actionCounter = clockMicros;
     outputShift.setValue(StmShiftPin::LedPower, !outputShift.getValue(StmShiftPin::LedPower));
   }
 
-  if(inputMux.getValue(MuxPin::BtnPause) || inputMux.getValue(MuxPin::BtnPlay)) {
+  if(clockMicros - actionVariable2 > ONE_SECOND_MICROS && (inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease || inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease)) {
     endErrorAction();
   }
 }
@@ -282,6 +313,8 @@ void endActionCommand() {
   actionStep = 0;
   actionVariable1 = 0;
   actionVariable2 = 0;
+  verticalStallCounter = 0;
+  verticalStallPosition = 0;
   movementStepper.releaseMotorCurrent();
 }
 

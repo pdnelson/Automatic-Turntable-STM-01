@@ -12,8 +12,15 @@
 // The number of steps to make a full revolution on a 28BYJ-48 stepper motor.
 #define STEPS_PER_REVOLUTION 2048
 
+// One seconds, in microseconds.
+#define ONE_SECOND_MICROS 1000000
+
+/**
+ * Constants related to the pause/unpause commands -------------
+ */
+
 // A margin of error for the slide potentiometer "encoders."
-#define ENCODER_DELTA 5
+#define VERTICAL_ENCODER_DELTA 5
 
 // The number of encoder ticks to move the tonearm down after contact with the lift has been terminated.
 #define TICKS_BELOW_RECORD 10
@@ -27,5 +34,5 @@
 // The amount of time, in microseconds, that must pass between status changes of the lift.
 #define LIFT_DEBOUNCE_MICROS 200000
 
-// One seconds, in microseconds.
-#define ONE_SECOND_MICROS 1000000
+// The number of steps the vertical stepper must reach before it is considered "stalled".
+#define VERTICAL_STALL_STEPS 50
