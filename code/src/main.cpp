@@ -207,36 +207,27 @@ void runPauseAction() {
   movementStepper.step(VerticalDirection::Up);
   int currentPosition = analogRead(Pin::VerticalPosition);
 
-  // TODO: Error/stall checking.
-  // To check: 
-  //   - At the end of the routine, lift status should be lifted
-
   switch(actionStep) {
     case PauseStep::LiftToCalibratedPosition:
 
       // Keep stepping until we are at position TEST_VERTICAL_UPPER_LIMIT. 
       // TODO: Pull this value from home calibration. TEST_VERTICAL_UPPER_LIMIT is only for testing.
       if(currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
-        endActionCommand();
+
+        // If the tonearm is lifted at the end of the routine, then the command succeeded.
+        if(getLiftStatus() == LiftStatus::Lifted) {
+          endActionCommand();
+        } 
+        
+        // Otherwise, the command failed.
+        else {
+          initErrorAction(CommandError::NotLifted);
+        }
       }
       break;
   }
 
   checkVerticalStall(VerticalDirection::Up, currentPosition);
-}
-
-void checkVerticalStall(VerticalDirection direction, int currentPosition) {
-  verticalStallCounter++;
-
-  int greaterThan = direction == VerticalDirection::Down ? verticalStallPosition : currentPosition;
-  int lessThan = direction == VerticalDirection::Down ? currentPosition : verticalStallPosition;
-
-  if(greaterThan > lessThan) {
-    verticalStallPosition = currentPosition;
-    verticalStallCounter = 0;
-  } else if(verticalStallCounter >= VERTICAL_STALL_STEPS) {
-    initErrorAction(direction == VerticalDirection::Down ? CommandError::LiftStalledMovingDown : CommandError::LiftStalledMovingUp);
-  }
 }
 
 void runUnPauseAction() {
@@ -278,6 +269,31 @@ void runUnPauseAction() {
   checkVerticalStall(VerticalDirection::Down, currentPosition);
 }
 
+void endUnPauseAction() {
+  outputShift.setValue(StmShiftPin::LedPauseStatus, false);
+  outputShift.setValue(StmShiftPin::AudioCutOff, false);
+  endActionCommand();
+}
+
+/**
+ * This executes once per loop cycle. Every time a step is completed, this will increment the verticalStallCounter one time.
+ * When an encoder tick occurs, the verticalStallCounter is reset. If the verticalStallCounter increments VERTICAL_STALL_STEPS before
+ * an encoder tick occurs, then we can assume the lift motor has stalled.
+ */
+void checkVerticalStall(VerticalDirection direction, int currentPosition) {
+  verticalStallCounter++;
+
+  int greaterThan = direction == VerticalDirection::Down ? verticalStallPosition : currentPosition;
+  int lessThan = direction == VerticalDirection::Down ? currentPosition : verticalStallPosition;
+
+  if(greaterThan > lessThan) {
+    verticalStallPosition = currentPosition;
+    verticalStallCounter = 0;
+  } else if(verticalStallCounter >= VERTICAL_STALL_STEPS) {
+    initErrorAction(direction == VerticalDirection::Down ? CommandError::LiftStalledMovingDown : CommandError::LiftStalledMovingUp);
+  }
+}
+
 void initErrorAction(CommandError error) {
   endActionCommand();
   actionVariable1 = error;
@@ -288,6 +304,8 @@ void initErrorAction(CommandError error) {
 }
 
 /**
+ * This routine blinks the power LED until the user presses the "Pause" or "Play" commands.
+ * 
  * actionVariable1: The error that occurred
  * actionVariable2: The time the error occurred
  */
@@ -316,12 +334,6 @@ void endActionCommand() {
   verticalStallCounter = 0;
   verticalStallPosition = 0;
   movementStepper.releaseMotorCurrent();
-}
-
-void endUnPauseAction() {
-  outputShift.setValue(StmShiftPin::LedPauseStatus, false);
-  outputShift.setValue(StmShiftPin::AudioCutOff, false);
-  endActionCommand();
 }
 
 LiftStatus getLiftStatus() {

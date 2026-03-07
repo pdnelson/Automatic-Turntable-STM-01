@@ -4,8 +4,9 @@
 enum CommandError : uint8_t {
     LiftStalledMovingUp = 0,
     LiftStalledMovingDown = 1,
-    LiftTooHigh = 2,
-    LiftTooLow = 3
+
+    // The tonearm "pause" routine finished, though the tonearm's status is not lifted.
+    NotLifted = 2,
 };
 
 #endif
