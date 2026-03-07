@@ -114,8 +114,6 @@ void setup() {
 
   outputShift.initialize();
   outputShift.setValue(StmShiftPin::LedPower, true);
-
-  Serial.begin(SERIAL_SPEED);
 }
 
 void loop() {

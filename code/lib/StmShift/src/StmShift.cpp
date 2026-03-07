@@ -62,13 +62,11 @@ void StmShift::monitor() {
 }
 
 void StmShift::setValue(StmShiftPin pin, bool value) {
-  bool currentValue = (this->nextValue >> pin) & 1;
-
-  if(currentValue != value) {
+  if(this->getValue(pin) != value) {
     this->nextValue ^= 1 << pin;
   }
 }
 
 bool StmShift::getValue(StmShiftPin pin) {
-  return this->nextValue >> pin;
+  return (this->nextValue >> pin) & 1;
 }
