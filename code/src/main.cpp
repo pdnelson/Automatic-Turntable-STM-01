@@ -13,7 +13,9 @@
 #include <step/UnPauseStep.h>
 #include <StmShift.h>
 #include <StmShiftPin.h>
+#include <ExternalCommand.h>
 
+void monitorSerialInputs();
 void monitorCommandInput();
 void executeCommand();
 void updateClockMicros();
@@ -26,6 +28,7 @@ void initErrorAction(CommandError error);
 void errorActionCommand();
 void endErrorAction();
 void checkVerticalStall(VerticalDirection direction, int currentPosition);
+void readSerial(Stream& stream);
 LiftStatus getLiftStatus();
 
 Stepper movementStepper = Stepper(
@@ -114,13 +117,57 @@ void setup() {
 
   outputShift.initialize();
   outputShift.setValue(StmShiftPin::LedPower, true);
+
+  STM_SERIAL_USB.begin(SERIAL_SPEED);
+  STM_SERIAL_1.begin(SERIAL_SPEED);
+  STM_SERIAL_2.begin(SERIAL_SPEED);
+  STM_SERIAL_3.begin(SERIAL_SPEED);
+  STM_SERIAL_4.begin(SERIAL_SPEED);
+  STM_SERIAL_5.begin(SERIAL_SPEED);
 }
 
 void loop() {
   updateClockMicros();
+  monitorSerialInputs();
   monitorCommandInput();
   executeCommand();
   outputShift.monitor();
+}
+
+void monitorSerialInputs() {
+  readSerial(STM_SERIAL_5);
+  readSerial(STM_SERIAL_4);
+  readSerial(STM_SERIAL_3);
+  readSerial(STM_SERIAL_2);
+  readSerial(STM_SERIAL_1);
+  readSerial(STM_SERIAL_USB);
+}
+
+void readSerial(Stream& stream) {
+  if(stream.available() > 1 && stream.read() == SERIAL_COMMAND_KEY) {
+    switch(stream.read()) {
+      case ExternalCommand::NoOpCommand: break;
+      case ExternalCommand::ActionPauseUnPause: {
+        initPauseUnpauseAction();
+        break;
+      }
+      case ExternalCommand::DataVerticalEncoderPos: {
+        //stream.write(analogRead(Pin::VerticalPosition));
+        stream.println(analogRead(Pin::VerticalPosition));
+        break;
+      }
+      case ExternalCommand::DataLiftStatus: {
+        //stream.write(getLiftStatus());
+        stream.println(getLiftStatus());
+        break;
+      }
+      case ExternalCommand::DataCurrentCommand: {
+        //stream.write(actionCommand);
+        stream.println(actionCommand);
+        break;
+      }
+    }
+  }
 }
 
 void monitorCommandInput() {

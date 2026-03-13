@@ -36,3 +36,16 @@
 
 // The number of steps the vertical stepper must reach before it is considered "stalled".
 #define VERTICAL_STALL_STEPS 50
+
+/**
+ * Below here are Serial aliases to make it easier to identify the STM-01's serial ports on the back in the code.
+ */
+
+#define STM_SERIAL_USB Serial
+#define STM_SERIAL_1 Serial1
+#define STM_SERIAL_2 Serial2
+#define STM_SERIAL_3 Serial7
+#define STM_SERIAL_4 Serial8
+#define STM_SERIAL_5 Serial3
+
+#define SERIAL_COMMAND_KEY 0b01101101 // 109 in decimal; 'm' in ASCII
