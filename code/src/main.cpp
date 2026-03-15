@@ -151,19 +151,42 @@ void readSerial(Stream& stream) {
         initPauseUnpauseAction();
         break;
       }
-      case ExternalCommand::DataVerticalEncoderPos: {
-        //stream.write(analogRead(Pin::VerticalPosition));
-        stream.println(analogRead(Pin::VerticalPosition));
+      case ExternalCommand::SetClearActionCommand: {
+        switch(actionCommand) {
+          case ActionCommand::Error:
+            endErrorAction();
+            break;
+          case ActionCommand::UnPause:
+            endUnPauseAction();
+          default:
+            endActionCommand();
+        }
         break;
       }
-      case ExternalCommand::DataLiftStatus: {
-        //stream.write(getLiftStatus());
-        stream.println(getLiftStatus());
+      case ExternalCommand::GetVerticalEncoderPos: {
+        uint16_t verticalPosition = analogRead(Pin::VerticalPosition);
+
+        byte data[2];
+        data[0] = verticalPosition & 0x00FF;
+        data[1] = (verticalPosition >> 8) & 0x00FF;
+
+        stream.write(data, 2);
         break;
       }
-      case ExternalCommand::DataCurrentCommand: {
-        //stream.write(actionCommand);
-        stream.println(actionCommand);
+      case ExternalCommand::GetLiftStatus: {
+        stream.write(getLiftStatus());
+        break;
+      }
+      case ExternalCommand::GetCurrentCommand: {
+        stream.write(actionCommand);
+        break;
+      }
+      case ExternalCommand::GetErrorCode: {
+        if(actionCommand == ActionCommand::Error) {
+          stream.write(actionVariable1); // actionVariable1 holds the error code
+        } else {
+          stream.write((uint8_t)0); // 0 represents no error
+        }
         break;
       }
     }
