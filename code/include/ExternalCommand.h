@@ -2,7 +2,7 @@
 #define EXTERNALCOMMAND_H
 
 enum ExternalCommand : uint8_t {
-    NoOpCommand = 0,
+    ConnectionTest = 0,
 
     // Action commands (1-30)
     ActionPauseUnPause = 1,

@@ -152,7 +152,9 @@ void monitorSerialInputs() {
 void readSerial(Stream& stream) {
   if(stream.available() > 1 && stream.read() == SERIAL_COMMAND_KEY) {
     switch(stream.read()) {
-      case ExternalCommand::NoOpCommand: break;
+      case ExternalCommand::ConnectionTest: 
+        stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);
+        break;
       case ExternalCommand::ActionPauseUnPause: {
         initPauseUnpauseAction();
         break;
