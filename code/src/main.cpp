@@ -7,6 +7,7 @@
 #include <ActionCommand.h>
 #include <Stepper.h>
 #include <LiftStatus.h>
+#include <HomeStatus.h>
 #include <VerticalDirection.h>
 #include <MovementAxis.h>
 #include <step/PauseStep.h>
@@ -30,6 +31,7 @@ void endErrorAction();
 void checkVerticalStall(VerticalDirection direction, int currentPosition);
 void readSerial(Stream& stream);
 LiftStatus getLiftStatus();
+HomeStatus getHomeStatus();
 
 Stepper movementStepper = Stepper(
   STEPS_PER_REVOLUTION,
@@ -64,6 +66,9 @@ int verticalStallCounter = 0;
 
 unsigned long liftDebounce = 0;
 uint8_t lastLiftStatus = LiftStatus::Lifted;
+
+unsigned long homeDebounce = 0;
+uint8_t lastHomeStatus = HomeStatus::Homed;
 
 void setup() {
   // Input mux
@@ -110,10 +115,11 @@ void setup() {
   // Various Status
   pinMode(Pin::PowerOnStatusIn, INPUT);
   pinMode(Pin::Lift, INPUT_PULLUP);
-  pinMode(Pin::HomeStatus, INPUT_PULLUP);
+  pinMode(Pin::HomeMount, INPUT_PULLUP);
 
   // Set initial values
   lastLiftStatus = digitalRead(Pin::Lift);
+  lastHomeStatus = digitalRead(Pin::HomeMount);
 
   outputShift.initialize();
   outputShift.setValue(StmShiftPin::LedPower, true);
@@ -175,6 +181,10 @@ void readSerial(Stream& stream) {
       }
       case ExternalCommand::GetLiftStatus: {
         stream.write(getLiftStatus());
+        break;
+      }
+      case ExternalCommand::GetHomeStatus: {
+        stream.write(getHomeStatus());
         break;
       }
       case ExternalCommand::GetCurrentCommand: {
@@ -438,6 +448,20 @@ LiftStatus getLiftStatus() {
     return (LiftStatus) status;
   } else {
     return (LiftStatus) !status;
+  }
+}
+
+HomeStatus getHomeStatus() {
+  bool status = digitalRead(Pin::HomeMount);
+
+  if(status == lastHomeStatus) {
+    homeDebounce = clockMicros;
+    return (HomeStatus) status;
+  } else if(clockMicros - homeDebounce > HOME_DEBOUNCE_MICROS) {
+    lastHomeStatus = status;
+    return (HomeStatus) status;
+  } else {
+    return (HomeStatus) !status;
   }
 }
 

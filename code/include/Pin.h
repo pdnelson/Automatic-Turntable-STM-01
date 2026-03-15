@@ -35,7 +35,7 @@ enum Pin : uint8_t {
     HorizontalPositionEncoderB = 32,
     Serial4Rx = 34,
     Serial4Tx = 35,
-    HomeStatus = 37,
+    HomeMount = 37,
     HorizontalClutchStep4 = 38,
     HorizontalClutchStep3 = 39,
     HorizontalClutchStep2 = 40,

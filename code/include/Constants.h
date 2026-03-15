@@ -34,6 +34,9 @@
 // The amount of time, in microseconds, that must pass between status changes of the lift.
 #define LIFT_DEBOUNCE_MICROS 200000
 
+// The amount of time, in microseconds, that must pass between status changes of the home stand.
+#define HOME_DEBOUNCE_MICROS 200000
+
 // The number of steps the vertical stepper must reach before it is considered "stalled".
 #define VERTICAL_STALL_STEPS 50
 
