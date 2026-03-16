@@ -30,6 +30,7 @@ void errorActionCommand();
 void endErrorAction();
 void checkVerticalStall(VerticalDirection direction, int currentPosition);
 void readSerial(Stream& stream);
+void advanceCounts();
 LiftStatus getLiftStatus();
 HomeStatus getHomeStatus();
 
@@ -69,6 +70,10 @@ uint8_t lastLiftStatus = LiftStatus::Lifted;
 
 unsigned long homeDebounce = 0;
 uint8_t lastHomeStatus = HomeStatus::Homed;
+
+// Count variables
+unsigned long countCounter = 0;
+unsigned long upTimeSeconds = 0;
 
 void setup() {
   // Input mux
@@ -134,6 +139,7 @@ void setup() {
 
 void loop() {
   updateClockMicros();
+  advanceCounts();
   monitorSerialInputs();
   monitorCommandInput();
   executeCommand();
@@ -199,6 +205,16 @@ void readSerial(Stream& stream) {
         } else {
           stream.write((uint8_t)0); // 0 represents no error
         }
+        break;
+      }
+      case ExternalCommand::GetUpTime: {
+        byte data[4];
+        data[0] = upTimeSeconds & 0x000000FF;
+        data[1] = (upTimeSeconds >> 8) & 0x000000FF;
+        data[2] = (upTimeSeconds >> 16) & 0x000000FF;
+        data[3] = (upTimeSeconds >> 24) & 0x000000FF;
+
+        stream.write(data, 4);
         break;
       }
     }
@@ -464,6 +480,13 @@ HomeStatus getHomeStatus() {
     return (HomeStatus) status;
   } else {
     return (HomeStatus) !status;
+  }
+}
+
+void advanceCounts() {
+  if(clockMicros - countCounter > ONE_SECOND_MICROS) {
+    countCounter = clockMicros;
+    upTimeSeconds += 1;
   }
 }
 

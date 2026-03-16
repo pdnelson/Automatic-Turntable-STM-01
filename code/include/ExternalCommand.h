@@ -16,7 +16,8 @@ enum ExternalCommand : uint8_t {
     GetLiftStatus = 102,
     GetHomeStatus = 103,
     GetCurrentCommand = 104,
-    GetErrorCode = 105
+    GetErrorCode = 105,
+    GetUpTime = 106
 };
 
 #endif
