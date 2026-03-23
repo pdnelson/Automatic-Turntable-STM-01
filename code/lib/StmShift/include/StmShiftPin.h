@@ -11,11 +11,11 @@ enum StmShiftPin : uint8_t {
     LedPauseStatus = 7,
 
     // Bank B
-    Led7In = 8,
+    Led33Rpm = 8,
     Led10In = 9,
     Led12In = 10,
     LedAutoSize = 11,
-    Led33Rpm = 12,
+    Led7In = 12,
     Led45Rpm = 13,
     Led78Rpm = 14,
     LedAutoSpeed = 15

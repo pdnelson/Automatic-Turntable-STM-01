@@ -42,6 +42,16 @@
          */
         bool getValue(StmShiftPin pin);
 
+        /**
+         * Updates all the shift register's values.
+         */
+        void setValues(uint16_t newValues);
+
+        /**
+         * Gets all the values currently stored in the shift register.
+         */
+        uint16_t getValues();
+
     private:
         /**
          * The current pin values that the shift register has set. This always has the most up-to-date data that the shift register is displaying.

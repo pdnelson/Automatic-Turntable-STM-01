@@ -70,3 +70,11 @@ void StmShift::setValue(StmShiftPin pin, bool value) {
 bool StmShift::getValue(StmShiftPin pin) {
   return (this->nextValue >> pin) & 1;
 }
+
+void StmShift::setValues(uint16_t newValues) {
+  this->nextValue = newValues;
+}
+
+uint16_t StmShift::getValues() {
+  return this->nextValue;
+}

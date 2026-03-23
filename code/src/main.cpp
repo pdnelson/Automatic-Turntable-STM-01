@@ -15,6 +15,7 @@
 #include <StmShift.h>
 #include <StmShiftPin.h>
 #include <ExternalCommand.h>
+#include <TurntableSpeed.h>
 
 void monitorSerialInputs();
 void monitorCommandInput();
@@ -33,6 +34,9 @@ void readSerial(Stream& stream);
 void advanceCounts();
 LiftStatus getLiftStatus();
 HomeStatus getHomeStatus();
+void rotateSpeed();
+void updateSpeed(TurntableSpeed newSpeed);
+void blinkCustomSpeedIndicator();
 
 Stepper movementStepper = Stepper(
   STEPS_PER_REVOLUTION,
@@ -61,6 +65,7 @@ uint8_t actionStep = 0;
 long actionCounter = 0;
 long actionVariable1 = 0;
 long actionVariable2 = 0;
+long actionVariable3 = 0;
 
 int verticalStallPosition = 0;
 int verticalStallCounter = 0;
@@ -74,6 +79,11 @@ uint8_t lastHomeStatus = HomeStatus::Homed;
 // Count variables
 unsigned long countCounter = 0;
 unsigned long upTimeSeconds = 0;
+
+// Speed variables
+TurntableSpeed selectedSpeed = TurntableSpeed::RpmAuto;
+float targetSpeed = -1;
+unsigned long customSpeedIndicatorCounter = 0;
 
 void setup() {
   // Input mux
@@ -128,6 +138,7 @@ void setup() {
 
   outputShift.initialize();
   outputShift.setValue(StmShiftPin::LedPower, true);
+  updateSpeed(selectedSpeed);
 
   STM_SERIAL_USB.begin(SERIAL_SPEED);
   STM_SERIAL_1.begin(SERIAL_SPEED);
@@ -267,7 +278,7 @@ void monitorCommandInput() {
   }
 
   else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnRelease) {
-    // todo: rotate through size buttons
+    rotateSpeed();
   }
 }
 
@@ -411,6 +422,7 @@ void initErrorAction(CommandError error) {
   endActionCommand();
   actionVariable1 = error;
   actionVariable2 = clockMicros;
+  actionVariable3 = outputShift.getValues();
   actionCommand = ActionCommand::Error;
 
   // Action lights get turned off
@@ -447,17 +459,7 @@ void errorActionCommand() {
 
 void endErrorAction() {
   outputShift.setValue(StmShiftPin::LedPower, true);
-
-  // TODO: Return size/speed LEDs to what they were at before
-  outputShift.setValue(StmShiftPin::LedAutoSize, false);
-  outputShift.setValue(StmShiftPin::Led78Rpm, false);
-  outputShift.setValue(StmShiftPin::Led45Rpm, false);
-  outputShift.setValue(StmShiftPin::Led33Rpm, false);
-  outputShift.setValue(StmShiftPin::LedAutoSpeed, false);
-  outputShift.setValue(StmShiftPin::Led12In, false);
-  outputShift.setValue(StmShiftPin::Led10In, false);
-  outputShift.setValue(StmShiftPin::Led7In, false);
-
+  outputShift.setValues(actionVariable3);
   endActionCommand();
 }
 
@@ -497,6 +499,66 @@ HomeStatus getHomeStatus() {
     return (HomeStatus) status;
   } else {
     return (HomeStatus) !status;
+  }
+}
+
+void rotateSpeed() {
+  switch(selectedSpeed) {
+    case TurntableSpeed::Rpm33:
+      updateSpeed(TurntableSpeed::Rpm45);
+      break;
+    case TurntableSpeed::Rpm45:
+      updateSpeed(TurntableSpeed::Rpm78);
+      break;
+    case TurntableSpeed::Rpm78:
+      updateSpeed(TurntableSpeed::RpmAuto);
+      break;
+    case TurntableSpeed::RpmAuto:
+      updateSpeed(TurntableSpeed::Rpm33);
+      break;
+    case TurntableSpeed::RpmCustom:
+      updateSpeed(TurntableSpeed::RpmAuto);
+      break;
+  }
+}
+
+void updateSpeed(TurntableSpeed newSpeed) {
+  // First set all speed LEDs to off
+  outputShift.setValue(StmShiftPin::Led78Rpm, false);
+  outputShift.setValue(StmShiftPin::Led45Rpm, false);
+  outputShift.setValue(StmShiftPin::Led33Rpm, false);
+  outputShift.setValue(StmShiftPin::LedAutoSpeed, false);
+
+  switch(newSpeed) {
+    case TurntableSpeed::Rpm33:
+      targetSpeed = 33.3333;
+      outputShift.setValue(StmShiftPin::Led33Rpm, true);
+      break;
+    case TurntableSpeed::Rpm45:
+      targetSpeed = 45.0;
+      outputShift.setValue(StmShiftPin::Led45Rpm, true);
+      break;
+    case TurntableSpeed::Rpm78:
+      targetSpeed = 78.0;
+      outputShift.setValue(StmShiftPin::Led78Rpm, true);
+      break;
+    case TurntableSpeed::RpmAuto:
+      // TODO: If playing a record, go based on the last-played size
+      outputShift.setValue(StmShiftPin::LedAutoSpeed, true);
+      break;
+    case TurntableSpeed::RpmCustom:
+      /* do nothing */
+      break;
+  }
+
+  selectedSpeed = newSpeed;
+  customSpeedIndicatorCounter = clockMicros;
+}
+
+void blinkCustomSpeedIndicator() {
+  if(selectedSpeed == TurntableSpeed::RpmCustom && clockMicros - customSpeedIndicatorCounter > ONE_SECOND_MICROS) {
+    customSpeedIndicatorCounter = clockMicros;
+    outputShift.setValue(StmShiftPin::LedAutoSpeed, !outputShift.getValue(StmShiftPin::LedAutoSpeed));
   }
 }
 
