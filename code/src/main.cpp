@@ -156,67 +156,84 @@ void monitorSerialInputs() {
 }
 
 void readSerial(Stream& stream) {
-  if(stream.available() > 1 && stream.read() == SERIAL_COMMAND_KEY) {
-    switch(stream.read()) {
-      case ExternalCommand::ConnectionTest: 
-        stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);
-        break;
-      case ExternalCommand::ActionPauseUnPause: {
-        initPauseUnpauseAction();
-        break;
-      }
-      case ExternalCommand::SetClearActionCommand: {
-        switch(actionCommand) {
-          case ActionCommand::Error:
-            endErrorAction();
-            break;
-          case ActionCommand::UnPause:
-            endUnPauseAction();
-          default:
-            endActionCommand();
+  if(stream.available() > 0) {
+    uint8_t key = stream.read();
+
+    // If the key is the init key, send back model and version info
+    if(key == SERIAL_COMMAND_INIT_KEY) {
+      byte data[4];
+      data[0] = SERIAL_COMMAND_MODEL_KEY;
+      data[1] = VERSION_MAJOR;
+      data[2] = VERSION_MINOR;
+      data[3] = VERSION_PATCH;
+
+      stream.write(data, 4);
+    }
+
+    // If the key is for this model turntable, execute the command
+    else if(key == SERIAL_COMMAND_MODEL_KEY) {
+      switch(stream.read()) {
+        case ExternalCommand::ConnectionTest: 
+          stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);
+          break;
+        case ExternalCommand::ActionPauseUnPause: {
+          initPauseUnpauseAction();
+          break;
         }
-        break;
-      }
-      case ExternalCommand::GetVerticalEncoderPos: {
-        uint16_t verticalPosition = analogRead(Pin::VerticalPosition);
-
-        byte data[2];
-        data[0] = verticalPosition & 0x00FF;
-        data[1] = (verticalPosition >> 8) & 0x00FF;
-
-        stream.write(data, 2);
-        break;
-      }
-      case ExternalCommand::GetLiftStatus: {
-        stream.write(getLiftStatus());
-        break;
-      }
-      case ExternalCommand::GetHomeStatus: {
-        stream.write(getHomeStatus());
-        break;
-      }
-      case ExternalCommand::GetCurrentCommand: {
-        stream.write(actionCommand);
-        break;
-      }
-      case ExternalCommand::GetErrorCode: {
-        if(actionCommand == ActionCommand::Error) {
-          stream.write(actionVariable1); // actionVariable1 holds the error code
-        } else {
-          stream.write((uint8_t)0); // 0 represents no error
+        case ExternalCommand::SetClearActionCommand: {
+          switch(actionCommand) {
+            case ActionCommand::Error:
+              endErrorAction();
+              break;
+            case ActionCommand::UnPause:
+              endUnPauseAction();
+            default:
+              endActionCommand();
+          }
+          break;
         }
-        break;
-      }
-      case ExternalCommand::GetUpTime: {
-        byte data[4];
-        data[0] = upTimeSeconds & 0x000000FF;
-        data[1] = (upTimeSeconds >> 8) & 0x000000FF;
-        data[2] = (upTimeSeconds >> 16) & 0x000000FF;
-        data[3] = (upTimeSeconds >> 24) & 0x000000FF;
+        case ExternalCommand::GetVerticalEncoderPos: {
+          uint16_t verticalPosition = analogRead(Pin::VerticalPosition);
 
-        stream.write(data, 4);
-        break;
+          byte data[2];
+          data[0] = verticalPosition & 0x00FF;
+          data[1] = (verticalPosition >> 8) & 0x00FF;
+
+          stream.write(data, 2);
+          break;
+        }
+        case ExternalCommand::GetLiftStatus: {
+          stream.write(getLiftStatus());
+          break;
+        }
+        case ExternalCommand::GetHomeStatus: {
+          stream.write(getHomeStatus());
+          break;
+        }
+        case ExternalCommand::GetCurrentCommand: {
+          stream.write(actionCommand);
+          break;
+        }
+        case ExternalCommand::GetErrorCode: {
+          if(actionCommand == ActionCommand::Error) {
+            stream.write(actionVariable1); // actionVariable1 holds the error code
+          } else {
+            stream.write((uint8_t)0); // 0 represents no error
+          }
+          break;
+        }
+        case ExternalCommand::GetUpTime: {
+          byte data[4];
+          data[0] = upTimeSeconds & 0x000000FF;
+          data[1] = (upTimeSeconds >> 8) & 0x000000FF;
+          data[2] = (upTimeSeconds >> 16) & 0x000000FF;
+          data[3] = (upTimeSeconds >> 24) & 0x000000FF;
+
+          stream.write(data, 4);
+          break;
+        }
       }
+  
     }
   }
 }
