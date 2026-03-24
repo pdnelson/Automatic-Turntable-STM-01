@@ -8,6 +8,10 @@ enum ExternalCommand : uint8_t {
     ActionPauseUnPause = 1,
 
     // Data/setting set commands (31-100)
+    SetSpeed = 31,
+    SetSize = 32,
+    SetCustomSpeed = 33,
+    SetRotateSpeed = 34,
     SetClearActionCommand = 35,
 
     // Data retrieval commands (100+)
@@ -17,7 +21,9 @@ enum ExternalCommand : uint8_t {
     GetHomeStatus = 103,
     GetCurrentCommand = 104,
     GetErrorCode = 105,
-    GetUpTime = 106
+    GetUpTime = 106,
+    GetSpeedSetting = 107,
+    GetSpeedTarget = 108
 };
 
 #endif

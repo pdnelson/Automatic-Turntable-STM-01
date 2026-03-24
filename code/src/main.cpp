@@ -154,6 +154,9 @@ void loop() {
   monitorSerialInputs();
   monitorCommandInput();
   executeCommand();
+
+  // Output statuses
+  blinkCustomSpeedIndicator();
   outputShift.monitor();
 }
 
@@ -189,6 +192,40 @@ void readSerial(Stream& stream) {
           break;
         case ExternalCommand::ActionPauseUnPause: {
           initPauseUnpauseAction();
+          break;
+        }
+        case ExternalCommand::SetSpeed: {
+          updateSpeed((TurntableSpeed)stream.read());
+          break;
+        }
+        case ExternalCommand::SetRotateSpeed: {
+          rotateSpeed();
+          break;
+        }
+        case ExternalCommand::SetCustomSpeed: {
+          uint32_t data1 = stream.read() & 0x000000FF;
+          uint32_t data2 = stream.read() << 8 & 0x0000FF00;
+          uint32_t data3 = stream.read() << 16 & 0x00FF0000;
+          uint32_t data4 = stream.read() << 24 & 0xFF000000;
+
+          uint32_t dataCombined = data1 | data2 | data3 | data4;
+          float* finalSpeed = reinterpret_cast<float*>((void*) &dataCombined);
+
+          targetSpeed = *finalSpeed;
+
+          if(targetSpeed < 33.33333 && targetSpeed > 33.3) {
+            updateSpeed(TurntableSpeed::Rpm33);
+          } else if(targetSpeed == 45.0) {
+            updateSpeed(TurntableSpeed::Rpm45);
+          } else if(targetSpeed == 78.0) {
+            updateSpeed(TurntableSpeed::Rpm78);
+          } else {
+            updateSpeed(TurntableSpeed::RpmCustom);
+          }
+          break;
+        }
+        case ExternalCommand::SetSize: {
+          // todo
           break;
         }
         case ExternalCommand::SetClearActionCommand: {
@@ -241,6 +278,20 @@ void readSerial(Stream& stream) {
           data[3] = (upTimeSeconds >> 24) & 0x000000FF;
 
           stream.write(data, 4);
+          break;
+        }
+        case ExternalCommand::GetSpeedSetting: {
+          stream.write(selectedSpeed);
+          break;
+        }
+        case ExternalCommand::GetSpeedTarget: {
+          float speed = -1;
+          if(getHomeStatus() == HomeStatus::NotHomed) {
+            speed = targetSpeed;
+          }
+          
+          byte const * data = reinterpret_cast<byte const *>(&speed);
+          stream.write(data, sizeof(float));
           break;
         }
       }
@@ -544,6 +595,7 @@ void updateSpeed(TurntableSpeed newSpeed) {
       break;
     case TurntableSpeed::RpmAuto:
       // TODO: If playing a record, go based on the last-played size
+
       outputShift.setValue(StmShiftPin::LedAutoSpeed, true);
       break;
     case TurntableSpeed::RpmCustom:
