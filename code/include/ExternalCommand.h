@@ -13,6 +13,7 @@ enum ExternalCommand : uint8_t {
     SetCustomSpeed = 33,
     SetRotateSpeed = 34,
     SetClearActionCommand = 35,
+    SetRotateSize = 36,
 
     // Data retrieval commands (100+)
     GetVerticalEncoderPos = 100,
@@ -23,7 +24,8 @@ enum ExternalCommand : uint8_t {
     GetErrorCode = 105,
     GetUpTime = 106,
     GetSpeedSetting = 107,
-    GetSpeedTarget = 108
+    GetSpeedTarget = 108,
+    GetSizeSetting = 109
 };
 
 #endif

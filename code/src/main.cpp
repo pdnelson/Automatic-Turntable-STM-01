@@ -16,6 +16,7 @@
 #include <StmShiftPin.h>
 #include <ExternalCommand.h>
 #include <TurntableSpeed.h>
+#include <RecordSize.h>
 
 void monitorSerialInputs();
 void monitorCommandInput();
@@ -37,6 +38,8 @@ HomeStatus getHomeStatus();
 void rotateSpeed();
 void updateSpeed(TurntableSpeed newSpeed);
 void blinkCustomSpeedIndicator();
+void rotateSize();
+void updateSize(RecordSize newSize);
 
 Stepper movementStepper = Stepper(
   STEPS_PER_REVOLUTION,
@@ -84,6 +87,9 @@ unsigned long upTimeSeconds = 0;
 TurntableSpeed selectedSpeed = TurntableSpeed::RpmAuto;
 float targetSpeed = -1;
 unsigned long customSpeedIndicatorCounter = 0;
+
+// Size variables
+RecordSize selectedSize = RecordSize::InAuto;
 
 void setup() {
   // Input mux
@@ -139,6 +145,7 @@ void setup() {
   outputShift.initialize();
   outputShift.setValue(StmShiftPin::LedPower, true);
   updateSpeed(selectedSpeed);
+  updateSize(selectedSize);
 
   STM_SERIAL_USB.begin(SERIAL_SPEED);
   STM_SERIAL_1.begin(SERIAL_SPEED);
@@ -225,7 +232,11 @@ void readSerial(Stream& stream) {
           break;
         }
         case ExternalCommand::SetSize: {
-          // todo
+          updateSize((RecordSize)stream.read());
+          break;
+        }
+        case ExternalCommand::SetRotateSize: {
+          rotateSize();
           break;
         }
         case ExternalCommand::SetClearActionCommand: {
@@ -294,6 +305,10 @@ void readSerial(Stream& stream) {
           stream.write(data, sizeof(float));
           break;
         }
+        case ExternalCommand::GetSizeSetting: {
+          stream.write(selectedSize);
+          break;
+        }
       }
   
     }
@@ -325,7 +340,7 @@ void monitorCommandInput() {
 
   // Settings buttons 
   if(inputMux.getValue(MuxPin::BtnSizeSelect) == ButtonResult::OnRelease) {
-    // todo: rotate through size buttons
+    rotateSize();
   }
 
   else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnRelease) {
@@ -605,6 +620,47 @@ void updateSpeed(TurntableSpeed newSpeed) {
 
   selectedSpeed = newSpeed;
   customSpeedIndicatorCounter = clockMicros;
+}
+
+void rotateSize() {
+  switch(selectedSize) {
+    case RecordSize::In7:
+      updateSize(RecordSize::In10);
+      break;
+    case RecordSize::In10:
+      updateSize(RecordSize::In12);
+      break;
+    case RecordSize::In12:
+      updateSize(RecordSize::InAuto);
+      break;
+    case RecordSize::InAuto:
+      updateSize(RecordSize::In7);
+      break;
+  }
+}
+
+void updateSize(RecordSize newSize) {
+  outputShift.setValue(StmShiftPin::Led7In, false);
+  outputShift.setValue(StmShiftPin::Led10In, false);
+  outputShift.setValue(StmShiftPin::Led12In, false);
+  outputShift.setValue(StmShiftPin::LedAutoSize, false);
+
+  switch(newSize) {
+    case RecordSize::In7:
+      outputShift.setValue(StmShiftPin::Led7In, true);
+      break;
+    case RecordSize::In10:
+      outputShift.setValue(StmShiftPin::Led10In, true);
+      break;
+    case RecordSize::In12:
+      outputShift.setValue(StmShiftPin::Led12In, true);
+      break;
+    case RecordSize::InAuto:
+      outputShift.setValue(StmShiftPin::LedAutoSize, true);
+      break;
+  }
+
+  selectedSize = newSize;
 }
 
 void blinkCustomSpeedIndicator() {
