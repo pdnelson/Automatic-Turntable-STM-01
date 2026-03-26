@@ -193,7 +193,14 @@ void readSerial(Stream& stream) {
 
     // If the key is for this model turntable, execute the command
     else if(key == SERIAL_COMMAND_MODEL_KEY) {
-      switch(stream.read()) {
+      ExternalCommand incomingCommand = (ExternalCommand)stream.read();
+
+      // If a command is already running, and an action command comes through, then throw it out.
+      if(actionCommand != ActionCommand::NoAction && incomingCommand < 31 && incomingCommand > 0) {
+        return;
+      }
+
+      switch(incomingCommand) {
         case ExternalCommand::ConnectionTest: 
           stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);
           break;
@@ -249,6 +256,10 @@ void readSerial(Stream& stream) {
             default:
               endActionCommand();
           }
+          break;
+        }
+        case ExternalCommand::GetHorizontalEncoderPos: {
+          // todo: implement
           break;
         }
         case ExternalCommand::GetVerticalEncoderPos: {
@@ -340,11 +351,11 @@ void monitorCommandInput() {
 
   // Settings buttons 
   if(inputMux.getValue(MuxPin::BtnSizeSelect) == ButtonResult::OnRelease) {
-    rotateSize();
+    //rotateSize();
   }
 
   else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnRelease) {
-    rotateSpeed();
+    //rotateSpeed();
   }
 }
 
