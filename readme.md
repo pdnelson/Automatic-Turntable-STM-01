@@ -74,6 +74,7 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [ ] IR record/track detection
 - [ ] Headshell capacitive touch sensor
 - [ ] Audio cut-off circuit
+- [ ] Design power supply
 - [ ] Save settings when powered off
 - [ ] Prototype motor/3-phase belt-driven turntable setup
 - [ ] Finalized turntable setup (heavy platter and big pulley)
