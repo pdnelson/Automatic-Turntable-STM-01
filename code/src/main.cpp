@@ -535,7 +535,6 @@ void errorActionCommand() {
 }
 
 void endErrorAction() {
-  outputShift.setValue(StmShiftPin::LedPower, true);
   outputShift.setValues(actionVariable3);
   endActionCommand();
 }
@@ -546,6 +545,7 @@ void endActionCommand() {
   actionStep = 0;
   actionVariable1 = 0;
   actionVariable2 = 0;
+  actionVariable3 = 0;
   verticalStallCounter = 0;
   verticalStallPosition = 0;
   movementStepper.releaseMotorCurrent();

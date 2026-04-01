@@ -28,7 +28,7 @@
 #define VERTICAL_ENCODER_DELTA 5
 
 // The number of encoder ticks to move the tonearm down after contact with the lift has been terminated.
-#define TICKS_BELOW_RECORD 10
+#define TICKS_BELOW_RECORD 15 // Set to 0 because the debounce ends up doing this well enough for now (or forever, maybe)
 
 // A hard-coded test value for the lower vertical encoder limit. This will eventually be replaced by a calibration value.
 #define TEST_VERTICAL_LOWER_LIMIT 20
@@ -37,10 +37,10 @@
 #define TEST_VERTICAL_UPPER_LIMIT 1000
 
 // The amount of time, in microseconds, that must pass between status changes of the lift.
-#define LIFT_DEBOUNCE_MICROS 200000
+#define LIFT_DEBOUNCE_MICROS 50000
 
 // The amount of time, in microseconds, that must pass between status changes of the home stand.
-#define HOME_DEBOUNCE_MICROS 200000
+#define HOME_DEBOUNCE_MICROS 100000
 
 // The number of steps the vertical stepper must reach before it is considered "stalled".
 #define VERTICAL_STALL_STEPS 50
