@@ -351,11 +351,11 @@ void monitorCommandInput() {
 
   // Settings buttons 
   if(inputMux.getValue(MuxPin::BtnSizeSelect) == ButtonResult::OnRelease) {
-    //rotateSize();
+    rotateSize();
   }
 
   else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnRelease) {
-    //rotateSpeed();
+    rotateSpeed();
   }
 }
 
