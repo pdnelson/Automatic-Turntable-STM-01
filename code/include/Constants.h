@@ -43,7 +43,11 @@
 #define HOME_DEBOUNCE_MICROS 100000
 
 // The number of steps the vertical stepper must reach before it is considered "stalled".
-#define VERTICAL_STALL_STEPS 50
+#define VERTICAL_STALL_STEPS 100
+
+// When the tonearm lifts up toward the center of the platter, it might bounce a little bit. This timeout represents the maximum
+// amount of time we allow for the tonearm to bounce, before it should level out.
+#define LIFT_BOUNCE_TIMEOUT_MICROS 1500000
 
 /**
  * Below here are Serial aliases to make it easier to identify the STM-01's serial ports on the back in the code.

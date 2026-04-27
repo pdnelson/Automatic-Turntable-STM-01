@@ -2,7 +2,8 @@
 #define PAUSESTEP_H
 
 enum PauseStep : uint8_t {
-    LiftToCalibratedPosition = 0
+    LiftToCalibratedPosition = 0,
+    WaitForLiftStatus = 1
 };
 
 #endif

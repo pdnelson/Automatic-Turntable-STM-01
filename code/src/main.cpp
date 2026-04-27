@@ -405,30 +405,33 @@ void initPauseUnpauseAction() {
 }
 
 void runPauseAction() {
-  movementStepper.step(VerticalDirection::Up);
-  int currentPosition = analogRead(Pin::VerticalPosition);
 
   switch(actionStep) {
-    case PauseStep::LiftToCalibratedPosition:
+    case PauseStep::LiftToCalibratedPosition: {
+      movementStepper.step(VerticalDirection::Up);
+      int currentPosition = analogRead(Pin::VerticalPosition);
 
       // Keep stepping until we are at position TEST_VERTICAL_UPPER_LIMIT. 
       // TODO: Pull this value from home calibration. TEST_VERTICAL_UPPER_LIMIT is only for testing.
       if(currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
+        actionStep = PauseStep::WaitForLiftStatus;
+        actionVariable1 = clockMicros;
+      }
 
-        // If the tonearm is lifted at the end of the routine, then the command succeeded.
-        if(getLiftStatus() == LiftStatus::Lifted) {
-          endActionCommand();
-        } 
-        
-        // Otherwise, the command failed.
-        else {
-          initErrorAction(CommandError::NotLifted);
-        }
+      checkVerticalStall(VerticalDirection::Up, currentPosition);
+      break;
+    }
+    case PauseStep::WaitForLiftStatus: {
+      // Verify that, at the end of the pause routine, the tonearm is lifted. Allow some time to account for a possible bouncy lift.
+      if(getLiftStatus() == LiftStatus::Lifted) {
+        endActionCommand();
+      } else if(clockMicros - actionVariable1 > LIFT_BOUNCE_TIMEOUT_MICROS) {
+        initErrorAction(CommandError::NotLifted);
       }
       break;
+    }
   }
 
-  checkVerticalStall(VerticalDirection::Up, currentPosition);
 }
 
 void runUnPauseAction() {
@@ -484,13 +487,19 @@ void endUnPauseAction() {
 void checkVerticalStall(VerticalDirection direction, int currentPosition) {
   verticalStallCounter++;
 
+  // If going down, verticalStallPosition > currentPosition
+  // If going up, currentPosition > verticalStallPosition
   int greaterThan = direction == VerticalDirection::Down ? verticalStallPosition : currentPosition;
   int lessThan = direction == VerticalDirection::Down ? currentPosition : verticalStallPosition;
 
+  // Reset the stall counter when an encoder tick (in the proper direction) occurs
   if(greaterThan > lessThan) {
     verticalStallPosition = currentPosition;
     verticalStallCounter = 0;
-  } else if(verticalStallCounter >= VERTICAL_STALL_STEPS) {
+  } 
+  
+  // 
+  else if(verticalStallCounter >= VERTICAL_STALL_STEPS) {
     initErrorAction(direction == VerticalDirection::Down ? CommandError::LiftStalledMovingDown : CommandError::LiftStalledMovingUp);
   }
 }
