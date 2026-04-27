@@ -66,7 +66,7 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [x] Design tonearm and headshell assembly
 - [x] Connect tonearm to electronics
 - [x] Status shift register
-- [ ] Command Button UI
+- [x] Command Button UI
 - [x] Error handling
 - [x] External Commands
 - [ ] Horizontal position tracking
