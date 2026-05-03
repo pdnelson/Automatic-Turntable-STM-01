@@ -349,6 +349,19 @@ void monitorCommandInput() {
     }
   }
 
+  ButtonResult posStatus = inputMux.getValue(MuxPin::BtnSizeSelect);
+  ButtonResult negStatus = inputMux.getValue(MuxPin::BtnSpeedSelect);
+
+  if(posStatus == ButtonResult::OnPress || posStatus == ButtonResult::Held || posStatus == ButtonResult::Pressed) {
+    digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
+    movementStepper.setSpeed(10);
+    movementStepper.step(1);
+  } else if(negStatus == ButtonResult::OnPress || negStatus == ButtonResult::Held || negStatus == ButtonResult::Pressed) {
+    digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
+    movementStepper.setSpeed(10);
+    movementStepper.step(-1);
+  }
+
   // Settings buttons 
   if(inputMux.getValue(MuxPin::BtnSizeSelect) == ButtonResult::OnRelease) {
     rotateSize();
