@@ -7,3 +7,5 @@ code/.vscode/ipch
 code/.gitignore
 
 *.skb
+
+Thumbs.db
