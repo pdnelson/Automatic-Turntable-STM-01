@@ -69,15 +69,20 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [x] Command Button UI
 - [x] Error handling
 - [x] External Commands
-- [ ] Horizontal position tracking
 - [ ] Horizontal clutch mechanism
+- [ ] Horizontal position tracking
+- [ ] "Specific Size" play routine
 - [ ] IR record/track detection
+- [ ] "Automatic" play routine
+- [ ] Automatic homing routine
+- [ ] Track forward/backward routine
 - [ ] Headshell capacitive touch sensor
 - [ ] Audio cut-off circuit
+- [ ] Prototype motor/3-phase belt-driven turntable setup
+- [ ] Speed monitoring routine
+- [ ] Finalized turntable setup (heavy platter and big pulley)
 - [ ] Design power supply
 - [ ] Save settings when powered off
-- [ ] Prototype motor/3-phase belt-driven turntable setup
-- [ ] Finalized turntable setup (heavy platter and big pulley)
 - [ ] Prototype plinth using plywood
 - [ ] Finalized plinth using whatever material I decide to use
 - [ ] Design PCB
