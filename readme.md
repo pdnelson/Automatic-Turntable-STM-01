@@ -69,7 +69,7 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [x] Command Button UI
 - [x] Error handling
 - [x] External Commands
-- [ ] Horizontal clutch mechanism
+- [x] Horizontal clutch mechanism
 - [ ] Horizontal position tracking
 - [ ] "Specific Size" play routine
 - [ ] IR record/track detection
