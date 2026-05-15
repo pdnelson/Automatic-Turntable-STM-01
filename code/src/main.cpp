@@ -2,6 +2,8 @@
 #include <Pin.h>
 #include <MuxPin.h>
 #include <InputMux.h>
+#include <ClutchDirection.h>
+#include <ClutchStatus.h>
 #include <Constants.h>
 #include <CommandError.h>
 #include <ActionCommand.h>
@@ -47,6 +49,14 @@ Stepper movementStepper = Stepper(
   Pin::MovementStep3,
   Pin::MovementStep2,
   Pin::MovementStep4
+);
+
+Stepper clutchStepper = Stepper(
+  STEPS_PER_REVOLUTION,
+  Pin::HorizontalClutchStep1,
+  Pin::HorizontalClutchStep3,
+  Pin::HorizontalClutchStep2,
+  Pin::HorizontalClutchStep4
 );
 
 InputMux inputMux = InputMux(
@@ -114,6 +124,7 @@ void setup() {
   pinMode(Pin::HorizontalClutchStep2, OUTPUT);
   pinMode(Pin::HorizontalClutchStep3, OUTPUT);
   pinMode(Pin::HorizontalClutchStep4, OUTPUT);
+  pinMode(Pin::HorizontalClutchSwitch, INPUT_PULLUP);
 
   // Encoders
   pinMode(Pin::SpeedEncoderA, INPUT);
@@ -127,7 +138,6 @@ void setup() {
   pinMode(Pin::TurntableMotorPhase3, OUTPUT);
 
   // Positioning Potentiometers
-  pinMode(Pin::HorizontalClutchPosition, INPUT);
   pinMode(Pin::VerticalPosition, INPUT);
 
   // Various Sensors
@@ -146,6 +156,8 @@ void setup() {
   outputShift.setValue(StmShiftPin::LedPower, true);
   updateSpeed(selectedSpeed);
   updateSize(selectedSize);
+
+  clutchStepper.setSpeed(CLUTCH_SPEED);
 
   STM_SERIAL_USB.begin(SERIAL_SPEED);
   STM_SERIAL_1.begin(SERIAL_SPEED);
@@ -338,6 +350,30 @@ void monitorCommandInput() {
     
     else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
       // todo: implement
+
+      // This is just a test implementation. This makes the "play" button engage/disengage the clutch for movement.
+
+      // Disengage
+      if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
+        while(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
+          clutchStepper.step(ClutchDirection::Disengage);
+        }
+      }
+      
+      // Engage
+      else {
+        while(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Disengaged) {
+          clutchStepper.step(ClutchDirection::Engage);
+        }
+
+        uint stepCount = 0;
+        while(stepCount != CLUTCH_ENGAGE_STEPS) {
+          stepCount++;
+          clutchStepper.step(ClutchDirection::Engage);
+        }
+      }
+
+      clutchStepper.releaseMotorCurrent();
     }
 
     else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {
@@ -354,11 +390,11 @@ void monitorCommandInput() {
 
   if(posStatus == ButtonResult::OnPress || posStatus == ButtonResult::Held || posStatus == ButtonResult::Pressed) {
     digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
-    movementStepper.setSpeed(10);
+    movementStepper.setSpeed(7);
     movementStepper.step(1);
   } else if(negStatus == ButtonResult::OnPress || negStatus == ButtonResult::Held || negStatus == ButtonResult::Pressed) {
     digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
-    movementStepper.setSpeed(10);
+    movementStepper.setSpeed(7);
     movementStepper.step(-1);
   }
 

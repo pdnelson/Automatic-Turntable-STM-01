@@ -24,7 +24,7 @@ enum Pin : uint8_t {
     TurntableMotorPhase3 = 19,
     TurntableMotorPhase2 = 20,
     TurntableMotorPhase1 = 21,
-    HorizontalClutchPosition = 22,
+    HorizontalClutchSwitch = 22,
     VerticalPosition = 23,
     OutputShiftScl = 24, // Wire2
     OutputShiftSda = 25, // Wire2

@@ -50,6 +50,20 @@
 #define LIFT_BOUNCE_TIMEOUT_MICROS 1500000
 
 /**
+ * Constants related to the horizontal movement -----------
+ */
+
+// The RPM at which the clutch stepper spins.
+#define CLUTCH_SPEED 14
+
+// The number of steps for the clutch to engage, after the limit switch is released.
+#define CLUTCH_ENGAGE_STEPS 250
+
+// If the clutch switch doesn't release after this number of steps, the clutch movement failed.
+// Similarly, if the clutch switch doesn't press after this value + CLUTCH_ENGAGE_STEPS, the clutch movement failed.
+#define CLUTCH_TIMEOUT_STEPS 50
+
+/**
  * Below here are Serial aliases to make it easier to identify the STM-01's serial ports on the back in the code.
  */
 
