@@ -21,6 +21,7 @@
 #include <ExternalCommand.h>
 #include <TurntableSpeed.h>
 #include <RecordSize.h>
+#include <AzimuthDirection.h>
 
 void monitorSerialInputs();
 void monitorCommandInput();
@@ -90,6 +91,7 @@ long actionVariable1 = 0;
 long actionVariable2 = 0;
 long actionVariable3 = 0;
 long actionVariable4 = 0;
+long actionVariable5 = 0;
 
 int verticalStallPosition = 0;
 int verticalStallCounter = 0;
@@ -421,8 +423,9 @@ void initPlayAction(int16_t stepCount, uint8_t speed) {
   digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
   verticalStallPosition = analogRead(Pin::VerticalPosition);
   outputShift.setValue(StmShiftPin::LedPlayStatus, true);
-  actionVariable3 = stepCount;
+  actionVariable3 = abs(stepCount);
   actionVariable4 = speed;
+  actionVariable5 = (actionVariable3 == stepCount) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
   movementStepper.setSpeed(10);
   actionCommand = ActionCommand::Play;
 }
@@ -439,7 +442,7 @@ void runPlayAction() {
       }
 
       if(actionVariable1 && actionVariable2) {
-        actionVariable1 = 0;
+        actionVariable1 = clockMicros;
         actionVariable2 = 0;
         actionStep = PlayStep::WaitForLiftStatusPlay;
       }
@@ -450,14 +453,15 @@ void runPlayAction() {
       if(waitForLiftStatus()) {
         actionStep = PlayStep::MoveHorizontallyNSteps;
         movementStepper.setSpeed(actionVariable4);
+        actionCounter = 0;
         digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
       }
 
       break;
     }
     case PlayStep::MoveHorizontallyNSteps: {
-      if(actionCounter != actionVariable3) {
-        movementStepper.step(-1);
+      if(actionCounter <= actionVariable3) {
+        movementStepper.step(actionVariable5);
         actionCounter++;
       }
 
@@ -468,6 +472,7 @@ void runPlayAction() {
         actionVariable2 = 0;
         actionVariable3 = 0;
         actionVariable4 = 0;
+        actionVariable5 = 0;
         actionCounter = 0;
         movementStepper.setSpeed(3);
         actionStep = PlayStep::LowerUntilToneArmReleasedPlay;
@@ -527,6 +532,7 @@ void runPauseAction() {
   switch(actionStep) {
     case PauseStep::LiftToCalibratedPosition: {
       if(liftToCalibratedPosition()) {
+        actionVariable1 = clockMicros;
         actionStep = PauseStep::WaitForLiftStatus;
       }
       break;
@@ -763,6 +769,8 @@ void endActionCommand() {
   actionVariable1 = 0;
   actionVariable2 = 0;
   actionVariable3 = 0;
+  actionVariable4 = 0;
+  actionVariable5 = 0;
   verticalStallCounter = 0;
   verticalStallPosition = 0;
   movementStepper.releaseMotorCurrent();
