@@ -13,7 +13,9 @@
 #include <VerticalDirection.h>
 #include <MovementAxis.h>
 #include <step/PauseStep.h>
+#include <step/PlayStep.h>
 #include <step/UnPauseStep.h>
+#include <step/result/LowerTonearmResult.h>
 #include <StmShift.h>
 #include <StmShiftPin.h>
 #include <ExternalCommand.h>
@@ -24,6 +26,8 @@ void monitorSerialInputs();
 void monitorCommandInput();
 void executeCommand();
 void updateClockMicros();
+void initPlayAction(int16_t stepCount, uint8_t speed);
+void runPlayAction();
 void initPauseUnpauseAction();
 void runPauseAction();
 void runUnPauseAction();
@@ -32,7 +36,13 @@ void endUnPauseAction();
 void initErrorAction(CommandError error);
 void errorActionCommand();
 void endErrorAction();
-void checkVerticalStall(VerticalDirection direction, int currentPosition);
+bool liftToCalibratedPosition();
+bool waitForLiftStatus();
+LowerTonearmResult lowerUntilTonearmReleased();
+bool lowerBelowRecord();
+bool engageAzimuthClutch();
+bool disengageAzimuthClutch();
+bool checkVerticalStall(VerticalDirection direction, int currentPosition);
 void readSerial(Stream& stream);
 void advanceCounts();
 LiftStatus getLiftStatus();
@@ -79,6 +89,7 @@ long actionCounter = 0;
 long actionVariable1 = 0;
 long actionVariable2 = 0;
 long actionVariable3 = 0;
+long actionVariable4 = 0;
 
 int verticalStallPosition = 0;
 int verticalStallCounter = 0;
@@ -220,6 +231,14 @@ void readSerial(Stream& stream) {
           initPauseUnpauseAction();
           break;
         }
+        case ExternalCommand::ActionProtoPlay: {
+          int16_t data1 = stream.read() & 0x00FF;
+          int16_t data2 = stream.read() << 8 & 0xFF00;
+
+          int16_t stepCount = data1 | data2;
+
+          initPlayAction(stepCount, stream.read());
+        }
         case ExternalCommand::SetSpeed: {
           updateSpeed((TurntableSpeed)stream.read());
           break;
@@ -349,31 +368,7 @@ void monitorCommandInput() {
     } 
     
     else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-      // todo: implement
-
-      // This is just a test implementation. This makes the "play" button engage/disengage the clutch for movement.
-
-      // Disengage
-      if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
-        while(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
-          clutchStepper.step(ClutchDirection::Disengage);
-        }
-      }
-      
-      // Engage
-      else {
-        while(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Disengaged) {
-          clutchStepper.step(ClutchDirection::Engage);
-        }
-
-        uint stepCount = 0;
-        while(stepCount != CLUTCH_ENGAGE_STEPS) {
-          stepCount++;
-          clutchStepper.step(ClutchDirection::Engage);
-        }
-      }
-
-      clutchStepper.releaseMotorCurrent();
+      initPlayAction(500, 14);
     }
 
     else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {
@@ -383,19 +378,6 @@ void monitorCommandInput() {
     else if(inputMux.getValue(MuxPin::BtnTestMode) == ButtonResult::OnRelease) {
       actionCommand = ActionCommand::TestMode;
     }
-  }
-
-  ButtonResult posStatus = inputMux.getValue(MuxPin::BtnSizeSelect);
-  ButtonResult negStatus = inputMux.getValue(MuxPin::BtnSpeedSelect);
-
-  if(posStatus == ButtonResult::OnPress || posStatus == ButtonResult::Held || posStatus == ButtonResult::Pressed) {
-    digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
-    movementStepper.setSpeed(7);
-    movementStepper.step(1);
-  } else if(negStatus == ButtonResult::OnPress || negStatus == ButtonResult::Held || negStatus == ButtonResult::Pressed) {
-    digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
-    movementStepper.setSpeed(7);
-    movementStepper.step(-1);
   }
 
   // Settings buttons 
@@ -418,7 +400,7 @@ void executeCommand() {
       runUnPauseAction();
       break;
     case ActionCommand::Play:
-      endActionCommand(); // TODO: Implement.
+      runPlayAction();
       break;
     case ActionCommand::Home:
       endActionCommand(); // TODO: Implement.
@@ -432,6 +414,93 @@ void executeCommand() {
     case ActionCommand::Error: 
       errorActionCommand();
       break;
+  }
+}
+
+void initPlayAction(int16_t stepCount, uint8_t speed) {
+  digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
+  verticalStallPosition = analogRead(Pin::VerticalPosition);
+  outputShift.setValue(StmShiftPin::LedPlayStatus, true);
+  actionVariable3 = stepCount;
+  actionVariable4 = speed;
+  movementStepper.setSpeed(10);
+  actionCommand = ActionCommand::Play;
+}
+
+void runPlayAction() {
+  switch(actionStep) {
+    case PlayStep::LiftToCalibratedPositionPlay: {
+      if(!actionVariable1) {
+        actionVariable1 = liftToCalibratedPosition();
+      }
+
+      if(!actionVariable2) {
+        actionVariable2 = engageAzimuthClutch();
+      }
+
+      if(actionVariable1 && actionVariable2) {
+        actionVariable1 = 0;
+        actionVariable2 = 0;
+        actionStep = PlayStep::WaitForLiftStatusPlay;
+      }
+
+      break;
+    }
+    case PlayStep::WaitForLiftStatusPlay: {
+      if(waitForLiftStatus()) {
+        actionStep = PlayStep::MoveHorizontallyNSteps;
+        movementStepper.setSpeed(actionVariable4);
+        digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
+      }
+
+      break;
+    }
+    case PlayStep::MoveHorizontallyNSteps: {
+      if(actionCounter != actionVariable3) {
+        movementStepper.step(-1);
+        actionCounter++;
+      }
+
+      if(actionCounter == actionVariable3 && getLiftStatus() == LiftStatus::Lifted) {
+        digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
+        verticalStallPosition = analogRead(Pin::VerticalPosition);
+        actionVariable1 = clockMicros;
+        actionVariable2 = 0;
+        actionVariable3 = 0;
+        actionVariable4 = 0;
+        actionCounter = 0;
+        movementStepper.setSpeed(3);
+        actionStep = PlayStep::LowerUntilToneArmReleasedPlay;
+      }
+      break;
+    }
+    case PlayStep::LowerUntilToneArmReleasedPlay: {
+      LowerTonearmResult result = lowerUntilTonearmReleased();
+
+      if(result == LowerTonearmResult::Lowered) {
+        actionStep = PlayStep::LowerBelowRecordPlay;
+      } else if(result == LowerTonearmResult::EncounteredLimit) {
+        endActionCommand();
+      }
+
+      break;
+    }
+    case PlayStep::LowerBelowRecordPlay: {
+      if(!actionVariable1) {
+        actionVariable1 = lowerBelowRecord();
+      }
+
+      if(!actionVariable2) {
+        actionVariable2 = disengageAzimuthClutch();
+      }
+
+      if(actionVariable1 && actionVariable2) {
+        outputShift.setValue(StmShiftPin::LedPlayStatus, false);
+        endActionCommand();
+      }
+
+      break;
+    }
   }
 }
 
@@ -457,25 +526,14 @@ void runPauseAction() {
 
   switch(actionStep) {
     case PauseStep::LiftToCalibratedPosition: {
-      movementStepper.step(VerticalDirection::Up);
-      int currentPosition = analogRead(Pin::VerticalPosition);
-
-      // Keep stepping until we are at position TEST_VERTICAL_UPPER_LIMIT. 
-      // TODO: Pull this value from home calibration. TEST_VERTICAL_UPPER_LIMIT is only for testing.
-      if(currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
+      if(liftToCalibratedPosition()) {
         actionStep = PauseStep::WaitForLiftStatus;
-        actionVariable1 = clockMicros;
       }
-
-      checkVerticalStall(VerticalDirection::Up, currentPosition);
       break;
     }
     case PauseStep::WaitForLiftStatus: {
-      // Verify that, at the end of the pause routine, the tonearm is lifted. Allow some time to account for a possible bouncy lift.
-      if(getLiftStatus() == LiftStatus::Lifted) {
+      if(waitForLiftStatus()) {
         endActionCommand();
-      } else if(clockMicros - actionVariable1 > LIFT_BOUNCE_TIMEOUT_MICROS) {
-        initErrorAction(CommandError::NotLifted);
       }
       break;
     }
@@ -484,24 +542,17 @@ void runPauseAction() {
 }
 
 void runUnPauseAction() {
-  movementStepper.step(VerticalDirection::Down);
-  int currentPosition = analogRead(Pin::VerticalPosition);
 
   switch(actionStep) {
     case UnPauseStep::LowerUntilToneArmReleased: {
+      LowerTonearmResult result = lowerUntilTonearmReleased();
 
-      // Once the tonearm is set down, initiate the next step
-      if(getLiftStatus() == LiftStatus::SetDown) {
-        actionVariable1 = currentPosition;
+      if(result == LowerTonearmResult::Lowered) {
         actionStep = UnPauseStep::LowerBelowRecord;
-      } 
-      
-      // If the tonearm reaches the bottom limit, then end the routine.
-      // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-      else if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT) {
+      } else if(result == LowerTonearmResult::EncounteredLimit) {
         endUnPauseAction();
       }
-
+      
       break;
     }
 
@@ -509,9 +560,7 @@ void runUnPauseAction() {
      * Action variable 1: The encoder starting position when this step begins.
      */
     case UnPauseStep::LowerBelowRecord: {
-
-      // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-      if(actionVariable1 - currentPosition >= TICKS_BELOW_RECORD || currentPosition <= TEST_VERTICAL_LOWER_LIMIT) {
+      if(lowerBelowRecord()) {
         endUnPauseAction();
       }
 
@@ -519,7 +568,6 @@ void runUnPauseAction() {
     }
   }
   
-  checkVerticalStall(VerticalDirection::Down, currentPosition);
 }
 
 void endUnPauseAction() {
@@ -529,11 +577,119 @@ void endUnPauseAction() {
 }
 
 /**
+ * @return `true` if we are good to advance to the next step, `false` otherwise.
+ */
+bool liftToCalibratedPosition() {
+  movementStepper.step(VerticalDirection::Up);
+  int currentPosition = analogRead(Pin::VerticalPosition);
+
+  bool stalled = checkVerticalStall(VerticalDirection::Up, currentPosition);
+
+  // Keep stepping until we are at position TEST_VERTICAL_UPPER_LIMIT. 
+  // TODO: Pull this value from home calibration. TEST_VERTICAL_UPPER_LIMIT is only for testing.
+  if(currentPosition >= TEST_VERTICAL_UPPER_LIMIT && !stalled) {
+    actionVariable1 = clockMicros;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * @return `true` if we are good to advance to the next step, `false` otherwise.
+ */
+bool waitForLiftStatus() {
+  // Verify that, at the end of the pause routine, the tonearm is lifted. Allow some time to account for a possible bouncy lift.
+  if(getLiftStatus() == LiftStatus::Lifted) {
+    return true;
+  } else if(clockMicros - actionVariable1 > LIFT_BOUNCE_TIMEOUT_MICROS) {
+    initErrorAction(CommandError::NotLifted);
+    return false;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * @return `Lowered` if we are good to advance to the next step, `EncounteredLimit` if we never lowered onto anything, `Lowering` otherwise.
+ */
+LowerTonearmResult lowerUntilTonearmReleased() {
+  movementStepper.step(VerticalDirection::Down);
+  int currentPosition = analogRead(Pin::VerticalPosition);
+
+  bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
+
+  // Once the tonearm is set down, initiate the next step
+  if(getLiftStatus() == LiftStatus::SetDown && !stalled) {
+    actionVariable1 = currentPosition;
+    return LowerTonearmResult::Lowered;
+  } 
+  
+  // If the tonearm reaches the bottom limit, then end the routine.
+  // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
+  else if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT && !stalled) {
+    return LowerTonearmResult::EncounteredLimit;
+  }
+  else {
+    return LowerTonearmResult::Lowering;
+  }
+}
+
+/**
+ * @return `true` if we are good to advance to the next step, `false` otherwise.
+ */
+bool lowerBelowRecord() {
+  movementStepper.step(VerticalDirection::Down);
+  int currentPosition = analogRead(Pin::VerticalPosition);
+
+  bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
+
+  // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
+  if((actionVariable1 - currentPosition >= TICKS_BELOW_RECORD || currentPosition <= TEST_VERTICAL_LOWER_LIMIT) && !stalled) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * @return `true` if we are good to advance to the next step, `false` otherwise.
+ */
+bool engageAzimuthClutch() {
+  clutchStepper.step(ClutchDirection::Engage);
+
+  if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
+    actionCounter++;
+  }
+
+  if(actionCounter == CLUTCH_ENGAGE_STEPS) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * @return `true` if we are good to advance to the next step, `false` otherwise.
+ */
+bool disengageAzimuthClutch() {
+  clutchStepper.step(ClutchDirection::Disengage);
+
+  if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Disengaged) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
  * This executes once per loop cycle. Every time a step is completed, this will increment the verticalStallCounter one time.
  * When an encoder tick occurs, the verticalStallCounter is reset. If the verticalStallCounter increments VERTICAL_STALL_STEPS before
  * an encoder tick occurs, then we can assume the lift motor has stalled.
+ * 
+ * @return `true` if we have stalled, `false` otherwise.
  */
-void checkVerticalStall(VerticalDirection direction, int currentPosition) {
+bool checkVerticalStall(VerticalDirection direction, int currentPosition) {
   verticalStallCounter++;
 
   // If going down, verticalStallPosition > currentPosition
@@ -547,10 +703,13 @@ void checkVerticalStall(VerticalDirection direction, int currentPosition) {
     verticalStallCounter = 0;
   } 
   
-  // 
+  // We've stalled.
   else if(verticalStallCounter >= VERTICAL_STALL_STEPS) {
     initErrorAction(direction == VerticalDirection::Down ? CommandError::LiftStalledMovingDown : CommandError::LiftStalledMovingUp);
+    return true;
   }
+
+  return false;
 }
 
 void initErrorAction(CommandError error) {
