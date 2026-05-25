@@ -1,17 +1,17 @@
-# Introduction
+# The Statimatic STM-01
 
 This is (going to be) a fully-automatic, modular turntable, called the Statimatic STM-01. The development of this turntable is being documented in the following YouTube series: [https://www.youtube.com/watch?v=k4UXI1rkMYs\&list=PL\_8A3xK4AntYpp8yXHuAbhb6lULQ2ivFA](https://www.youtube.com/playlist?list=PL_8A3xK4AntYpp8yXHuAbhb6lULQ2ivFA)
 
 At this time, an AR-XA turntable (left) is being used as the fill-in "turntable" for the STM-01 (right) during development. Eventually, the STM-01 will get its own turtable
 <img width="4032" height="2268" alt="20260521_185642" src="https://github.com/user-attachments/assets/cd819c7b-82fa-4b46-9678-90f65ebb569b" />
 
-# Electronics
+## Electronics
 This project is driven by a Teensy 4.1, three stepper motors to facilitate movement, multiplexers, a shift register, and more! See the `electrical` folder for the full schematic (so far).
 
 Development is progressing on a breadboard, with questionable organization. Eventually, the plan is to etch a custom PCB.
 <img width="4032" height="2268" alt="20260521_190106" src="https://github.com/user-attachments/assets/b46482c6-eddd-4caf-a0df-032dace4a9f7" />
 
-# Mechanisms
+## Mechanisms
 The automatic tonerm's operation is facilitated by two mechanisms: One for vertical movement (right), and one for horizontal (left).
 
 The vertical axis has a stepper motor driving movement, and a 10k slide potentiometer acting as an absolute encoder, so its position can be monitored.
@@ -20,10 +20,10 @@ The horizontal axis has a stepper motor driving horizontal movements, and anothe
 
 <img width="4032" height="2268" alt="20260521_190203" src="https://github.com/user-attachments/assets/3c295208-4761-462c-82d0-73f3fe41d063" />
 
-# Previous Turntable
+## Previous Turntable
 I designed a prototype turntable previously, separately from this repository, around late 2020/early 2021. That prototype lives in [another repository](https://github.com/pdnelson/Automatic-Record-Player). Though I'm no longer working on that project, much of the research, and many of the ideas I experimented with have made their way into this project.
 
-# Planned Features
+## Planned Features
 The built-in features of this turntable will be kept to a minimum, so that development can go more quickly. These features will be able to be expanded using the 5 expansion ports on the back of the turntable.
 
 ## Commands
@@ -56,7 +56,7 @@ These statistics could include:
 - How long you've had the turntable powered on
 - How long you've had the turntable playing a record
 
-# Modularity
+## Modularity
 
 The plan is to allow connection of up to 5 external modules to the turntable, concurrently. The intention is to design the turntable as its own standalone unit, before any modules, so that each module can be designed in isolation.
 
@@ -77,7 +77,7 @@ These could be, for example:
 
 Got an idea for a module that you think would be cool? Send me a message; I might agree! Though I'm not developing any modules yet, it will be good to build up a nice list of things so I never run out of things to work on.
 
-# Progress
+## Progress
 
 This project has a lot of work that needs done to it. Here's what's been completed so far, and what's left to do:
 - [x] Prototype documentation
