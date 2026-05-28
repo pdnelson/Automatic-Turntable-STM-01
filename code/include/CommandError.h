@@ -2,6 +2,7 @@
 #define COMMANDERROR_H
 
 enum CommandError : uint8_t {
+    NoError = 0,
     LiftStalledMovingUp = 1,
     LiftStalledMovingDown = 2,
 

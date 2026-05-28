@@ -1,3 +1,4 @@
+#include <memory>
 #include <Arduino.h>
 #include <Pin.h>
 #include <MuxPin.h>
@@ -22,37 +23,98 @@
 #include <TurntableSpeed.h>
 #include <RecordSize.h>
 #include <AzimuthDirection.h>
+#include <Prototypes.h>
 
-void monitorSerialInputs();
-void monitorCommandInput();
-void executeCommand();
-void updateClockMicros();
-void initPlayAction(int16_t stepCount, uint8_t speed);
-void runPlayAction();
-void initPauseUnpauseAction();
-void runPauseAction();
-void runUnPauseAction();
-void endActionCommand();
-void endUnPauseAction();
-void initErrorAction(CommandError error);
-void errorActionCommand();
-void endErrorAction();
-bool liftToCalibratedPosition();
-bool waitForLiftStatus();
-LowerTonearmResult lowerUntilTonearmReleased();
-bool lowerBelowRecord();
-bool engageAzimuthClutch();
-bool disengageAzimuthClutch();
-bool checkVerticalStall(VerticalDirection direction, int currentPosition);
-void readSerial(Stream& stream);
-void advanceCounts();
-LiftStatus getLiftStatus();
-HomeStatus getHomeStatus();
-void rotateSpeed();
-void updateSpeed(TurntableSpeed newSpeed);
-void blinkCustomSpeedIndicator();
-void rotateSize();
-void updateSize(RecordSize newSize);
+struct CommandResult {
+  bool complete;
+  CommandError error;
+};
+
+class TurntableCommand {
+  public:
+    virtual ~TurntableCommand() = default;
+    virtual CommandResult execute() = 0;
+};
+
+class TurntableSubCommand {
+  public:
+    CommandResult execute() {
+      if(result.error != CommandError::NoError) {
+        return result;
+      } else if(result.complete) {
+        if(nextSubCommand == nullptr) {
+          return { true, CommandError::NoError };
+        } else {
+          nextSubCommand->initialize();
+          return nextSubCommand->execute();
+        }
+      } else {
+        result = doCommand();
+        return { false, result.error };
+      }
+    }
+
+    void initialize() {
+      if(!initialized) {
+        doInitialize();
+        initialized = true;
+      }
+    }
+
+    std::unique_ptr<TurntableSubCommand> nextSubCommand;
+    
+    bool initialized = false;
+
+  private:
+    CommandResult result = { false, CommandError::NoError };
+    virtual CommandResult doCommand() = 0;
+    virtual void doInitialize() = 0;
+};
+
+class SubCmdLiftToCalibratedPosition : public TurntableSubCommand {
+  public:
+    SubCmdLiftToCalibratedPosition(Stepper movementMotors, uint8_t speed): movementMotors(movementMotors) {
+      this->speed = speed;
+    }
+
+  private:
+    CommandResult doCommand() override {
+      // todo
+      return { true, CommandError::NoError }; 
+    }
+
+    void doInitialize() override {
+        digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
+        movementMotors.setSpeed(this->speed);
+    }
+
+    Stepper movementMotors;
+    uint8_t speed;
+};
+
+class CmdPause : public TurntableCommand {
+  public:
+
+    CmdPause(Stepper movementMotors, StmShift outputShift): liftToCalibratedPosition(movementMotors, 10), outputShift(outputShift) {
+      // Do nothing
+    }
+
+    CommandResult execute() override {
+      // Initialize status LEDs and stuff associated with this command
+      if(!liftToCalibratedPosition.initialized) {
+        outputShift.setValue(StmShiftPin::LedPauseStatus, true);
+        outputShift.setValue(StmShiftPin::AudioCutOff, true);
+      }
+
+      liftToCalibratedPosition.initialize();
+
+      return liftToCalibratedPosition.execute();
+    }
+
+  private:
+    SubCmdLiftToCalibratedPosition liftToCalibratedPosition;
+    StmShift outputShift;
+};
 
 Stepper movementStepper = Stepper(
   STEPS_PER_REVOLUTION,
@@ -113,6 +175,8 @@ unsigned long customSpeedIndicatorCounter = 0;
 
 // Size variables
 RecordSize selectedSize = RecordSize::InAuto;
+
+std::unique_ptr<TurntableCommand> currentCommand;
 
 void setup() {
   // Input mux
@@ -366,11 +430,11 @@ void monitorCommandInput() {
   if(actionCommand == ActionCommand::NoAction) {
 
     if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
-      initPauseUnpauseAction();
+      currentCommand = std::make_unique<CmdPause>(movementStepper, outputShift);
     } 
     
     else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-      initPlayAction(500, 14);
+      initPlayAction(120, 4);
     }
 
     else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {
@@ -393,29 +457,16 @@ void monitorCommandInput() {
 }
 
 void executeCommand() {
-  switch(actionCommand) {
-    case ActionCommand::NoAction: break;
-    case ActionCommand::Pause:
-      runPauseAction();
-      break;
-    case ActionCommand::UnPause:
-      runUnPauseAction();
-      break;
-    case ActionCommand::Play:
-      runPlayAction();
-      break;
-    case ActionCommand::Home:
-      endActionCommand(); // TODO: Implement.
-      break;
-    case ActionCommand::Calibration:
-      endActionCommand(); // TODO: Implement.
-      break;
-    case ActionCommand::TestMode:
-      endActionCommand(); // TODO: Implement.
-      break;
-    case ActionCommand::Error: 
-      errorActionCommand();
-      break;
+  if(currentCommand != NULL) {
+    CommandResult result = currentCommand->execute();
+
+    if(result.error != CommandError::NoError || result.complete) {
+      if(result.error != CommandError::NoError) {
+        // todo : initialize error command
+      } else {
+        currentCommand = nullptr;
+      }
+    }
   }
 }
 
@@ -423,6 +474,7 @@ void initPlayAction(int16_t stepCount, uint8_t speed) {
   digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
   verticalStallPosition = analogRead(Pin::VerticalPosition);
   outputShift.setValue(StmShiftPin::LedPlayStatus, true);
+  outputShift.setValue(StmShiftPin::LedPauseStatus, false);
   actionVariable3 = abs(stepCount);
   actionVariable4 = speed;
   actionVariable5 = (actionVariable3 == stepCount) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
@@ -480,27 +532,27 @@ void runPlayAction() {
       break;
     }
     case PlayStep::LowerUntilToneArmReleasedPlay: {
-      LowerTonearmResult result = lowerUntilTonearmReleased();
+      if(!actionVariable2) {
+        actionVariable2 = disengageAzimuthClutch();
+      }
 
-      if(result == LowerTonearmResult::Lowered) {
+      if(actionVariable3 == LowerTonearmResult::Lowering) {
+        actionVariable3 = lowerUntilTonearmReleased();
+      }
+
+      if(actionVariable3 == LowerTonearmResult::Lowered && actionVariable2) {
+        actionVariable1 = analogRead(Pin::VerticalPosition);
         actionStep = PlayStep::LowerBelowRecordPlay;
-      } else if(result == LowerTonearmResult::EncounteredLimit) {
+      } else if(actionVariable3 == LowerTonearmResult::EncounteredLimit && actionVariable2) {
         endActionCommand();
       }
 
       break;
     }
     case PlayStep::LowerBelowRecordPlay: {
-      if(!actionVariable1) {
-        actionVariable1 = lowerBelowRecord();
-      }
-
-      if(!actionVariable2) {
-        actionVariable2 = disengageAzimuthClutch();
-      }
-
-      if(actionVariable1 && actionVariable2) {
+      if(lowerBelowRecord()) {
         outputShift.setValue(StmShiftPin::LedPlayStatus, false);
+        outputShift.setValue(StmShiftPin::LedPauseStatus, false);
         endActionCommand();
       }
 
@@ -554,6 +606,7 @@ void runUnPauseAction() {
       LowerTonearmResult result = lowerUntilTonearmReleased();
 
       if(result == LowerTonearmResult::Lowered) {
+        actionVariable1 = analogRead(Pin::VerticalPosition);
         actionStep = UnPauseStep::LowerBelowRecord;
       } else if(result == LowerTonearmResult::EncounteredLimit) {
         endUnPauseAction();
@@ -627,7 +680,6 @@ LowerTonearmResult lowerUntilTonearmReleased() {
 
   // Once the tonearm is set down, initiate the next step
   if(getLiftStatus() == LiftStatus::SetDown && !stalled) {
-    actionVariable1 = currentPosition;
     return LowerTonearmResult::Lowered;
   } 
   
