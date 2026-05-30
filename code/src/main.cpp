@@ -25,95 +25,355 @@
 #include <AzimuthDirection.h>
 #include <Prototypes.h>
 
+class TurntableState {
+  public:
+    TurntableState(): outputShift() {
+      // Lift
+      pinMode(Pin::Lift, INPUT_PULLUP);
+      lastLiftStatus = digitalRead(Pin::Lift);
+
+      // Home
+      pinMode(Pin::HomeMount, INPUT_PULLUP);
+      lastHomeStatus = digitalRead(Pin::HomeMount);
+
+      // Output shift
+      pinMode(Pin::OutputShiftSda, OUTPUT);
+      pinMode(Pin::OutputShiftScl, OUTPUT);
+      outputShift.initialize();
+      outputShift.setValue(StmShiftPin::LedPower, true);
+    }
+
+    StmShift outputShift;
+
+    void monitor(unsigned long clockMicros) {
+      outputShift.monitor();
+    }
+
+    LiftStatus getLiftStatus(unsigned long clockMicros) {
+      bool status = digitalRead(Pin::Lift);
+
+      if(status == this->lastLiftStatus) {
+        this->liftDebounce = clockMicros;
+        return (LiftStatus) status;
+      } else if(clockMicros - this->liftDebounce > LIFT_DEBOUNCE_MICROS) {
+        this->lastLiftStatus = status;
+        return (LiftStatus) status;
+      } else {
+        return (LiftStatus) !status;
+      }
+    }
+
+    HomeStatus getHomeStatus(unsigned long clockMicros) {
+      bool status = digitalRead(Pin::HomeMount);
+
+      if(status == this->lastHomeStatus) {
+        this->homeDebounce = clockMicros;
+        return (HomeStatus) status;
+      } else if(clockMicros - this->homeDebounce > HOME_DEBOUNCE_MICROS) {
+        this->lastHomeStatus = status;
+        return (HomeStatus) status;
+      } else {
+        return (HomeStatus) !status;
+      }
+    }
+
+    bool isPaused() {
+      return outputShift.getValue(StmShiftPin::LedPauseStatus);
+    }
+
+  private:
+    unsigned long liftDebounce = 0;
+    uint8_t lastLiftStatus = LiftStatus::Lifted;
+
+    unsigned long homeDebounce = 0;
+    uint8_t lastHomeStatus = HomeStatus::Homed;
+};
+
 struct CommandResult {
   bool complete;
   CommandError error;
 };
 
-class TurntableCommand {
+class BaseTurntableCommand {
   public:
-    virtual ~TurntableCommand() = default;
-    virtual CommandResult execute() = 0;
-};
+    BaseTurntableCommand(TurntableState state): state(state) {
+      // do nothing!!!
+    } 
 
-class TurntableSubCommand {
-  public:
-    CommandResult execute() {
-      if(result.error != CommandError::NoError) {
-        return result;
-      } else if(result.complete) {
-        if(nextSubCommand == nullptr) {
-          return { true, CommandError::NoError };
-        } else {
-          nextSubCommand->initialize();
-          return nextSubCommand->execute();
-        }
-      } else {
-        result = doCommand();
-        return { false, result.error };
+    virtual ~BaseTurntableCommand() = default;
+    virtual ActionCommand getCommandId() = 0;
+    CommandResult execute(unsigned long clockMicros) {
+      initialize(clockMicros);
+
+      CommandResult result = doExecute(clockMicros);
+
+      if(result.complete || result.error != CommandError::NoError) {
+        uninitialize(clockMicros);
       }
-    }
 
-    void initialize() {
-      if(!initialized) {
-        doInitialize();
-        initialized = true;
-      }
+      return result;
     }
-
-    std::unique_ptr<TurntableSubCommand> nextSubCommand;
-    
-    bool initialized = false;
+    TurntableState state;
 
   private:
-    CommandResult result = { false, CommandError::NoError };
-    virtual CommandResult doCommand() = 0;
-    virtual void doInitialize() = 0;
+    virtual CommandResult doExecute(unsigned long clockMicros) = 0;
+    virtual void doInitialize(unsigned long clockMicros) = 0;
+    virtual void doUninitialize(unsigned long clockMicros) = 0;
+    bool initialized = false;
+    bool uninitialized = false;
+
+    void initialize(unsigned long clockMicros) {
+      if(!this->initialized) {
+        this->doInitialize(clockMicros);
+        this->initialized = true;
+      }
+    }
+
+    void uninitialize(unsigned long clockMicros) {
+      if(!this->uninitialized) {
+        this->doUninitialize(clockMicros);
+        this->uninitialized = true;
+      }
+    }
 };
 
-class SubCmdLiftToCalibratedPosition : public TurntableSubCommand {
+class BaseTurntableSubCommand {
   public:
-    SubCmdLiftToCalibratedPosition(Stepper movementMotors, uint8_t speed): movementMotors(movementMotors) {
+    BaseTurntableSubCommand(TurntableState state): state(state) {
+      // do nothin'
+    }
+
+    TurntableState state;
+
+    CommandResult execute(unsigned long clockMicros) {
+      this->initialize(clockMicros);
+
+      if(this->result.error != CommandError::NoError) {
+        this->uninitialize(clockMicros);
+        return this->result;
+      } else if(this->result.complete) {
+        this->uninitialize(clockMicros);
+        if(this->nextSubCommand == nullptr) {
+          return { true, CommandError::NoError };
+        } else {
+          return this->nextSubCommand->execute(clockMicros);
+        }
+      } else {
+        this->result = doExecute(clockMicros);
+        return { false, this->result.error };
+      }
+    }
+
+    std::unique_ptr<BaseTurntableSubCommand> nextSubCommand;
+    
+  private:
+    CommandResult result = { false, CommandError::NoError };
+    virtual CommandResult doExecute(unsigned long clockMicros) = 0;
+    virtual void doInitialize(unsigned long clockMicros) = 0;
+    virtual void doUninitialize(unsigned long clockMicros) = 0;
+    bool initialized = false;
+    bool uninitialized = false;
+
+    void initialize(unsigned long clockMicros) {
+      if(!this->initialized) {
+        this->doInitialize(clockMicros);
+        this->initialized = true;
+      }
+    }
+
+    void uninitialize(unsigned long clockMicros) {
+      if(!this->uninitialized) {
+        this->doUninitialize(clockMicros);
+        this->uninitialized = true;
+      }
+    }
+};
+
+class BaseLiftSubCommand : public BaseTurntableSubCommand {
+  public:
+    BaseLiftSubCommand(TurntableState state, Stepper movementMotors, uint8_t speed): BaseTurntableSubCommand(state), movementMotors(movementMotors) {
       this->speed = speed;
     }
 
-  private:
-    CommandResult doCommand() override {
-      // todo
-      return { true, CommandError::NoError }; 
+    bool checkVerticalStall(VerticalDirection direction, int currentPosition) {
+      this->verticalStallCounter++;
+
+      // If going down, verticalStallPosition > currentPosition
+      // If going up, currentPosition > verticalStallPosition
+      int greaterThan = direction == VerticalDirection::Down ? this->verticalStallPosition : currentPosition;
+      int lessThan = direction == VerticalDirection::Down ? currentPosition : this->verticalStallPosition;
+
+      // Reset the stall counter when an encoder tick (in the proper direction) occurs
+      if(greaterThan > lessThan) {
+        this->verticalStallPosition = currentPosition;
+        this->verticalStallCounter = 0;
+      } 
+      
+      // We've stalled.
+      else if(this->verticalStallCounter >= VERTICAL_STALL_STEPS) {
+        return true;
+      }
+
+      return false;
     }
 
-    void doInitialize() override {
-        digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-        movementMotors.setSpeed(this->speed);
+    void baseInitialize() {
+      digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
+      this->verticalStallPosition = analogRead(Pin::VerticalPosition);
+      this->movementMotors.setSpeed(this->speed);
     }
 
     Stepper movementMotors;
-    uint8_t speed;
+    uint8_t speed = 0;
+
+  private:
+    int16_t verticalStallCounter = 0;
+    int16_t verticalStallPosition = 0;
+
 };
 
-class CmdPause : public TurntableCommand {
+class SubCmdLiftTonearm : public BaseLiftSubCommand {
   public:
-
-    CmdPause(Stepper movementMotors, StmShift outputShift): liftToCalibratedPosition(movementMotors, 10), outputShift(outputShift) {
+    SubCmdLiftTonearm(TurntableState state, Stepper movementMotors, uint8_t speed) : BaseLiftSubCommand(state, movementMotors, speed) {
       // Do nothing
     }
 
-    CommandResult execute() override {
-      // Initialize status LEDs and stuff associated with this command
-      if(!liftToCalibratedPosition.initialized) {
-        outputShift.setValue(StmShiftPin::LedPauseStatus, true);
-        outputShift.setValue(StmShiftPin::AudioCutOff, true);
+  private:
+    bool reachedLimit = false;
+    unsigned long timeLimitReached = 0;
+
+    void doInitialize(unsigned long clockMicros) override {
+        baseInitialize();
+    }
+
+    CommandResult doExecute(unsigned long clockMicros) override {
+      this->movementMotors.step(VerticalDirection::Up);
+      int currentPosition = analogRead(Pin::VerticalPosition);
+
+      bool stalled = checkVerticalStall(VerticalDirection::Up, currentPosition);
+
+      bool completed = false;
+      CommandError error = CommandError::NoError;
+
+      if(stalled) {
+        error = CommandError::LiftStalledMovingUp;
+      } else {
+        if(!this->reachedLimit && currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
+          this->reachedLimit = true;
+          this->timeLimitReached = clockMicros;
+        } else if(this->reachedLimit) {
+          if(this->state.getLiftStatus(clockMicros) == LiftStatus::Lifted) {
+            completed = true;
+          } else if(clockMicros - this->timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
+            error = CommandError::NotLifted;
+          }
+        }
       }
 
-      liftToCalibratedPosition.initialize();
+      return { completed, error }; 
+    }
 
-      return liftToCalibratedPosition.execute();
+    void doUninitialize(unsigned long clockMicros) override {
+      // do nothing
+    }
+};
+
+class SubCmdSetDownTonearm : public BaseLiftSubCommand {
+  public:
+    SubCmdSetDownTonearm(TurntableState state, Stepper movementMotors, uint8_t speed) : BaseLiftSubCommand(state, movementMotors, speed) {
+      // Do nothing
     }
 
   private:
-    SubCmdLiftToCalibratedPosition liftToCalibratedPosition;
-    StmShift outputShift;
+    bool isSetDown = false;
+    int setDownPosition = 0;
+
+    void doInitialize(unsigned long clockMicros) override {
+        baseInitialize();
+    }
+
+    CommandResult doExecute(unsigned long clockMicros) override {
+      movementMotors.step(VerticalDirection::Down);
+      int currentPosition = analogRead(Pin::VerticalPosition);
+
+      bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
+
+      bool completed = false;
+      CommandError error = CommandError::NoError;
+
+      if(stalled) {
+        error = CommandError::LiftStalledMovingUp;
+      } else if(!this->isSetDown) {
+        if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT) {
+          completed = true;
+        } else if(!this->isSetDown && this->state.getLiftStatus(clockMicros) == LiftStatus::SetDown) {
+          this->isSetDown = true;
+          this->setDownPosition = currentPosition;
+        } else if(this->isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD) {
+          completed = true;
+        }
+      }
+
+      return { completed, error };
+    }
+
+    void doUninitialize(unsigned long clockMicros) override {
+      // do nothing
+    }
+};
+
+class CmdPause : public BaseTurntableCommand {
+  public:
+    CmdPause(TurntableState state, Stepper movementMotors) : BaseTurntableCommand(state), liftTonearm(state, movementMotors, 10) {
+      // Do nothing
+    }
+
+    ActionCommand getCommandId() override {
+      return ActionCommand::Pause;
+    }
+
+    void doInitialize(unsigned long clockMicros) override {
+      state.outputShift.setValue(StmShiftPin::LedPauseStatus, true);
+      state.outputShift.setValue(StmShiftPin::AudioCutOff, true);
+    }
+
+    CommandResult doExecute(unsigned long clockMicros) override {
+      return liftTonearm.execute(clockMicros);
+    }
+
+    void doUninitialize(unsigned long clockMicros) override {
+      // do nothing
+    }
+
+  private:
+    SubCmdLiftTonearm liftTonearm;
+};
+
+class CmdUnPause : public BaseTurntableCommand {
+  public:
+    CmdUnPause(TurntableState state, Stepper movementMotors) : BaseTurntableCommand(state), setDownTonearm(state, movementMotors, 3) {
+      // Do nothing
+    }
+
+    ActionCommand getCommandId() override {
+      return ActionCommand::UnPause;
+    }
+
+    void doInitialize(unsigned long clockMicros) override {
+      // do nothing
+    }
+
+    CommandResult doExecute(unsigned long clockMicros) override {
+      return setDownTonearm.execute(clockMicros);
+    }
+
+    void doUninitialize(unsigned long clockMicros) override {
+      state.outputShift.setValue(StmShiftPin::LedPauseStatus, false);
+      state.outputShift.setValue(StmShiftPin::AudioCutOff, false);
+    }
+
+  private:
+    SubCmdSetDownTonearm setDownTonearm;
 };
 
 Stepper movementStepper = Stepper(
@@ -142,27 +402,7 @@ InputMux inputMux = InputMux(
   BUTTON_DEBOUNCE_INTERVAL
 );
 
-StmShift outputShift = StmShift();
-
 unsigned long clockMicros = 0;
-
-ActionCommand actionCommand = ActionCommand::NoAction;
-uint8_t actionStep = 0;
-long actionCounter = 0;
-long actionVariable1 = 0;
-long actionVariable2 = 0;
-long actionVariable3 = 0;
-long actionVariable4 = 0;
-long actionVariable5 = 0;
-
-int verticalStallPosition = 0;
-int verticalStallCounter = 0;
-
-unsigned long liftDebounce = 0;
-uint8_t lastLiftStatus = LiftStatus::Lifted;
-
-unsigned long homeDebounce = 0;
-uint8_t lastHomeStatus = HomeStatus::Homed;
 
 // Count variables
 unsigned long countCounter = 0;
@@ -176,7 +416,9 @@ unsigned long customSpeedIndicatorCounter = 0;
 // Size variables
 RecordSize selectedSize = RecordSize::InAuto;
 
-std::unique_ptr<TurntableCommand> currentCommand;
+TurntableState state;
+
+std::unique_ptr<BaseTurntableCommand> currentCommand;
 
 void setup() {
   // Input mux
@@ -184,10 +426,6 @@ void setup() {
   pinMode(Pin::InputMuxB, OUTPUT);
   pinMode(Pin::InputMuxC, OUTPUT);
   pinMode(Pin::InputMuxResult, INPUT);
-
-  // Output shift
-  pinMode(Pin::OutputShiftSda, OUTPUT);
-  pinMode(Pin::OutputShiftScl, OUTPUT);
 
   // Movement steppers
   pinMode(Pin::MovementStep1, OUTPUT);
@@ -222,15 +460,9 @@ void setup() {
 
   // Various Status
   pinMode(Pin::PowerOnStatusIn, INPUT);
-  pinMode(Pin::Lift, INPUT_PULLUP);
-  pinMode(Pin::HomeMount, INPUT_PULLUP);
 
-  // Set initial values
-  lastLiftStatus = digitalRead(Pin::Lift);
-  lastHomeStatus = digitalRead(Pin::HomeMount);
+  state = TurntableState();
 
-  outputShift.initialize();
-  outputShift.setValue(StmShiftPin::LedPower, true);
   updateSpeed(selectedSpeed);
   updateSize(selectedSize);
 
@@ -253,7 +485,7 @@ void loop() {
 
   // Output statuses
   blinkCustomSpeedIndicator();
-  outputShift.monitor();
+  state.monitor(clockMicros);
 }
 
 void monitorSerialInputs() {
@@ -285,7 +517,7 @@ void readSerial(Stream& stream) {
       ExternalCommand incomingCommand = (ExternalCommand)stream.read();
 
       // If a command is already running, and an action command comes through, then throw it out.
-      if(actionCommand != ActionCommand::NoAction && incomingCommand < 31 && incomingCommand > 0) {
+      if(currentCommand != nullptr && incomingCommand < 31 && incomingCommand > 0) {
         return;
       }
 
@@ -294,16 +526,16 @@ void readSerial(Stream& stream) {
           stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);
           break;
         case ExternalCommand::ActionPauseUnPause: {
-          initPauseUnpauseAction();
+          currentCommand = std::make_unique<CmdPause>(state, movementStepper);
           break;
         }
         case ExternalCommand::ActionProtoPlay: {
-          int16_t data1 = stream.read() & 0x00FF;
-          int16_t data2 = stream.read() << 8 & 0xFF00;
+          //int16_t data1 = stream.read() & 0x00FF;
+          //int16_t data2 = stream.read() << 8 & 0xFF00;
+//
+          //int16_t stepCount = data1 | data2;
 
-          int16_t stepCount = data1 | data2;
-
-          initPlayAction(stepCount, stream.read());
+          // todo: init the play action
         }
         case ExternalCommand::SetSpeed: {
           updateSpeed((TurntableSpeed)stream.read());
@@ -344,15 +576,7 @@ void readSerial(Stream& stream) {
           break;
         }
         case ExternalCommand::SetClearActionCommand: {
-          switch(actionCommand) {
-            case ActionCommand::Error:
-              endErrorAction();
-              break;
-            case ActionCommand::UnPause:
-              endUnPauseAction();
-            default:
-              endActionCommand();
-          }
+          currentCommand = nullptr;
           break;
         }
         case ExternalCommand::GetHorizontalEncoderPos: {
@@ -370,20 +594,26 @@ void readSerial(Stream& stream) {
           break;
         }
         case ExternalCommand::GetLiftStatus: {
-          stream.write(getLiftStatus());
+          stream.write(state.getLiftStatus(clockMicros));
           break;
         }
         case ExternalCommand::GetHomeStatus: {
-          stream.write(getHomeStatus());
+          stream.write(state.getHomeStatus(clockMicros));
           break;
         }
         case ExternalCommand::GetCurrentCommand: {
-          stream.write(actionCommand);
+          ActionCommand current = ActionCommand::NoAction;
+          if(currentCommand != nullptr) {
+            currentCommand->getCommandId();
+          }
+          
+          stream.write(current);
           break;
         }
         case ExternalCommand::GetErrorCode: {
-          if(actionCommand == ActionCommand::Error) {
-            stream.write(actionVariable1); // actionVariable1 holds the error code
+          if(currentCommand != nullptr && currentCommand->getCommandId() == ActionCommand::Error) {
+            //stream.write(actionVariable1); // actionVariable1 holds the error code
+            // todo: write error code here
           } else {
             stream.write((uint8_t)0); // 0 represents no error
           }
@@ -405,7 +635,7 @@ void readSerial(Stream& stream) {
         }
         case ExternalCommand::GetSpeedTarget: {
           float speed = -1;
-          if(getHomeStatus() == HomeStatus::NotHomed) {
+          if(state.getHomeStatus(clockMicros) == HomeStatus::NotHomed) {
             speed = targetSpeed;
           }
           
@@ -427,22 +657,26 @@ void monitorCommandInput() {
   inputMux.monitor(clockMicros);
 
   // Only read action command values if there is currently no action running
-  if(actionCommand == ActionCommand::NoAction) {
+  if(currentCommand == nullptr) {
 
     if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
-      currentCommand = std::make_unique<CmdPause>(movementStepper, outputShift);
+      if(state.isPaused() || state.getLiftStatus(clockMicros) == LiftStatus::Lifted) {
+        currentCommand = std::make_unique<CmdUnPause>(state, movementStepper);
+      } else {
+        currentCommand = std::make_unique<CmdPause>(state, movementStepper);
+      }
     } 
     
     else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-      initPlayAction(120, 4);
+      // todo
     }
 
     else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {
-      actionCommand = ActionCommand::Calibration;
+      // todo
     }
 
     else if(inputMux.getValue(MuxPin::BtnTestMode) == ButtonResult::OnRelease) {
-      actionCommand = ActionCommand::TestMode;
+      // todo
     }
   }
 
@@ -458,401 +692,14 @@ void monitorCommandInput() {
 
 void executeCommand() {
   if(currentCommand != NULL) {
-    CommandResult result = currentCommand->execute();
+    CommandResult result = currentCommand->execute(clockMicros);
 
-    if(result.error != CommandError::NoError || result.complete) {
-      if(result.error != CommandError::NoError) {
-        // todo : initialize error command
-      } else {
-        currentCommand = nullptr;
-      }
+    if(result.error != CommandError::NoError) {
+      currentCommand = nullptr;
+      // todo : initialize error command
+    } else if(result.complete) {
+      currentCommand = nullptr;
     }
-  }
-}
-
-void initPlayAction(int16_t stepCount, uint8_t speed) {
-  digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-  verticalStallPosition = analogRead(Pin::VerticalPosition);
-  outputShift.setValue(StmShiftPin::LedPlayStatus, true);
-  outputShift.setValue(StmShiftPin::LedPauseStatus, false);
-  actionVariable3 = abs(stepCount);
-  actionVariable4 = speed;
-  actionVariable5 = (actionVariable3 == stepCount) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
-  movementStepper.setSpeed(10);
-  actionCommand = ActionCommand::Play;
-}
-
-void runPlayAction() {
-  switch(actionStep) {
-    case PlayStep::LiftToCalibratedPositionPlay: {
-      if(!actionVariable1) {
-        actionVariable1 = liftToCalibratedPosition();
-      }
-
-      if(!actionVariable2) {
-        actionVariable2 = engageAzimuthClutch();
-      }
-
-      if(actionVariable1 && actionVariable2) {
-        actionVariable1 = clockMicros;
-        actionVariable2 = 0;
-        actionStep = PlayStep::WaitForLiftStatusPlay;
-      }
-
-      break;
-    }
-    case PlayStep::WaitForLiftStatusPlay: {
-      if(waitForLiftStatus()) {
-        actionStep = PlayStep::MoveHorizontallyNSteps;
-        movementStepper.setSpeed(actionVariable4);
-        actionCounter = 0;
-        digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
-      }
-
-      break;
-    }
-    case PlayStep::MoveHorizontallyNSteps: {
-      if(actionCounter <= actionVariable3) {
-        movementStepper.step(actionVariable5);
-        actionCounter++;
-      }
-
-      if(actionCounter == actionVariable3 && getLiftStatus() == LiftStatus::Lifted) {
-        digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-        verticalStallPosition = analogRead(Pin::VerticalPosition);
-        actionVariable1 = clockMicros;
-        actionVariable2 = 0;
-        actionVariable3 = 0;
-        actionVariable4 = 0;
-        actionVariable5 = 0;
-        actionCounter = 0;
-        movementStepper.setSpeed(3);
-        actionStep = PlayStep::LowerUntilToneArmReleasedPlay;
-      }
-      break;
-    }
-    case PlayStep::LowerUntilToneArmReleasedPlay: {
-      if(!actionVariable2) {
-        actionVariable2 = disengageAzimuthClutch();
-      }
-
-      if(actionVariable3 == LowerTonearmResult::Lowering) {
-        actionVariable3 = lowerUntilTonearmReleased();
-      }
-
-      if(actionVariable3 == LowerTonearmResult::Lowered && actionVariable2) {
-        actionVariable1 = analogRead(Pin::VerticalPosition);
-        actionStep = PlayStep::LowerBelowRecordPlay;
-      } else if(actionVariable3 == LowerTonearmResult::EncounteredLimit && actionVariable2) {
-        endActionCommand();
-      }
-
-      break;
-    }
-    case PlayStep::LowerBelowRecordPlay: {
-      if(lowerBelowRecord()) {
-        outputShift.setValue(StmShiftPin::LedPlayStatus, false);
-        outputShift.setValue(StmShiftPin::LedPauseStatus, false);
-        endActionCommand();
-      }
-
-      break;
-    }
-  }
-}
-
-void initPauseUnpauseAction() {
-  digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-  verticalStallPosition = analogRead(Pin::VerticalPosition);
-
-  // If the tonearm is not making contact with the lift (implying it's on a record or home), OR the tonearm is at the lower limit (below a record), then "pause" (or lift it up)
-  // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-  if(getLiftStatus() == LiftStatus::SetDown || !(verticalStallPosition + VERTICAL_ENCODER_DELTA >= TEST_VERTICAL_UPPER_LIMIT)) {
-    movementStepper.setSpeed(10);
-    actionCommand = ActionCommand::Pause;
-    outputShift.setValue(StmShiftPin::LedPauseStatus, true);
-    outputShift.setValue(StmShiftPin::AudioCutOff, true);
-  } else {
-    // TODO: Go fast when over home, go slow when not over home
-    movementStepper.setSpeed(3);
-    actionCommand = ActionCommand::UnPause;
-  }
-}
-
-void runPauseAction() {
-
-  switch(actionStep) {
-    case PauseStep::LiftToCalibratedPosition: {
-      if(liftToCalibratedPosition()) {
-        actionVariable1 = clockMicros;
-        actionStep = PauseStep::WaitForLiftStatus;
-      }
-      break;
-    }
-    case PauseStep::WaitForLiftStatus: {
-      if(waitForLiftStatus()) {
-        endActionCommand();
-      }
-      break;
-    }
-  }
-
-}
-
-void runUnPauseAction() {
-
-  switch(actionStep) {
-    case UnPauseStep::LowerUntilToneArmReleased: {
-      LowerTonearmResult result = lowerUntilTonearmReleased();
-
-      if(result == LowerTonearmResult::Lowered) {
-        actionVariable1 = analogRead(Pin::VerticalPosition);
-        actionStep = UnPauseStep::LowerBelowRecord;
-      } else if(result == LowerTonearmResult::EncounteredLimit) {
-        endUnPauseAction();
-      }
-      
-      break;
-    }
-
-    /**
-     * Action variable 1: The encoder starting position when this step begins.
-     */
-    case UnPauseStep::LowerBelowRecord: {
-      if(lowerBelowRecord()) {
-        endUnPauseAction();
-      }
-
-      break;
-    }
-  }
-  
-}
-
-void endUnPauseAction() {
-  outputShift.setValue(StmShiftPin::LedPauseStatus, false);
-  outputShift.setValue(StmShiftPin::AudioCutOff, false);
-  endActionCommand();
-}
-
-/**
- * @return `true` if we are good to advance to the next step, `false` otherwise.
- */
-bool liftToCalibratedPosition() {
-  movementStepper.step(VerticalDirection::Up);
-  int currentPosition = analogRead(Pin::VerticalPosition);
-
-  bool stalled = checkVerticalStall(VerticalDirection::Up, currentPosition);
-
-  // Keep stepping until we are at position TEST_VERTICAL_UPPER_LIMIT. 
-  // TODO: Pull this value from home calibration. TEST_VERTICAL_UPPER_LIMIT is only for testing.
-  if(currentPosition >= TEST_VERTICAL_UPPER_LIMIT && !stalled) {
-    actionVariable1 = clockMicros;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/**
- * @return `true` if we are good to advance to the next step, `false` otherwise.
- */
-bool waitForLiftStatus() {
-  // Verify that, at the end of the pause routine, the tonearm is lifted. Allow some time to account for a possible bouncy lift.
-  if(getLiftStatus() == LiftStatus::Lifted) {
-    return true;
-  } else if(clockMicros - actionVariable1 > LIFT_BOUNCE_TIMEOUT_MICROS) {
-    initErrorAction(CommandError::NotLifted);
-    return false;
-  } else {
-    return false;
-  }
-}
-
-/**
- * @return `Lowered` if we are good to advance to the next step, `EncounteredLimit` if we never lowered onto anything, `Lowering` otherwise.
- */
-LowerTonearmResult lowerUntilTonearmReleased() {
-  movementStepper.step(VerticalDirection::Down);
-  int currentPosition = analogRead(Pin::VerticalPosition);
-
-  bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
-
-  // Once the tonearm is set down, initiate the next step
-  if(getLiftStatus() == LiftStatus::SetDown && !stalled) {
-    return LowerTonearmResult::Lowered;
-  } 
-  
-  // If the tonearm reaches the bottom limit, then end the routine.
-  // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-  else if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT && !stalled) {
-    return LowerTonearmResult::EncounteredLimit;
-  }
-  else {
-    return LowerTonearmResult::Lowering;
-  }
-}
-
-/**
- * @return `true` if we are good to advance to the next step, `false` otherwise.
- */
-bool lowerBelowRecord() {
-  movementStepper.step(VerticalDirection::Down);
-  int currentPosition = analogRead(Pin::VerticalPosition);
-
-  bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
-
-  // TODO: Pull this value from home calibration. TEST_VERTICAL_LOWER_LIMIT is only for testing.
-  if((actionVariable1 - currentPosition >= TICKS_BELOW_RECORD || currentPosition <= TEST_VERTICAL_LOWER_LIMIT) && !stalled) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/**
- * @return `true` if we are good to advance to the next step, `false` otherwise.
- */
-bool engageAzimuthClutch() {
-  clutchStepper.step(ClutchDirection::Engage);
-
-  if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
-    actionCounter++;
-  }
-
-  if(actionCounter == CLUTCH_ENGAGE_STEPS) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/**
- * @return `true` if we are good to advance to the next step, `false` otherwise.
- */
-bool disengageAzimuthClutch() {
-  clutchStepper.step(ClutchDirection::Disengage);
-
-  if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Disengaged) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-/**
- * This executes once per loop cycle. Every time a step is completed, this will increment the verticalStallCounter one time.
- * When an encoder tick occurs, the verticalStallCounter is reset. If the verticalStallCounter increments VERTICAL_STALL_STEPS before
- * an encoder tick occurs, then we can assume the lift motor has stalled.
- * 
- * @return `true` if we have stalled, `false` otherwise.
- */
-bool checkVerticalStall(VerticalDirection direction, int currentPosition) {
-  verticalStallCounter++;
-
-  // If going down, verticalStallPosition > currentPosition
-  // If going up, currentPosition > verticalStallPosition
-  int greaterThan = direction == VerticalDirection::Down ? verticalStallPosition : currentPosition;
-  int lessThan = direction == VerticalDirection::Down ? currentPosition : verticalStallPosition;
-
-  // Reset the stall counter when an encoder tick (in the proper direction) occurs
-  if(greaterThan > lessThan) {
-    verticalStallPosition = currentPosition;
-    verticalStallCounter = 0;
-  } 
-  
-  // We've stalled.
-  else if(verticalStallCounter >= VERTICAL_STALL_STEPS) {
-    initErrorAction(direction == VerticalDirection::Down ? CommandError::LiftStalledMovingDown : CommandError::LiftStalledMovingUp);
-    return true;
-  }
-
-  return false;
-}
-
-void initErrorAction(CommandError error) {
-  endActionCommand();
-  actionVariable1 = error;
-  actionVariable2 = clockMicros;
-  actionVariable3 = outputShift.getValues();
-  actionCommand = ActionCommand::Error;
-
-  // Action lights get turned off
-  outputShift.setValue(StmShiftPin::LedPauseStatus, false);
-  outputShift.setValue(StmShiftPin::LedPlayStatus, false);
-
-  // Size and speed lights become a binary code, representing the current error
-  outputShift.setValue(StmShiftPin::LedAutoSize, error & 1);
-  outputShift.setValue(StmShiftPin::Led78Rpm, error >> 1 & 1);
-  outputShift.setValue(StmShiftPin::Led45Rpm, error >> 2 & 1);
-  outputShift.setValue(StmShiftPin::Led33Rpm, error >> 3 & 1);
-  outputShift.setValue(StmShiftPin::LedAutoSpeed, error >> 4 & 1);
-  outputShift.setValue(StmShiftPin::Led12In, error >> 5 & 1);
-  outputShift.setValue(StmShiftPin::Led10In, error >> 6 & 1);
-  outputShift.setValue(StmShiftPin::Led7In, error >> 7 & 1);
-}
-
-/**
- * This routine blinks the power LED until the user presses the "Pause" or "Play" commands.
- * 
- * actionVariable1: The error that occurred
- * actionVariable2: The time the error occurred
- */
-void errorActionCommand() {
-  if(clockMicros - actionCounter > ONE_SECOND_MICROS) {
-    actionCounter = clockMicros;
-    outputShift.setValue(StmShiftPin::LedPower, !outputShift.getValue(StmShiftPin::LedPower));
-  }
-
-  if(clockMicros - actionVariable2 > ONE_SECOND_MICROS && (inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease || inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease)) {
-    endErrorAction();
-  }
-}
-
-void endErrorAction() {
-  outputShift.setValues(actionVariable3);
-  endActionCommand();
-}
-
-void endActionCommand() {
-  actionCommand = ActionCommand::NoAction;
-  actionCounter = 0;
-  actionStep = 0;
-  actionVariable1 = 0;
-  actionVariable2 = 0;
-  actionVariable3 = 0;
-  actionVariable4 = 0;
-  actionVariable5 = 0;
-  verticalStallCounter = 0;
-  verticalStallPosition = 0;
-  movementStepper.releaseMotorCurrent();
-}
-
-LiftStatus getLiftStatus() {
-  bool status = digitalRead(Pin::Lift);
-
-  if(status == lastLiftStatus) {
-    liftDebounce = clockMicros;
-    return (LiftStatus) status;
-  } else if(clockMicros - liftDebounce > LIFT_DEBOUNCE_MICROS) {
-    lastLiftStatus = status;
-    return (LiftStatus) status;
-  } else {
-    return (LiftStatus) !status;
-  }
-}
-
-HomeStatus getHomeStatus() {
-  bool status = digitalRead(Pin::HomeMount);
-
-  if(status == lastHomeStatus) {
-    homeDebounce = clockMicros;
-    return (HomeStatus) status;
-  } else if(clockMicros - homeDebounce > HOME_DEBOUNCE_MICROS) {
-    lastHomeStatus = status;
-    return (HomeStatus) status;
-  } else {
-    return (HomeStatus) !status;
   }
 }
 
@@ -878,28 +725,28 @@ void rotateSpeed() {
 
 void updateSpeed(TurntableSpeed newSpeed) {
   // First set all speed LEDs to off
-  outputShift.setValue(StmShiftPin::Led78Rpm, false);
-  outputShift.setValue(StmShiftPin::Led45Rpm, false);
-  outputShift.setValue(StmShiftPin::Led33Rpm, false);
-  outputShift.setValue(StmShiftPin::LedAutoSpeed, false);
+  state.outputShift.setValue(StmShiftPin::Led78Rpm, false);
+  state.outputShift.setValue(StmShiftPin::Led45Rpm, false);
+  state.outputShift.setValue(StmShiftPin::Led33Rpm, false);
+  state.outputShift.setValue(StmShiftPin::LedAutoSpeed, false);
 
   switch(newSpeed) {
     case TurntableSpeed::Rpm33:
       targetSpeed = 33.3333;
-      outputShift.setValue(StmShiftPin::Led33Rpm, true);
+      state.outputShift.setValue(StmShiftPin::Led33Rpm, true);
       break;
     case TurntableSpeed::Rpm45:
       targetSpeed = 45.0;
-      outputShift.setValue(StmShiftPin::Led45Rpm, true);
+      state.outputShift.setValue(StmShiftPin::Led45Rpm, true);
       break;
     case TurntableSpeed::Rpm78:
       targetSpeed = 78.0;
-      outputShift.setValue(StmShiftPin::Led78Rpm, true);
+      state.outputShift.setValue(StmShiftPin::Led78Rpm, true);
       break;
     case TurntableSpeed::RpmAuto:
       // TODO: If playing a record, go based on the last-played size
 
-      outputShift.setValue(StmShiftPin::LedAutoSpeed, true);
+      state.outputShift.setValue(StmShiftPin::LedAutoSpeed, true);
       break;
     case TurntableSpeed::RpmCustom:
       /* do nothing */
@@ -928,23 +775,23 @@ void rotateSize() {
 }
 
 void updateSize(RecordSize newSize) {
-  outputShift.setValue(StmShiftPin::Led7In, false);
-  outputShift.setValue(StmShiftPin::Led10In, false);
-  outputShift.setValue(StmShiftPin::Led12In, false);
-  outputShift.setValue(StmShiftPin::LedAutoSize, false);
+  state.outputShift.setValue(StmShiftPin::Led7In, false);
+  state.outputShift.setValue(StmShiftPin::Led10In, false);
+  state.outputShift.setValue(StmShiftPin::Led12In, false);
+  state.outputShift.setValue(StmShiftPin::LedAutoSize, false);
 
   switch(newSize) {
     case RecordSize::In7:
-      outputShift.setValue(StmShiftPin::Led7In, true);
+      state.outputShift.setValue(StmShiftPin::Led7In, true);
       break;
     case RecordSize::In10:
-      outputShift.setValue(StmShiftPin::Led10In, true);
+      state.outputShift.setValue(StmShiftPin::Led10In, true);
       break;
     case RecordSize::In12:
-      outputShift.setValue(StmShiftPin::Led12In, true);
+      state.outputShift.setValue(StmShiftPin::Led12In, true);
       break;
     case RecordSize::InAuto:
-      outputShift.setValue(StmShiftPin::LedAutoSize, true);
+      state.outputShift.setValue(StmShiftPin::LedAutoSize, true);
       break;
   }
 
@@ -954,7 +801,7 @@ void updateSize(RecordSize newSize) {
 void blinkCustomSpeedIndicator() {
   if(selectedSpeed == TurntableSpeed::RpmCustom && clockMicros - customSpeedIndicatorCounter > ONE_SECOND_MICROS) {
     customSpeedIndicatorCounter = clockMicros;
-    outputShift.setValue(StmShiftPin::LedAutoSpeed, !outputShift.getValue(StmShiftPin::LedAutoSpeed));
+    state.outputShift.setValue(StmShiftPin::LedAutoSpeed, !state.outputShift.getValue(StmShiftPin::LedAutoSpeed));
   }
 }
 
