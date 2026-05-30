@@ -96,8 +96,8 @@ struct CommandResult {
 
 class BaseTurntableCommand {
   public:
-    BaseTurntableCommand(TurntableState state): state(state) {
-      // do nothing!!!
+    BaseTurntableCommand(TurntableState* state) {
+      this->state = state;
     } 
 
     virtual ~BaseTurntableCommand() = default;
@@ -113,7 +113,7 @@ class BaseTurntableCommand {
 
       return result;
     }
-    TurntableState state;
+    TurntableState* state;
 
   private:
     virtual CommandResult doExecute(unsigned long clockMicros) = 0;
@@ -139,11 +139,11 @@ class BaseTurntableCommand {
 
 class BaseTurntableSubCommand {
   public:
-    BaseTurntableSubCommand(TurntableState state): state(state) {
-      // do nothin'
+    BaseTurntableSubCommand(TurntableState* state) {
+      this->state = state;
     }
 
-    TurntableState state;
+    TurntableState* state;
 
     CommandResult execute(unsigned long clockMicros) {
       this->initialize(clockMicros);
@@ -191,7 +191,7 @@ class BaseTurntableSubCommand {
 
 class BaseLiftSubCommand : public BaseTurntableSubCommand {
   public:
-    BaseLiftSubCommand(TurntableState state, Stepper movementMotors, uint8_t speed): BaseTurntableSubCommand(state), movementMotors(movementMotors) {
+    BaseLiftSubCommand(TurntableState* state, Stepper movementMotors, uint8_t speed): BaseTurntableSubCommand(state), movementMotors(movementMotors) {
       this->speed = speed;
     }
 
@@ -234,7 +234,7 @@ class BaseLiftSubCommand : public BaseTurntableSubCommand {
 
 class SubCmdLiftTonearm : public BaseLiftSubCommand {
   public:
-    SubCmdLiftTonearm(TurntableState state, Stepper movementMotors, uint8_t speed) : BaseLiftSubCommand(state, movementMotors, speed) {
+    SubCmdLiftTonearm(TurntableState* state, Stepper movementMotors, uint8_t speed) : BaseLiftSubCommand(state, movementMotors, speed) {
       // Do nothing
     }
 
@@ -262,7 +262,7 @@ class SubCmdLiftTonearm : public BaseLiftSubCommand {
           this->reachedLimit = true;
           this->timeLimitReached = clockMicros;
         } else if(this->reachedLimit) {
-          if(this->state.getLiftStatus(clockMicros) == LiftStatus::Lifted) {
+          if(state->getLiftStatus(clockMicros) == LiftStatus::Lifted) {
             completed = true;
           } else if(clockMicros - this->timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
             error = CommandError::NotLifted;
@@ -280,7 +280,7 @@ class SubCmdLiftTonearm : public BaseLiftSubCommand {
 
 class SubCmdSetDownTonearm : public BaseLiftSubCommand {
   public:
-    SubCmdSetDownTonearm(TurntableState state, Stepper movementMotors, uint8_t speed) : BaseLiftSubCommand(state, movementMotors, speed) {
+    SubCmdSetDownTonearm(TurntableState* state, Stepper movementMotors, uint8_t speed) : BaseLiftSubCommand(state, movementMotors, speed) {
       // Do nothing
     }
 
@@ -306,7 +306,7 @@ class SubCmdSetDownTonearm : public BaseLiftSubCommand {
       } else if(!this->isSetDown) {
         if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT) {
           completed = true;
-        } else if(!this->isSetDown && this->state.getLiftStatus(clockMicros) == LiftStatus::SetDown) {
+        } else if(!this->isSetDown && this->state->getLiftStatus(clockMicros) == LiftStatus::SetDown) {
           this->isSetDown = true;
           this->setDownPosition = currentPosition;
         } else if(this->isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD) {
@@ -324,7 +324,7 @@ class SubCmdSetDownTonearm : public BaseLiftSubCommand {
 
 class CmdPause : public BaseTurntableCommand {
   public:
-    CmdPause(TurntableState state, Stepper movementMotors) : BaseTurntableCommand(state), liftTonearm(state, movementMotors, 10) {
+    CmdPause(TurntableState* state, Stepper movementMotors) : BaseTurntableCommand(state), liftTonearm(state, movementMotors, 10) {
       // Do nothing
     }
 
@@ -333,8 +333,8 @@ class CmdPause : public BaseTurntableCommand {
     }
 
     void doInitialize(unsigned long clockMicros) override {
-      state.outputShift.setValue(StmShiftPin::LedPauseStatus, true);
-      state.outputShift.setValue(StmShiftPin::AudioCutOff, true);
+      state->outputShift.setValue(StmShiftPin::LedPauseStatus, true);
+      state->outputShift.setValue(StmShiftPin::AudioCutOff, true);
     }
 
     CommandResult doExecute(unsigned long clockMicros) override {
@@ -351,7 +351,7 @@ class CmdPause : public BaseTurntableCommand {
 
 class CmdUnPause : public BaseTurntableCommand {
   public:
-    CmdUnPause(TurntableState state, Stepper movementMotors) : BaseTurntableCommand(state), setDownTonearm(state, movementMotors, 3) {
+    CmdUnPause(TurntableState* state, Stepper movementMotors) : BaseTurntableCommand(state), setDownTonearm(state, movementMotors, 3) {
       // Do nothing
     }
 
@@ -368,8 +368,8 @@ class CmdUnPause : public BaseTurntableCommand {
     }
 
     void doUninitialize(unsigned long clockMicros) override {
-      state.outputShift.setValue(StmShiftPin::LedPauseStatus, false);
-      state.outputShift.setValue(StmShiftPin::AudioCutOff, false);
+      state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
+      state->outputShift.setValue(StmShiftPin::AudioCutOff, false);
     }
 
   private:
@@ -416,7 +416,7 @@ unsigned long customSpeedIndicatorCounter = 0;
 // Size variables
 RecordSize selectedSize = RecordSize::InAuto;
 
-TurntableState state;
+TurntableState* state;
 
 std::unique_ptr<BaseTurntableCommand> currentCommand;
 
@@ -461,7 +461,7 @@ void setup() {
   // Various Status
   pinMode(Pin::PowerOnStatusIn, INPUT);
 
-  state = TurntableState();
+  state = new TurntableState();
 
   updateSpeed(selectedSpeed);
   updateSize(selectedSize);
@@ -485,7 +485,7 @@ void loop() {
 
   // Output statuses
   blinkCustomSpeedIndicator();
-  state.monitor(clockMicros);
+  state->monitor(clockMicros);
 }
 
 void monitorSerialInputs() {
@@ -594,11 +594,11 @@ void readSerial(Stream& stream) {
           break;
         }
         case ExternalCommand::GetLiftStatus: {
-          stream.write(state.getLiftStatus(clockMicros));
+          stream.write(state->getLiftStatus(clockMicros));
           break;
         }
         case ExternalCommand::GetHomeStatus: {
-          stream.write(state.getHomeStatus(clockMicros));
+          stream.write(state->getHomeStatus(clockMicros));
           break;
         }
         case ExternalCommand::GetCurrentCommand: {
@@ -635,7 +635,7 @@ void readSerial(Stream& stream) {
         }
         case ExternalCommand::GetSpeedTarget: {
           float speed = -1;
-          if(state.getHomeStatus(clockMicros) == HomeStatus::NotHomed) {
+          if(state->getHomeStatus(clockMicros) == HomeStatus::NotHomed) {
             speed = targetSpeed;
           }
           
@@ -660,7 +660,7 @@ void monitorCommandInput() {
   if(currentCommand == nullptr) {
 
     if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
-      if(state.isPaused() || state.getLiftStatus(clockMicros) == LiftStatus::Lifted) {
+      if(state->isPaused() || state->getLiftStatus(clockMicros) == LiftStatus::Lifted) {
         currentCommand = std::make_unique<CmdUnPause>(state, movementStepper);
       } else {
         currentCommand = std::make_unique<CmdPause>(state, movementStepper);
@@ -725,28 +725,28 @@ void rotateSpeed() {
 
 void updateSpeed(TurntableSpeed newSpeed) {
   // First set all speed LEDs to off
-  state.outputShift.setValue(StmShiftPin::Led78Rpm, false);
-  state.outputShift.setValue(StmShiftPin::Led45Rpm, false);
-  state.outputShift.setValue(StmShiftPin::Led33Rpm, false);
-  state.outputShift.setValue(StmShiftPin::LedAutoSpeed, false);
+  state->outputShift.setValue(StmShiftPin::Led78Rpm, false);
+  state->outputShift.setValue(StmShiftPin::Led45Rpm, false);
+  state->outputShift.setValue(StmShiftPin::Led33Rpm, false);
+  state->outputShift.setValue(StmShiftPin::LedAutoSpeed, false);
 
   switch(newSpeed) {
     case TurntableSpeed::Rpm33:
       targetSpeed = 33.3333;
-      state.outputShift.setValue(StmShiftPin::Led33Rpm, true);
+      state->outputShift.setValue(StmShiftPin::Led33Rpm, true);
       break;
     case TurntableSpeed::Rpm45:
       targetSpeed = 45.0;
-      state.outputShift.setValue(StmShiftPin::Led45Rpm, true);
+      state->outputShift.setValue(StmShiftPin::Led45Rpm, true);
       break;
     case TurntableSpeed::Rpm78:
       targetSpeed = 78.0;
-      state.outputShift.setValue(StmShiftPin::Led78Rpm, true);
+      state->outputShift.setValue(StmShiftPin::Led78Rpm, true);
       break;
     case TurntableSpeed::RpmAuto:
       // TODO: If playing a record, go based on the last-played size
 
-      state.outputShift.setValue(StmShiftPin::LedAutoSpeed, true);
+      state->outputShift.setValue(StmShiftPin::LedAutoSpeed, true);
       break;
     case TurntableSpeed::RpmCustom:
       /* do nothing */
@@ -775,23 +775,23 @@ void rotateSize() {
 }
 
 void updateSize(RecordSize newSize) {
-  state.outputShift.setValue(StmShiftPin::Led7In, false);
-  state.outputShift.setValue(StmShiftPin::Led10In, false);
-  state.outputShift.setValue(StmShiftPin::Led12In, false);
-  state.outputShift.setValue(StmShiftPin::LedAutoSize, false);
+  state->outputShift.setValue(StmShiftPin::Led7In, false);
+  state->outputShift.setValue(StmShiftPin::Led10In, false);
+  state->outputShift.setValue(StmShiftPin::Led12In, false);
+  state->outputShift.setValue(StmShiftPin::LedAutoSize, false);
 
   switch(newSize) {
     case RecordSize::In7:
-      state.outputShift.setValue(StmShiftPin::Led7In, true);
+      state->outputShift.setValue(StmShiftPin::Led7In, true);
       break;
     case RecordSize::In10:
-      state.outputShift.setValue(StmShiftPin::Led10In, true);
+      state->outputShift.setValue(StmShiftPin::Led10In, true);
       break;
     case RecordSize::In12:
-      state.outputShift.setValue(StmShiftPin::Led12In, true);
+      state->outputShift.setValue(StmShiftPin::Led12In, true);
       break;
     case RecordSize::InAuto:
-      state.outputShift.setValue(StmShiftPin::LedAutoSize, true);
+      state->outputShift.setValue(StmShiftPin::LedAutoSize, true);
       break;
   }
 
@@ -801,7 +801,7 @@ void updateSize(RecordSize newSize) {
 void blinkCustomSpeedIndicator() {
   if(selectedSpeed == TurntableSpeed::RpmCustom && clockMicros - customSpeedIndicatorCounter > ONE_SECOND_MICROS) {
     customSpeedIndicatorCounter = clockMicros;
-    state.outputShift.setValue(StmShiftPin::LedAutoSpeed, !state.outputShift.getValue(StmShiftPin::LedAutoSpeed));
+    state->outputShift.setValue(StmShiftPin::LedAutoSpeed, !state->outputShift.getValue(StmShiftPin::LedAutoSpeed));
   }
 }
 
