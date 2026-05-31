@@ -5,11 +5,12 @@
 #include <LiftStatus.h>
 #include <HomeStatus.h>
 #include <memory>
-#include <BaseTurntableCommand.h>
+//#include <BaseTurntableCommand.h>
 #include <StmShift.h>
 
 #ifndef TurntableState_h
 #define TurntableState_h
+class BaseTurntableCommand;
 
 class TurntableState {
     public:

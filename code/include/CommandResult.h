@@ -1,11 +1,14 @@
-#include <CommandError.h>
-
 #ifndef COMMANDRESULT_H
 #define COMMANDRESULT_H
 
-struct CommandResult {
-  bool complete;
-  CommandError error;
+enum CommandResult : uint8_t {
+    Running = 0,
+    Success = 1,
+    LiftStalledMovingUp = 2,
+    LiftStalledMovingDown = 3,
+
+    // The tonearm "pause" routine finished, though the tonearm's status is not lifted.
+    NotLifted = 4
 };
 
 #endif

@@ -1,6 +1,5 @@
-#include "TurntableState.h"
+#include <TurntableState.h>
 #include <Arduino.h>
-#include <CommandError.h>
 #include <CommandResult.h>
 #include <Constants.h>
 #include <HomeStatus.h>
@@ -56,10 +55,10 @@ void TurntableState::executeCommand() {
     if(currentCommand != nullptr) {
         CommandResult result = currentCommand->execute();
 
-        if(result.error != CommandError::NoError) {
+        if(result > CommandResult::Running) {
             currentCommand = nullptr;
             // todo : initialize error command
-        } else if(result.complete) {
+        } else if(result == CommandResult::Success) {
             currentCommand = nullptr;
         }
     }

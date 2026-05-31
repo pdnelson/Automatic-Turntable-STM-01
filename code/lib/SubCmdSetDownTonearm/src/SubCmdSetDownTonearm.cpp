@@ -1,10 +1,9 @@
-#include "SubCmdSetDownTonearm.h"
+#include <SubCmdSetDownTonearm.h>
 #include <Arduino.h>
 #include <VerticalDirection.h>
 #include <Pin.h>
 #include <LiftStatus.h>
 #include <CommandResult.h>
-#include <CommandError.h>
 #include <BaseLiftSubCommand.h>
 #include <Constants.h>
 
@@ -22,23 +21,20 @@ CommandResult SubCmdSetDownTonearm::doExecute() {
 
     bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
 
-    bool completed = false;
-    CommandError error = CommandError::NoError;
+    CommandResult result = CommandResult::Running;
 
     if(stalled) {
-        error = CommandError::LiftStalledMovingUp;
+        result = CommandResult::LiftStalledMovingUp;
     } else {
-        if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT) {
-            completed = true;
+        if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT || (this->isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD)) {
+            result = CommandResult::Success;
         } else if(!this->isSetDown && this->state->getLiftStatus() == LiftStatus::SetDown) {
             this->isSetDown = true;
             this->setDownPosition = currentPosition;
-        } else if(this->isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD) {
-            completed = true;
         }
     }
 
-    return { completed, error };
+    return result;
 }
 
 void SubCmdSetDownTonearm::doUninitialize() {

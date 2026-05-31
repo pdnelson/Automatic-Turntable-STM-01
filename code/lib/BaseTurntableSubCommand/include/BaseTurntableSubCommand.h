@@ -1,6 +1,5 @@
 #include <TurntableState.h>
 #include <CommandResult.h>
-#include <CommandError.h>
 
 #ifndef BaseTurntableSubCommand_h
 #define BaseTurntableSubCommand_h
@@ -15,7 +14,7 @@ class BaseTurntableSubCommand {
         CommandResult execute();
 
     private:
-        CommandResult result = { false, CommandError::NoError };
+        CommandResult result = CommandResult::Running;
         virtual CommandResult doExecute() = 0;
         virtual void doInitialize() = 0;
         virtual void doUninitialize() = 0;

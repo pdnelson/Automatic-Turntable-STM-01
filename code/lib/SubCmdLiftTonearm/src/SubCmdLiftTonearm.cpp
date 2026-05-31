@@ -1,10 +1,9 @@
-#include "SubCmdLiftTonearm.h"
+#include <SubCmdLiftTonearm.h>
 #include <Arduino.h>
 #include <VerticalDirection.h>
 #include <Pin.h>
 #include <LiftStatus.h>
 #include <CommandResult.h>
-#include <CommandError.h>
 #include <BaseLiftSubCommand.h>
 #include <Constants.h>
 
@@ -22,25 +21,24 @@ CommandResult SubCmdLiftTonearm::doExecute() {
 
     bool stalled = checkVerticalStall(VerticalDirection::Up, currentPosition);
 
-    bool completed = false;
-    CommandError error = CommandError::NoError;
+    CommandResult result = CommandResult::Running;
 
     if(stalled) {
-        error = CommandError::LiftStalledMovingUp;
+        result = CommandResult::LiftStalledMovingUp;
     } else {
         if(!this->reachedLimit && currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
             this->reachedLimit = true;
             this->timeLimitReached = state->clockMicros;
         } else if(this->reachedLimit) {
             if(state->getLiftStatus() == LiftStatus::Lifted) {
-                completed = true;
+                result = CommandResult::Success;
             } else if(state->clockMicros - this->timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
-                error = CommandError::NotLifted;
+                result = CommandResult::NotLifted;
             }
         }
     }
 
-    return { completed, error }; 
+    return result; 
 }
 
 void SubCmdLiftTonearm::doUninitialize() {
