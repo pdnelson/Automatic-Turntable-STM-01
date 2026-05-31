@@ -6,6 +6,7 @@
 #include <CommandResult.h>
 #include <BaseLiftSubCommand.h>
 #include <Constants.h>
+#include <TurntableState.h>
 
 SubCmdSetDownTonearm::SubCmdSetDownTonearm(TurntableState* state, uint8_t speed) : BaseLiftSubCommand(state, speed) {
     // Do nothing.

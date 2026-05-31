@@ -4,6 +4,7 @@
 #include <Constants.h>
 #include <Pin.h>
 #include <MovementAxis.h>
+#include <TurntableState.h>
 
 BaseLiftSubCommand::BaseLiftSubCommand(TurntableState* state, uint8_t speed): BaseTurntableSubCommand(state) {
     this->speed = speed;

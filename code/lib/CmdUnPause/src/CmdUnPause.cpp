@@ -4,6 +4,7 @@
 #include <ActionCommand.h>
 #include <BaseTurntableCommand.h>
 #include <SubCmdSetDownTonearm.h>
+#include <TurntableState.h>
 
 CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state), setDownTonearm(state, 3) {
     // Do nothing.
