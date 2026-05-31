@@ -1,6 +1,5 @@
 #include <BaseTurntableSubCommand.h>
 #include <CommandResult.h>
-#include <TurntableState.h>
 
 BaseTurntableSubCommand::BaseTurntableSubCommand(TurntableState* state) {
     this->state = state;

@@ -1,4 +1,3 @@
-#include <memory>
 #include <Arduino.h>
 #include <Pin.h>
 #include <Constants.h>
