@@ -1,34 +1,35 @@
 #include <StmShift.h>
-#include <Wire.h> 
+#include <Wire.h>
 #include "StmShiftConstants.h"
 
-StmShift::StmShift() {
+StmShift::StmShift(uint8_t sda, uint8_t scl) {
     this->currentValue = 0x0000;
     this->nextValue = 0x0000;
-}
+    
+    pinMode(sda, OUTPUT);
+    pinMode(scl, OUTPUT);
 
-void StmShift::initialize() {
-  Wire2.begin();
+    Wire2.begin();
 
-  Wire2.beginTransmission(START_ADDR);
-  Wire2.write(BANK_A_MODE);
-  Wire2.write(OUTPUT_MODE);
-  Wire2.endTransmission();
+    Wire2.beginTransmission(START_ADDR);
+    Wire2.write(BANK_A_MODE);
+    Wire2.write(OUTPUT_MODE);
+    Wire2.endTransmission();
 
-  Wire2.beginTransmission(START_ADDR);
-  Wire2.write(BANK_B_MODE);
-  Wire2.write(OUTPUT_MODE);
-  Wire2.endTransmission();
+    Wire2.beginTransmission(START_ADDR);
+    Wire2.write(BANK_B_MODE);
+    Wire2.write(OUTPUT_MODE);
+    Wire2.endTransmission();
 
-  Wire2.beginTransmission(START_ADDR);
-  Wire2.write(BANK_A_WRITE);
-  Wire2.write(CLEAR_BANK);
-  Wire2.endTransmission();
+    Wire2.beginTransmission(START_ADDR);
+    Wire2.write(BANK_A_WRITE);
+    Wire2.write(CLEAR_BANK);
+    Wire2.endTransmission();
 
-  Wire2.beginTransmission(START_ADDR);
-  Wire2.write(BANK_B_WRITE);
-  Wire2.write(CLEAR_BANK);
-  Wire2.endTransmission();
+    Wire2.beginTransmission(START_ADDR);
+    Wire2.write(BANK_B_WRITE);
+    Wire2.write(CLEAR_BANK);
+    Wire2.endTransmission();
 }
 
 void StmShift::monitor() {

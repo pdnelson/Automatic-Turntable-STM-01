@@ -46,20 +46,25 @@ void InputMux::initializeBaseValues(uint8_t muxA, uint8_t muxB, uint8_t muxC, ui
     this->propagationDelay = propagationDelayMicros;
     this->holdInterval = holdIntervalMs * 1000; // Convert milliseconds value to microseconds
     this->debounceInterval = debounceIntervalMs * 1000; // Convert milliseconds value to microseconds
+    pinMode(this->muxOutput, INPUT);
 
     this->muxA = muxA;
+    pinMode(this->muxA, OUTPUT);
     digitalWrite(this->muxA, LOW);
 
     if(this->selectorCount >= 2) {
         this->muxB = muxB;
+        pinMode(this->muxB, OUTPUT);
         digitalWrite(this->muxB, LOW);
 
         if(this->selectorCount >= 3) {
             this->muxC = muxC;
+            pinMode(this->muxC, OUTPUT);
             digitalWrite(this->muxC, LOW);
 
             if(this->selectorCount >= 4) {
                 this->muxD = muxD;
+                pinMode(this->muxD, OUTPUT);
                 digitalWrite(this->muxD, LOW);
             }
         }

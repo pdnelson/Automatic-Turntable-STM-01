@@ -20,7 +20,7 @@
         /**
          * Constructor to instantiate an instance of this class.
          */
-        StmShift();
+        StmShift(uint8_t sda, uint8_t scl);
 
         /**
          * Initializes base values. Call this in your `setup` routine.
