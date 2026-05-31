@@ -1,25 +1,14 @@
 #include <memory>
 #include <Arduino.h>
 #include <Pin.h>
-#include <MuxPin.h>
-#include <InputMux.h>
-#include <ClutchDirection.h>
-#include <ClutchStatus.h>
 #include <Constants.h>
-#include <Stepper.h>
 #include <LiftStatus.h>
 #include <HomeStatus.h>
-#include <VerticalDirection.h>
-#include <MovementAxis.h>
-#include <StmShift.h>
-#include <StmShiftPin.h>
 #include <ExternalCommand.h>
 #include <TurntableSpeed.h>
 #include <RecordSize.h>
-#include <AzimuthDirection.h>
 #include <Prototypes.h>
-#include <state/TurntableState.h>
-#include <command/pause/CmdPause.h>
+#include <TurntableState.h>
 
 TurntableState* state;
 
@@ -93,7 +82,7 @@ void readSerial(Stream& stream) {
           stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);
           break;
         case ExternalCommand::ActionPauseUnPause: {
-          state->currentCommand = std::make_unique<CmdPause>(state);
+          //state->currentCommand = std::make_unique<CmdPause>(state);
           break;
         }
         case ExternalCommand::ActionProtoPlay: {

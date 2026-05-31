@@ -1,0 +1,22 @@
+#include <TurntableState.h>
+#include <CommandResult.h>
+#include <ActionCommand.h>
+#include <BaseTurntableCommand.h>
+#include <SubCmdSetDownTonearm.h>
+
+#ifndef CmdUnPause_h
+#define CmdUnPause_h
+
+class CmdUnPause : public BaseTurntableCommand {
+    public:
+        CmdUnPause(TurntableState* state);
+        ActionCommand getCommandId() override;
+        void doInitialize() override;
+        CommandResult doExecute() override;
+        void doUninitialize() override;
+
+    private:
+        SubCmdSetDownTonearm setDownTonearm;
+};
+
+#endif
