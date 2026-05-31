@@ -1,7 +1,6 @@
 #include <BaseTurntableCommand.h>
 #include <ActionCommand.h>
 #include <CommandResult.h>
-#include <TurntableState.h>
 
 BaseTurntableCommand::BaseTurntableCommand(TurntableState* state) {
     this->state = state;
@@ -12,7 +11,7 @@ CommandResult BaseTurntableCommand::execute() {
 
     CommandResult result = doExecute();
 
-    if(result.complete || result.error != CommandError::NoError) {
+    if(result != CommandResult::Running) {
         uninitialize();
     }
 

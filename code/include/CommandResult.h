@@ -1,7 +1,7 @@
 #ifndef COMMANDRESULT_H
 #define COMMANDRESULT_H
 
-enum CommandResult : uint8_t {
+enum CommandResult {
     Running = 0,
     Success = 1,
     LiftStalledMovingUp = 2,

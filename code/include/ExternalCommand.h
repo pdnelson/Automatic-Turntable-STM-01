@@ -1,7 +1,7 @@
 #ifndef EXTERNALCOMMAND_H
 #define EXTERNALCOMMAND_H
 
-enum ExternalCommand : uint8_t {
+enum ExternalCommand {
     ConnectionTest = 0,
 
     // Action commands (1-30)

@@ -1,7 +1,7 @@
 #ifndef PIN_H
 #define PIN_H
 
-enum Pin : uint8_t {
+enum Pin {
     Serial1Rx = 0,
     Serial1Tx = 1,
     InputMuxA = 2,

@@ -1,9 +1,10 @@
 #include <ActionCommand.h>
 #include <CommandResult.h>
-#include <TurntableState.h>
 
 #ifndef BaseTurntableCommand_h
 #define BaseTurntableCommand_h
+
+class TurntableState;
 
 class BaseTurntableCommand {
     public:

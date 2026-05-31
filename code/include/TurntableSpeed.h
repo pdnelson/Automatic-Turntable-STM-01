@@ -1,7 +1,7 @@
 #ifndef TURNTABLESPEED_H
 #define TURNTABLESPEED_H
 
-enum TurntableSpeed : byte {
+enum TurntableSpeed {
     Rpm33 = 0,
     Rpm45 = 1,
     Rpm78 = 2,

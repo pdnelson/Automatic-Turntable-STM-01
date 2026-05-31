@@ -1,9 +1,9 @@
-#include <TurntableState.h>
 #include <CommandResult.h>
 #include <BaseLiftSubCommand.h>
 
 #ifndef SubCmdLiftTonearm_h
 #define SubCmdLiftTonearm_h
+class TurntableState;
 
 class SubCmdLiftTonearm : public BaseLiftSubCommand {
     public:

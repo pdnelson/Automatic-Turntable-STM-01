@@ -1,7 +1,7 @@
 #ifndef CLUTCHDIRECTION_H
 #define CLUTCHDIRECTION_H
 
-enum ClutchDirection : int8_t {
+enum ClutchDirection {
     Engage = -1,
     Disengage = 1
 };

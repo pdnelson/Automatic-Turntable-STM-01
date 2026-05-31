@@ -1,8 +1,8 @@
-#include <TurntableState.h>
 #include <CommandResult.h>
 
 #ifndef BaseTurntableSubCommand_h
 #define BaseTurntableSubCommand_h
+class TurntableState;
 
 class BaseTurntableSubCommand {
     public:

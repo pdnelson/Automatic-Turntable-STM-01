@@ -1,9 +1,9 @@
-#include <TurntableState.h>
 #include <VerticalDirection.h>
 #include <BaseTurntableSubCommand.h>
 
 #ifndef BaseLiftSubCommand_h
 #define BaseLiftSubCommand_h
+class TurntableState;
 
 class BaseLiftSubCommand : public BaseTurntableSubCommand {
     public:
