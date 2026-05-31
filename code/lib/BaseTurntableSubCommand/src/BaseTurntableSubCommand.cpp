@@ -6,34 +6,40 @@ BaseTurntableSubCommand::BaseTurntableSubCommand(TurntableState* state) {
 }
 
 CommandResult BaseTurntableSubCommand::execute() {
-    this->initialize();
+    initialize();
 
-    if(this->result.error != CommandError::NoError) {
-        this->uninitialize();
-        return this->result;
-    } else if(this->result.complete) {
-        this->uninitialize();
-        if(this->nextSubCommand == nullptr) {
-            return { true, CommandError::NoError };
-        } else {
-            return this->nextSubCommand->execute();
+    // The command is finished
+    if(result != CommandResult::Running) {
+        uninitialize();
+    
+        // The command failed, or succeeded without a next command
+        if(result > CommandResult::Success || nextSubCommand == nullptr) {
+            return result;
         }
-    } else {
-        this->result = doExecute();
-        return { false, this->result.error };
+        
+        // The command succeeded, and there is another to execute
+        else {
+            return nextSubCommand->execute();
+        }
+    }
+    
+    // The command is still running
+    else {
+        result = doExecute();
+        return CommandResult::Running;
     }
 }
 
 void BaseTurntableSubCommand::initialize() {
-    if(!this->initialized) {
-        this->doInitialize();
-        this->initialized = true;
+    if(!initialized) {
+        doInitialize();
+        initialized = true;
     }
 }
 
 void BaseTurntableSubCommand::uninitialize() {
-    if(!this->uninitialized) {
-        this->doUninitialize();
-        this->uninitialized = true;
+    if(!uninitialized) {
+        doUninitialize();
+        uninitialized = true;
     }
 }

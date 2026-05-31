@@ -1,4 +1,5 @@
 #include <CommandResult.h>
+#include <memory>
 
 #ifndef BaseTurntableSubCommand_h
 #define BaseTurntableSubCommand_h
