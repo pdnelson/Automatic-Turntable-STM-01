@@ -3,8 +3,8 @@
 #include "StmShiftConstants.h"
 
 StmShift::StmShift(uint8_t sda, uint8_t scl) {
-    this->currentValue = 0x0000;
-    this->nextValue = 0x0000;
+    currentValue = 0x0000;
+    nextValue = 0x0000;
     
     pinMode(sda, OUTPUT);
     pinMode(scl, OUTPUT);
@@ -34,10 +34,10 @@ StmShift::StmShift(uint8_t sda, uint8_t scl) {
 
 void StmShift::monitor() {
   // If what's currently on the shift doesn't match what's "next," then update it.
-  if(this->nextValue != this->currentValue) {
+  if(nextValue != currentValue) {
 
-    uint8_t bankACurrValue = this->currentValue & 0x00FF;
-    uint8_t bankANextValue = this->nextValue & 0x00FF;
+    uint8_t bankACurrValue = currentValue & 0x00FF;
+    uint8_t bankANextValue = nextValue & 0x00FF;
 
     // Rewrite bank A if it has changed at all
     if(bankACurrValue != bankANextValue) {
@@ -47,8 +47,8 @@ void StmShift::monitor() {
       Wire2.endTransmission();
     }
 
-    uint8_t bankBCurrValue = (this->currentValue & 0xFF00) >> 8;
-    uint8_t bankBNextValue = (this->nextValue & 0xFF00) >> 8;
+    uint8_t bankBCurrValue = (currentValue & 0xFF00) >> 8;
+    uint8_t bankBNextValue = (nextValue & 0xFF00) >> 8;
 
     // Rewrite bank B if it has changed at all
     if(bankBCurrValue != bankBNextValue) {
@@ -58,24 +58,24 @@ void StmShift::monitor() {
       Wire2.endTransmission();
     }
 
-    this->currentValue = this->nextValue;
+    currentValue = nextValue;
   }
 }
 
 void StmShift::setValue(StmShiftPin pin, bool value) {
-  if(this->getValue(pin) != value) {
-    this->nextValue ^= 1 << pin;
+  if(getValue(pin) != value) {
+    nextValue ^= 1 << pin;
   }
 }
 
 bool StmShift::getValue(StmShiftPin pin) {
-  return (this->nextValue >> pin) & 1;
+  return (nextValue >> pin) & 1;
 }
 
 void StmShift::setValues(uint16_t newValues) {
-  this->nextValue = newValues;
+  nextValue = newValues;
 }
 
 uint16_t StmShift::getValues() {
-  return this->nextValue;
+  return nextValue;
 }

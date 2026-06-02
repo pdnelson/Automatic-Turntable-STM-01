@@ -27,13 +27,13 @@ CommandResult SubCmdLiftTonearm::doExecute() {
     if(stalled) {
         result = CommandResult::LiftStalledMovingUp;
     } else {
-        if(!this->reachedLimit && currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
-            this->reachedLimit = true;
-            this->timeLimitReached = state->clockMicros;
-        } else if(this->reachedLimit) {
+        if(!reachedLimit && currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
+            reachedLimit = true;
+            timeLimitReached = state->clockMicros;
+        } else if(reachedLimit) {
             if(state->getLiftStatus() == LiftStatus::Lifted) {
                 result = CommandResult::Success;
-            } else if(state->clockMicros - this->timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
+            } else if(state->clockMicros - timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
                 result = CommandResult::NotLifted;
             }
         }

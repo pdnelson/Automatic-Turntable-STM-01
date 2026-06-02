@@ -88,11 +88,11 @@ void TurntableState::rotateSpeed() {
 LiftStatus TurntableState::getLiftStatus() {
     bool status = digitalRead(Pin::Lift);
 
-    if(status == this->lastLiftStatus) {
-        this->liftDebounce = clockMicros;
+    if(status == lastLiftStatus) {
+        liftDebounce = clockMicros;
         return (LiftStatus) status;
-    } else if(clockMicros - this->liftDebounce > LIFT_DEBOUNCE_MICROS) {
-        this->lastLiftStatus = status;
+    } else if(clockMicros - liftDebounce > LIFT_DEBOUNCE_MICROS) {
+        lastLiftStatus = status;
         return (LiftStatus) status;
     } else {
         return (LiftStatus) !status;
@@ -102,11 +102,11 @@ LiftStatus TurntableState::getLiftStatus() {
 HomeStatus TurntableState::getHomeStatus() {
     bool status = digitalRead(Pin::HomeMount);
 
-    if(status == this->lastHomeStatus) {
-        this->homeDebounce = clockMicros;
+    if(status == lastHomeStatus) {
+        homeDebounce = clockMicros;
         return (HomeStatus) status;
-    } else if(clockMicros - this->homeDebounce > HOME_DEBOUNCE_MICROS) {
-        this->lastHomeStatus = status;
+    } else if(clockMicros - homeDebounce > HOME_DEBOUNCE_MICROS) {
+        lastHomeStatus = status;
         return (HomeStatus) status;
     } else {
         return (HomeStatus) !status;

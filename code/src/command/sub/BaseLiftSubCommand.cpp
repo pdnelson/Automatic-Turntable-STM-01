@@ -11,21 +11,21 @@ BaseLiftSubCommand::BaseLiftSubCommand(TurntableState* state, uint8_t speed): Ba
 }
 
 bool BaseLiftSubCommand::checkVerticalStall(VerticalDirection direction, int currentPosition) {
-    this->verticalStallCounter++;
+    verticalStallCounter++;
 
     // If going down, verticalStallPosition > currentPosition
     // If going up, currentPosition > verticalStallPosition
-    int greaterThan = direction == VerticalDirection::Down ? this->verticalStallPosition : currentPosition;
-    int lessThan = direction == VerticalDirection::Down ? currentPosition : this->verticalStallPosition;
+    int greaterThan = direction == VerticalDirection::Down ? verticalStallPosition : currentPosition;
+    int lessThan = direction == VerticalDirection::Down ? currentPosition : verticalStallPosition;
 
     // Reset the stall counter when an encoder tick (in the proper direction) occurs
     if(greaterThan > lessThan) {
-        this->verticalStallPosition = currentPosition;
-        this->verticalStallCounter = 0;
+        verticalStallPosition = currentPosition;
+        verticalStallCounter = 0;
     } 
     
     // We've stalled.
-    else if(this->verticalStallCounter >= VERTICAL_STALL_STEPS) {
+    else if(verticalStallCounter >= VERTICAL_STALL_STEPS) {
         return true;
     }
 
@@ -34,6 +34,6 @@ bool BaseLiftSubCommand::checkVerticalStall(VerticalDirection direction, int cur
 
 void BaseLiftSubCommand::baseInitialize() {
     digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-    this->verticalStallPosition = analogRead(Pin::VerticalPosition);
-    state->movementStepper.setSpeed(this->speed);
+    verticalStallPosition = analogRead(Pin::VerticalPosition);
+    state->movementStepper.setSpeed(speed);
 }

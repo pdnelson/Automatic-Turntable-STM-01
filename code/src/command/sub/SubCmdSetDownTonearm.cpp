@@ -27,11 +27,11 @@ CommandResult SubCmdSetDownTonearm::doExecute() {
     if(stalled) {
         result = CommandResult::LiftStalledMovingUp;
     } else {
-        if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT || (this->isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD)) {
+        if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT || (isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD)) {
             result = CommandResult::Success;
-        } else if(!this->isSetDown && this->state->getLiftStatus() == LiftStatus::SetDown) {
-            this->isSetDown = true;
-            this->setDownPosition = currentPosition;
+        } else if(!isSetDown && state->getLiftStatus() == LiftStatus::SetDown) {
+            isSetDown = true;
+            setDownPosition = currentPosition;
         }
     }
 

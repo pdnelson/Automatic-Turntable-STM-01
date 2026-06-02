@@ -17,15 +17,15 @@ CommandResult BaseTurntableCommand::execute() {
 }
 
 void BaseTurntableCommand::initialize() {
-    if(!this->initialized) {
-        this->doInitialize();
-        this->initialized = true;
+    if(!initialized) {
+        doInitialize();
+        initialized = true;
     }
 }
 
 void BaseTurntableCommand::uninitialize() {
-    if(!this->uninitialized) {
-        this->doUninitialize();
-        this->uninitialized = true;
+    if(!uninitialized) {
+        doUninitialize();
+        uninitialized = true;
     }
 }
