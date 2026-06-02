@@ -45,6 +45,7 @@ void TurntableState::monitor() {
     advanceCounts();
     // todo: monitor serial input
     monitorCommandInput();
+    executeCommand();
 
     // Output statuses
     blinkCustomSpeedIndicator();

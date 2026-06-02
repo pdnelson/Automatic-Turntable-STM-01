@@ -41,6 +41,7 @@ void setup() {
 
 void loop() {
   state->monitor();
+  //monitorSerialInputs();
 }
 
 void monitorSerialInputs() {
@@ -158,8 +159,9 @@ void readSerial(Stream& stream) {
         }
         case ExternalCommand::GetCurrentCommand: {
           ActionCommand current = ActionCommand::NoAction;
+          
           if(state->currentCommand != nullptr) {
-            state->currentCommand->getCommandId();
+            current = state->currentCommand->getCommandId();
           }
           
           stream.write(current);
