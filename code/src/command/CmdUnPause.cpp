@@ -8,7 +8,7 @@
 #include <Constants.h>
 
 CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state) {
-    subcommands = std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED);
+    subCommands = std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED);
 }
 
 ActionCommand CmdUnPause::getCommandId() {

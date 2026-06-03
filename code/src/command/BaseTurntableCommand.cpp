@@ -7,7 +7,7 @@ BaseTurntableCommand::BaseTurntableCommand(TurntableState* state) {
 CommandResult BaseTurntableCommand::execute() {
     initialize();
 
-    CommandResult result = subcommands->execute();
+    CommandResult result = subCommands->execute();
 
     if(result != CommandResult::Running) {
         uninitialize();

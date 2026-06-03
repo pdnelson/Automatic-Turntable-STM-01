@@ -8,7 +8,10 @@ enum CommandResult {
     LiftStalledMovingDown = 3,
 
     // The tonearm "pause" routine finished, though the tonearm's status is not lifted.
-    NotLifted = 4
+    NotLifted = 4,
+
+    ClutchFailedToEngage = 5,
+    ClutchFailedToDisengage = 6
 };
 
 #endif

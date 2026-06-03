@@ -9,7 +9,7 @@
 #include <memory>
 
 CmdPause::CmdPause(TurntableState* state) : BaseTurntableCommand(state) {
-    subcommands = std::make_unique<SubCmdLiftTonearm>(state, LIFT_UP_SPEED);
+    subCommands = std::make_unique<SubCmdLiftTonearm>(state, LIFT_UP_SPEED);
 }
 
 ActionCommand CmdPause::getCommandId() {

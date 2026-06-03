@@ -23,6 +23,7 @@ TurntableState::TurntableState() :
     clutchStepper(STEPS_PER_REVOLUTION, Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4)
 {
     pinMode(Pin::VerticalPosition, INPUT);
+    pinMode(Pin::HorizontalClutchSwitch, INPUT_PULLUP);
 
     // Lift
     pinMode(Pin::Lift, INPUT_PULLUP);
@@ -207,7 +208,11 @@ void TurntableState::monitorCommandInput() {
         } 
         
         else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-            currentCommand = std::make_unique<CmdProtoPlay>(this);
+            if(getHomeStatus() == HomeStatus::Homed) {
+                currentCommand = std::make_unique<CmdProtoPlay>(this, 140);
+            } else {
+                currentCommand = std::make_unique<CmdProtoPlay>(this, -350);
+            }
         }
 
         else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {
