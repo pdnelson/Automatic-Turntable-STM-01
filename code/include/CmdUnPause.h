@@ -12,11 +12,7 @@ class CmdUnPause : public BaseTurntableCommand {
         CmdUnPause(TurntableState* state);
         ActionCommand getCommandId() override;
         void doInitialize() override;
-        CommandResult doExecute() override;
         void doUninitialize() override;
-
-    private:
-        SubCmdSetDownTonearm setDownTonearm;
 };
 
 #endif

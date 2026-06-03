@@ -5,9 +5,11 @@
 #include <BaseTurntableCommand.h>
 #include <SubCmdLiftTonearm.h>
 #include <TurntableState.h>
+#include <Constants.h>
+#include <memory>
 
-CmdPause::CmdPause(TurntableState* state) : BaseTurntableCommand(state), liftTonearm(state, 10) {
-    // Do nothing
+CmdPause::CmdPause(TurntableState* state) : BaseTurntableCommand(state) {
+    subcommands = std::make_unique<SubCmdLiftTonearm>(state, LIFT_UP_SPEED);
 }
 
 ActionCommand CmdPause::getCommandId() {
@@ -17,10 +19,6 @@ ActionCommand CmdPause::getCommandId() {
 void CmdPause::doInitialize() {
     state->outputShift.setValue(StmShiftPin::LedPauseStatus, true);
     state->outputShift.setValue(StmShiftPin::AudioCutOff, true);
-}
-
-CommandResult CmdPause::doExecute() {
-    return liftTonearm.execute();
 }
 
 void CmdPause::doUninitialize() {

@@ -3,13 +3,13 @@
 #include <BaseTurntableCommand.h>
 #include <SubCmdLiftTonearm.h>
 
-#ifndef CmdPause_h
-#define CmdPause_h
+#ifndef CmdProtoPlay_h
+#define CmdProtoPlay_h
 class TurntableState;
 
-class CmdPause : public BaseTurntableCommand {
+class CmdProtoPlay : public BaseTurntableCommand {
     public:
-        CmdPause(TurntableState* state);
+        CmdProtoPlay(TurntableState* state);
 
         ActionCommand getCommandId() override;
         void doInitialize() override;

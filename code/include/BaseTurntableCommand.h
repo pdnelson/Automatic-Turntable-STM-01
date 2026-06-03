@@ -1,5 +1,7 @@
 #include <ActionCommand.h>
 #include <CommandResult.h>
+#include <memory>
+#include <BaseTurntableSubCommand.h>
 
 #ifndef BaseTurntableCommand_h
 #define BaseTurntableCommand_h
@@ -13,11 +15,11 @@ class BaseTurntableCommand {
         virtual ~BaseTurntableCommand() = default;
         virtual ActionCommand getCommandId() = 0;
         TurntableState* state;
+        std::unique_ptr<BaseTurntableSubCommand> subcommands;
 
         CommandResult execute();
 
     private:
-        virtual CommandResult doExecute() = 0;
         virtual void doInitialize() = 0;
         virtual void doUninitialize() = 0;
         bool initialized = false;

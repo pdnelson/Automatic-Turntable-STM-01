@@ -5,9 +5,10 @@
 #include <BaseTurntableCommand.h>
 #include <SubCmdSetDownTonearm.h>
 #include <TurntableState.h>
+#include <Constants.h>
 
-CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state), setDownTonearm(state, 3) {
-    // Do nothing.
+CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state) {
+    subcommands = std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED);
 }
 
 ActionCommand CmdUnPause::getCommandId() {
@@ -16,10 +17,6 @@ ActionCommand CmdUnPause::getCommandId() {
 
 void CmdUnPause::doInitialize() {
     // do nothing
-}
-
-CommandResult CmdUnPause::doExecute() {
-    return setDownTonearm.execute();
 }
 
 void CmdUnPause::doUninitialize() {

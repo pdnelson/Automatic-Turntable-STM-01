@@ -14,6 +14,7 @@
 #include <TurntableSpeed.h>
 #include <CmdPause.h>
 #include <CmdUnPause.h>
+#include <CmdProtoPlay.h>
 
 TurntableState::TurntableState() : 
     outputShift(Pin::OutputShiftSda, Pin::OutputShiftScl),
@@ -206,7 +207,7 @@ void TurntableState::monitorCommandInput() {
         } 
         
         else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-            // todo
+            currentCommand = std::make_unique<CmdProtoPlay>(this);
         }
 
         else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {

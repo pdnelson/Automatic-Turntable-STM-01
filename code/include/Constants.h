@@ -49,6 +49,12 @@
 // amount of time we allow for the tonearm to bounce, before it should level out.
 #define LIFT_BOUNCE_TIMEOUT_MICROS 1500000
 
+// How fast the tonearm should move when lifting.
+#define LIFT_UP_SPEED 10
+
+// How fast the tonearm should move when being set down.
+#define SET_DOWN_SPEED 3
+
 /**
  * Constants related to the horizontal movement -----------
  */
