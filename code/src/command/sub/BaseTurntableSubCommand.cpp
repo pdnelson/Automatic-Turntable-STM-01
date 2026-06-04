@@ -1,8 +1,22 @@
 #include <BaseTurntableSubCommand.h>
 #include <CommandResult.h>
+#include <memory>
 
-BaseTurntableSubCommand::BaseTurntableSubCommand(TurntableState* state) {
+BaseTurntableSubCommand::BaseTurntableSubCommand(TurntableState* state) : std::enable_shared_from_this<BaseTurntableSubCommand>() {
     this->state = state;
+}
+
+std::shared_ptr<BaseTurntableSubCommand> BaseTurntableSubCommand::next(std::shared_ptr<BaseTurntableSubCommand> nextSubCommand) {
+    nextEmptySubCommand(this->nextSubCommand) = nextSubCommand;
+    return shared_from_this();
+}
+
+std::shared_ptr<BaseTurntableSubCommand>& BaseTurntableSubCommand::nextEmptySubCommand(std::shared_ptr<BaseTurntableSubCommand>& nextSubCommand) {
+    if(nextSubCommand == nullptr) {
+        return nextSubCommand;
+    } else {
+        return nextEmptySubCommand(nextSubCommand->nextSubCommand);
+    }
 }
 
 CommandResult BaseTurntableSubCommand::execute() {

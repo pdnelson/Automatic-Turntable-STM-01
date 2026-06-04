@@ -4,6 +4,7 @@
 #include <CommandResult.h>
 #include <ActionCommand.h>
 #include <BaseTurntableCommand.h>
+#include <BaseTurntableSubCommand.h>
 #include <SubCmdLiftTonearm.h>
 #include <SubCmdSetDownTonearm.h>
 #include <SubCmdEngageAzClutch.h>
@@ -15,29 +16,19 @@
 CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps) : BaseTurntableCommand(state) {
 
     // Lift up
-    subCommands = std::make_unique<SubCmdLiftTonearm>(state, LIFT_UP_SPEED);
+    subCommands = std::make_shared<SubCmdLiftTonearm>(state, LIFT_UP_SPEED)
 
-    // Engage the clutch
-    subCommands->
-        nextSubCommand = std::make_unique<SubCmdEngageAzClutch>(state);
-
-    // Move CW or CCW
-    subCommands->
-        nextSubCommand->
-        nextSubCommand = std::make_unique<SubCmdMoveNSteps>(state, 14, steps);
-
-    // Disengage the clutch
-    subCommands->
-        nextSubCommand->
-        nextSubCommand->
-        nextSubCommand = std::make_unique<SubCmdDisengageAzClutch>(state);
-
-    // Set down
-    subCommands->
-        nextSubCommand->
-        nextSubCommand->
-        nextSubCommand->
-        nextSubCommand = std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED);
+        // Engage the clutch
+        ->next(std::make_shared<SubCmdEngageAzClutch>(state))
+        
+        // Move CW or CCW
+        ->next(std::make_unique<SubCmdMoveNSteps>(state, 14, steps))
+        
+        // Disengage the clutch
+        ->next(std::make_unique<SubCmdDisengageAzClutch>(state))
+        
+        // Set down
+        ->next(std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED));
 }
 
 ActionCommand CmdProtoPlay::getCommandId() {

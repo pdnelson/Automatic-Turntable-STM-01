@@ -5,16 +5,19 @@
 #define BaseTurntableSubCommand_h
 class TurntableState;
 
-class BaseTurntableSubCommand {
+class BaseTurntableSubCommand : public std::enable_shared_from_this<BaseTurntableSubCommand> {
     public:
         BaseTurntableSubCommand(TurntableState* state);
 
         TurntableState* state;
-        std::unique_ptr<BaseTurntableSubCommand> nextSubCommand;
+        std::shared_ptr<BaseTurntableSubCommand> nextSubCommand;
 
         CommandResult execute();
 
+        std::shared_ptr<BaseTurntableSubCommand> next(std::shared_ptr<BaseTurntableSubCommand> nextSubCommand);
+
     private:
+        std::shared_ptr<BaseTurntableSubCommand>& nextEmptySubCommand(std::shared_ptr<BaseTurntableSubCommand>& nextSubCommand);
         CommandResult result = CommandResult::Running;
         virtual CommandResult doExecute() = 0;
         virtual void doInitialize() = 0;

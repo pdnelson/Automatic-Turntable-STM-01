@@ -15,7 +15,7 @@ class BaseTurntableCommand {
         virtual ~BaseTurntableCommand() = default;
         virtual ActionCommand getCommandId() = 0;
         TurntableState* state;
-        std::unique_ptr<BaseTurntableSubCommand> subCommands;
+        std::shared_ptr<BaseTurntableSubCommand> subCommands;
 
         CommandResult execute();
 
