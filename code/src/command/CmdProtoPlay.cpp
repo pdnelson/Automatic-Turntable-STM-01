@@ -36,6 +36,7 @@ ActionCommand CmdProtoPlay::getCommandId() {
 }
 
 void CmdProtoPlay::doInitialize() {
+    state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, true);
     state->outputShift.setValue(StmShiftPin::AudioCutOff, true);
 }
