@@ -12,6 +12,7 @@
 #include <Stepper.h>
 #include <StmShift.h>
 #include <TurntableSpeed.h>
+#include <CmdError.h>
 #include <CmdPause.h>
 #include <CmdUnPause.h>
 #include <CmdProtoPlay.h>
@@ -58,11 +59,10 @@ void TurntableState::executeCommand() {
     if(currentCommand != nullptr) {
         CommandResult result = currentCommand->execute();
 
-        if(result > CommandResult::Running) {
+        if(result == CommandResult::Success) {
             currentCommand = nullptr;
-            // todo : initialize error command
-        } else if(result == CommandResult::Success) {
-            currentCommand = nullptr;
+        } else if(result > CommandResult::Success) {
+            currentCommand = std::make_unique<CmdError>(this, result);
         }
     }
 }

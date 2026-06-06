@@ -30,5 +30,5 @@ CommandResult SubCmdDisengageAzClutch::doExecute() {
 }
 
 void SubCmdDisengageAzClutch::doUninitialize() {
-    // Do nothing.
+    state->clutchStepper.releaseMotorCurrent();
 }

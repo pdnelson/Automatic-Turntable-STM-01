@@ -43,5 +43,5 @@ CommandResult SubCmdLiftTonearm::doExecute() {
 }
 
 void SubCmdLiftTonearm::doUninitialize() {
-    // Do nothing.
+    state->movementStepper.releaseMotorCurrent();
 }

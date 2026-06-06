@@ -1,18 +1,23 @@
 #include <CommandResult.h>
 #include <ActionCommand.h>
 #include <BaseTurntableCommand.h>
+#include <CommandResult.h>
 
-#ifndef CmdPause_h
-#define CmdPause_h
+#ifndef CmdError_h
+#define CmdError_h
 class TurntableState;
 
-class CmdPause : public BaseTurntableCommand {
+class CmdError : public BaseTurntableCommand {
     public:
-        CmdPause(TurntableState* state);
+        CmdError(TurntableState* state, CommandResult error);
 
         ActionCommand getCommandId() override;
         void doInitialize() override;
         void doUninitialize() override;
+        CommandResult error;
+
+    private:
+        uint16_t outputShiftValues = 0;
 };
 
 #endif

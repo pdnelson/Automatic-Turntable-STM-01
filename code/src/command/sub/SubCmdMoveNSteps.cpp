@@ -32,5 +32,5 @@ CommandResult SubCmdMoveNSteps::doExecute() {
 }
 
 void SubCmdMoveNSteps::doUninitialize() {
-    // Do nothing.
+    state->movementStepper.releaseMotorCurrent();
 }
