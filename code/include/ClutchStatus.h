@@ -1,7 +1,7 @@
 #ifndef CLUTCHSTATUS_H
 #define CLUTCHSTATUS_H
 
-enum ClutchStatus : uint8_t {
+enum ClutchStatus {
     Engaged = 1,
     Disengaged = 0
 };

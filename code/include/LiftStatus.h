@@ -1,7 +1,7 @@
 #ifndef LIFTSTATUS_H
 #define LIFTSTATUS_H
 
-enum LiftStatus : uint8_t {
+enum LiftStatus {
     Lifted = 0,
     SetDown = 1
 };

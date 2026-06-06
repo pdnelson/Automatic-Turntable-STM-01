@@ -1,7 +1,7 @@
 #ifndef STMSSHIFTPIN_H
 #define STMSSHIFTPIN_H
 
-enum StmShiftPin : uint8_t {
+enum StmShiftPin {
 
     // Bank A
     AudioCutOff = 3,

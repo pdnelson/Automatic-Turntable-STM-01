@@ -1,7 +1,7 @@
 #ifndef MUXPIN_H
 #define MUXPIN_H
 
-enum MuxPin : uint8_t {
+enum MuxPin {
     BtnPlay = 0,
     BtnSpeedSelect = 1,
     BtnSizeSelect = 2,
