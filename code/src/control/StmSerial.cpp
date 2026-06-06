@@ -9,6 +9,8 @@
 #include <Pin.h>
 #include <memory>
 #include <BaseTurntableCommand.h>
+#include <CommandId.h>
+#include <SubCommandId.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -64,11 +66,12 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetClearActionCommand:    state->currentCommand = nullptr;                    break;
                 
                 // Get Commands
-                case ExternalCommand::GetHorizontalEncoderPos:  break; // todo
+                case ExternalCommand::GetHorizontalEncoderPos:                                                      break; // todo
                 case ExternalCommand::GetVerticalEncoderPos:    processGetVerticalEncoderPos(stream);               break;
                 case ExternalCommand::GetLiftStatus:            stream.write(state->getLiftStatus());               break;
                 case ExternalCommand::GetHomeStatus:            stream.write(state->getHomeStatus());               break;
                 case ExternalCommand::GetCurrentCommand:        processGetCurrentCommand(stream);                   break;
+                case ExternalCommand::GetCurrentSubCommand:     processGetCurrentSubCommand(stream);                break;
                 case ExternalCommand::GetErrorCode:             processGetErrorCode(stream);                        break;
                 case ExternalCommand::GetUpTime:                processGetUpTime(stream);                           break;
                 case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed);                 break;
@@ -136,6 +139,16 @@ void StmSerial::processGetCurrentCommand(Stream& stream) {
         current = state->currentCommand->getCommandId();
     }
           
+    stream.write(current);
+}
+
+void StmSerial::processGetCurrentSubCommand(Stream& stream) {
+    SubCommandId current = SubCommandId::NoSubCommand;
+
+    if(state->currentCommand != nullptr) {
+        current = state->currentCommand->currentSubCommandId();
+    }
+
     stream.write(current);
 }
 

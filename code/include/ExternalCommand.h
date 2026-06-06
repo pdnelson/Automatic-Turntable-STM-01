@@ -26,7 +26,8 @@ enum ExternalCommand {
     GetUpTime = 106,
     GetSpeedSetting = 107,
     GetSpeedTarget = 108,
-    GetSizeSetting = 109
+    GetSizeSetting = 109,
+    GetCurrentSubCommand = 110
 };
 
 #endif

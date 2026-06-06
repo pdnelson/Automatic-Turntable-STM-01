@@ -20,6 +20,7 @@ class StmSerial {
         void processSetCustomSpeed(Stream& stream);
         void processGetVerticalEncoderPos(Stream& stream);
         void processGetCurrentCommand(Stream& stream);
+        void processGetCurrentSubCommand(Stream& stream);
         void processGetErrorCode(Stream& stream);
         void processGetUpTime(Stream& stream);
         void processGetSpeedTarget(Stream& stream);
