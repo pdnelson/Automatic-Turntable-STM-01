@@ -1,5 +1,6 @@
 #include <CommandResult.h>
 #include <memory>
+#include <SubCommandId.h>
 
 #ifndef BaseTurntableSubCommand_h
 #define BaseTurntableSubCommand_h
@@ -8,6 +9,8 @@ class TurntableState;
 class BaseTurntableSubCommand : public std::enable_shared_from_this<BaseTurntableSubCommand> {
     public:
         BaseTurntableSubCommand(TurntableState* state);
+
+        virtual SubCommandId getSubCommandId() = 0;
 
         TurntableState* state;
         std::shared_ptr<BaseTurntableSubCommand> nextSubCommand;

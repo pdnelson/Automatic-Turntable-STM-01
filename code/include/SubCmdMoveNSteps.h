@@ -1,6 +1,7 @@
 #include <CommandResult.h>
 #include <BaseTurntableSubCommand.h>
 #include <AzimuthDirection.h>
+#include <SubCommandId.h>
 
 #ifndef SubCmdMoveNSteps_h
 #define SubCmdMoveNSteps_h
@@ -9,6 +10,7 @@ class TurntableState;
 class SubCmdMoveNSteps : public BaseTurntableSubCommand {
     public:
         SubCmdMoveNSteps(TurntableState* state, uint8_t speed, int16_t steps);
+        SubCommandId getSubCommandId() override;
 
     private:
         void doInitialize() override;

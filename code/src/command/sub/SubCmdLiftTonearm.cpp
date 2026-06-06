@@ -7,6 +7,7 @@
 #include <BaseLiftSubCommand.h>
 #include <Constants.h>
 #include <TurntableState.h>
+#include <SubCommandId.h>
 
 SubCmdLiftTonearm::SubCmdLiftTonearm(TurntableState* state, uint8_t speed) : BaseLiftSubCommand(state, speed) {
     // Do nothing.
@@ -44,4 +45,8 @@ CommandResult SubCmdLiftTonearm::doExecute() {
 
 void SubCmdLiftTonearm::doUninitialize() {
     state->movementStepper.releaseMotorCurrent();
+}
+
+SubCommandId SubCmdLiftTonearm::getSubCommandId() {
+    return SubCommandId::LiftTonearm;
 }

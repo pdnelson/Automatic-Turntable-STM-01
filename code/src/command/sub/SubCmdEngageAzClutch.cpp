@@ -6,6 +6,7 @@
 #include <CommandResult.h>
 #include <TurntableState.h>
 #include <Constants.h>
+#include <SubCommandId.h>
 
 SubCmdEngageAzClutch::SubCmdEngageAzClutch(TurntableState* state) : BaseTurntableSubCommand(state) {
     this->state = state;
@@ -38,4 +39,8 @@ CommandResult SubCmdEngageAzClutch::doExecute() {
 
 void SubCmdEngageAzClutch::doUninitialize() {
     state->clutchStepper.releaseMotorCurrent();
+}
+
+SubCommandId SubCmdEngageAzClutch::getSubCommandId() {
+    return SubCommandId::EngageAzClutch;
 }

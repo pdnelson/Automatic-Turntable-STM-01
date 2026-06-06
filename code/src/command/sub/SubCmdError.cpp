@@ -6,6 +6,7 @@
 #include <TurntableState.h>
 #include <MovementAxis.h>
 #include <MuxPin.h>
+#include <SubCommandId.h>
 
 SubCmdError::SubCmdError(TurntableState* state) : BaseTurntableSubCommand(state) {
     this->state = state;
@@ -30,4 +31,8 @@ CommandResult SubCmdError::doExecute() {
 
 void SubCmdError::doUninitialize() {
     // Do nothing.
+}
+
+SubCommandId SubCmdError::getSubCommandId() {
+    return SubCommandId::ErrorSubCommand;
 }

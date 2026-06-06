@@ -6,6 +6,7 @@
 #include <Constants.h>
 #include <TurntableState.h>
 #include <MovementAxis.h>
+#include <SubCommandId.h>
 
 SubCmdMoveNSteps::SubCmdMoveNSteps(TurntableState* state, uint8_t speed, int16_t steps) : BaseTurntableSubCommand(state) {
     this->state = state;
@@ -33,4 +34,8 @@ CommandResult SubCmdMoveNSteps::doExecute() {
 
 void SubCmdMoveNSteps::doUninitialize() {
     state->movementStepper.releaseMotorCurrent();
+}
+
+SubCommandId SubCmdMoveNSteps::getSubCommandId() {
+    return SubCommandId::MoveNSteps;
 }

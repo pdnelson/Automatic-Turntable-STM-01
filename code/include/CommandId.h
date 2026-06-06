@@ -2,7 +2,7 @@
 #define COMMANDID_H
 
 enum CommandId {
-    NoAction,
+    NoCommand,
     Pause,
     UnPause,
     Play,

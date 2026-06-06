@@ -130,7 +130,7 @@ void StmSerial::processGetVerticalEncoderPos(Stream& stream) {
 }
 
 void StmSerial::processGetCurrentCommand(Stream& stream) {
-    CommandId current = CommandId::NoAction;
+    CommandId current = CommandId::NoCommand;
           
     if(state->currentCommand != nullptr) {
         current = state->currentCommand->getCommandId();
