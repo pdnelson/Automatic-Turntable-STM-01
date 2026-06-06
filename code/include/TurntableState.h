@@ -7,6 +7,7 @@
 #include <memory>
 #include <BaseTurntableCommand.h>
 #include <StmShift.h>
+#include <StmSerial.h>
 
 #ifndef TurntableState_h
 #define TurntableState_h
@@ -16,6 +17,7 @@ class TurntableState {
         TurntableState();
 
         StmShift outputShift;
+        StmSerial serialComm;
         InputMux inputMux;
         Stepper movementStepper;
         Stepper clutchStepper;
@@ -44,6 +46,8 @@ class TurntableState {
         void updateSpeed(TurntableSpeed newSpeed);
         void rotateSize();
         void updateSize(RecordSize newSize);
+        void pauseOrUnPause();
+        void playOrReturn();
 
     private:
         unsigned long liftDebounce = 0;

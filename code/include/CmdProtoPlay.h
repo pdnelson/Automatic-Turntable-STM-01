@@ -9,7 +9,7 @@ class TurntableState;
 
 class CmdProtoPlay : public BaseTurntableCommand {
     public:
-        CmdProtoPlay(TurntableState* state, int16_t steps);
+        CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuthSpeed);
 
         ActionCommand getCommandId() override;
         void doInitialize() override;

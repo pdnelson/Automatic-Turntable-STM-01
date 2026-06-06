@@ -19,6 +19,7 @@
 
 TurntableState::TurntableState() : 
     outputShift(Pin::OutputShiftSda, Pin::OutputShiftScl),
+    serialComm(this),
     inputMux(Pin::InputMuxA, Pin::InputMuxB, Pin::InputMuxC, Pin::InputMuxResult, MUX_POLL_INTERVAL, BUTTON_HOLD_INTERVAL, BUTTON_DEBOUNCE_INTERVAL),
     movementStepper(STEPS_PER_REVOLUTION, Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
     clutchStepper(STEPS_PER_REVOLUTION, Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4)
@@ -46,7 +47,7 @@ TurntableState::TurntableState() :
 void TurntableState::monitor() {
     updateClockMicros();
     advanceCounts();
-    // todo: monitor serial input
+    serialComm.monitor();
     monitorCommandInput();
     executeCommand();
 
@@ -194,25 +195,33 @@ void TurntableState::updateSize(RecordSize newSize) {
     selectedSize = newSize;
 }
 
+void TurntableState::pauseOrUnPause() {
+    if(isPaused() || getLiftStatus() == LiftStatus::Lifted) {
+        currentCommand = std::make_unique<CmdUnPause>(this);
+    } else {
+        currentCommand = std::make_unique<CmdPause>(this);
+    }
+}
+
+void TurntableState::playOrReturn() {
+    if(getHomeStatus() == HomeStatus::Homed) {
+        currentCommand = std::make_unique<CmdProtoPlay>(this, 140, 14);
+    } else {
+        currentCommand = std::make_unique<CmdProtoPlay>(this, -350, 14);
+    }
+}
+
 void TurntableState::monitorCommandInput() {
     inputMux.monitor(clockMicros);
 
     // Only read action command values if there is currently no action running
     if(currentCommand == nullptr) {
         if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
-            if(isPaused() || getLiftStatus() == LiftStatus::Lifted) {
-                currentCommand = std::make_unique<CmdUnPause>(this);
-            } else {
-                currentCommand = std::make_unique<CmdPause>(this);
-            }
+            pauseOrUnPause();
         } 
         
         else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-            if(getHomeStatus() == HomeStatus::Homed) {
-                currentCommand = std::make_unique<CmdProtoPlay>(this, 140);
-            } else {
-                currentCommand = std::make_unique<CmdProtoPlay>(this, -350);
-            }
+            playOrReturn();
         }
 
         else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {

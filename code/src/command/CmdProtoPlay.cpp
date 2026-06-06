@@ -13,7 +13,7 @@
 #include <TurntableState.h>
 #include <Constants.h>
 
-CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps) : BaseTurntableCommand(state) {
+CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuthSpeed) : BaseTurntableCommand(state) {
 
     // Lift up
     subCommands = std::make_shared<SubCmdLiftTonearm>(state, LIFT_UP_SPEED)
@@ -22,7 +22,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps) : BaseTurntable
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         
         // Move CW or CCW
-        ->next(std::make_unique<SubCmdMoveNSteps>(state, 14, steps))
+        ->next(std::make_unique<SubCmdMoveNSteps>(state, azimuthSpeed, steps))
         
         // Disengage the clutch
         ->next(std::make_unique<SubCmdDisengageAzClutch>(state))
