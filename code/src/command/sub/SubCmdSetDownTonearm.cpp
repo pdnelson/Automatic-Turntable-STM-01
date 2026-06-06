@@ -25,7 +25,7 @@ CommandResult SubCmdSetDownTonearm::doExecute() {
     CommandResult result = CommandResult::Running;
 
     if(stalled) {
-        result = CommandResult::LiftStalledMovingUp;
+        result = CommandResult::LiftStalledMovingDown;
     } else {
         if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT || (isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD)) {
             result = CommandResult::Success;
