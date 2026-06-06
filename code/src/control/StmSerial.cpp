@@ -32,55 +32,58 @@ void StmSerial::readSerialData(Stream& stream) {
 
         // If the key is the init key, send back model and version info
         if(key == SERIAL_COMMAND_INIT_KEY) {
-            byte data[4];
-            data[0] = SERIAL_COMMAND_MODEL_KEY;
-            data[1] = VERSION_MAJOR;
-            data[2] = VERSION_MINOR;
-            data[3] = VERSION_PATCH;
-
-            stream.write(data, 4);
+            processInitKey(stream);
         }
 
-    // If the key is for this model turntable, execute the command
-    else if(key == SERIAL_COMMAND_MODEL_KEY) {
-        ExternalCommand incomingCommand = (ExternalCommand)stream.read();
+        // If the key is for this model turntable, execute the command
+        else if(key == SERIAL_COMMAND_MODEL_KEY) {
+            ExternalCommand incomingCommand = (ExternalCommand)stream.read();
 
-        // If a command is already running, and an action command comes through, then throw it out.
-        if(state->currentCommand != nullptr && incomingCommand < 31 && incomingCommand > 0) {
-            return;
+            // If a command is already running, and an action command comes through, then throw it out.
+            if(state->currentCommand != nullptr && incomingCommand < 31 && incomingCommand > 0) {
+                return;
+            }
+
+            switch(incomingCommand) {
+                // Misc.
+                case ExternalCommand::ConnectionTest:           stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);    break;
+                
+                // Action Commands
+                case ExternalCommand::ActionPauseUnPause:       state->pauseOrUnPause();                            break;
+                case ExternalCommand::ActionProtoPlay:          processProtoPlay(stream);                           break;
+                
+                // Set Commands
+                case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
+                case ExternalCommand::SetRotateSpeed:           state->rotateSpeed();                               break;
+                case ExternalCommand::SetCustomSpeed:           processSetCustomSpeed(stream);                      break;
+                case ExternalCommand::SetSize:                  state->updateSize((RecordSize)stream.read());       break;
+                case ExternalCommand::SetRotateSize:            state->rotateSize();                                break;
+                case ExternalCommand::SetClearActionCommand:    state->currentCommand = nullptr;                    break;
+                
+                // Get Commands
+                case ExternalCommand::GetHorizontalEncoderPos:  break; // todo
+                case ExternalCommand::GetVerticalEncoderPos:    processGetVerticalEncoderPos(stream);               break;
+                case ExternalCommand::GetLiftStatus:            stream.write(state->getLiftStatus());               break;
+                case ExternalCommand::GetHomeStatus:            stream.write(state->getHomeStatus());               break;
+                case ExternalCommand::GetCurrentCommand:        processGetCurrentCommand(stream);                   break;
+                case ExternalCommand::GetErrorCode:             processGetErrorCode(stream);                        break;
+                case ExternalCommand::GetUpTime:                processGetUpTime(stream);                           break;
+                case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed);                 break;
+                case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream);                      break;
+                case ExternalCommand::GetSizeSetting:           stream.write(state->selectedSize);                  break;
+            }
         }
-
-        switch(incomingCommand) {
-            // Misc.
-            case ExternalCommand::ConnectionTest:           stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS); break;
-            
-            // Action Commands
-            case ExternalCommand::ActionPauseUnPause:       state->pauseOrUnPause(); break;
-            case ExternalCommand::ActionProtoPlay:          processProtoPlay(stream); break;
-            
-            // Set Commands
-            case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read()); break;
-            case ExternalCommand::SetRotateSpeed:           state->rotateSpeed(); break;
-            case ExternalCommand::SetCustomSpeed:           processSetCustomSpeed(stream); break;
-            case ExternalCommand::SetSize:                  state->updateSize((RecordSize)stream.read()); break;
-            case ExternalCommand::SetRotateSize:            state->rotateSize(); break;
-            case ExternalCommand::SetClearActionCommand:    state->currentCommand = nullptr; break;
-            
-            // Get Commands
-            case ExternalCommand::GetHorizontalEncoderPos:  break; // todo
-            case ExternalCommand::GetVerticalEncoderPos:    processGetVerticalEncoderPos(stream); break;
-            case ExternalCommand::GetLiftStatus:            stream.write(state->getLiftStatus()); break;
-            case ExternalCommand::GetHomeStatus:            stream.write(state->getHomeStatus()); break;
-            case ExternalCommand::GetCurrentCommand:        processGetCurrentCommand(stream); break;
-            case ExternalCommand::GetErrorCode:             processGetErrorCode(stream); break;
-            case ExternalCommand::GetUpTime:                processGetUpTime(stream); break;
-            case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed); break;
-            case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream); break;
-            case ExternalCommand::GetSizeSetting:           stream.write(state->selectedSize); break;
-      }
-  
     }
-  }
+}
+
+void StmSerial::processInitKey(Stream& stream) {
+    byte data[4];
+    data[0] = SERIAL_COMMAND_MODEL_KEY;
+    data[1] = VERSION_MAJOR;
+    data[2] = VERSION_MINOR;
+    data[3] = VERSION_PATCH;
+
+    stream.write(data, 4);
 }
 
 void StmSerial::processProtoPlay(Stream& stream) {
