@@ -3,9 +3,12 @@
 #include <TurntableState.h>
 #include <Constants.h>
 #include <ExternalCommand.h>
+#include <CmdError.h>
 #include <CmdPause.h>
 #include <CmdProtoPlay.h>
 #include <Pin.h>
+#include <memory>
+#include <BaseTurntableCommand.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -138,10 +141,11 @@ void StmSerial::processGetCurrentCommand(Stream& stream) {
 
 void StmSerial::processGetErrorCode(Stream& stream) {
     if(state->currentCommand != nullptr && state->currentCommand->getCommandId() == ActionCommand::Error) {
-        //stream.write(actionVariable1); // actionVariable1 holds the error code
-        // todo: write error code here
+        BaseTurntableCommand* base = state->currentCommand.get();
+        CmdError* errorCommand = static_cast<CmdError*>(base);
+        stream.write(errorCommand->error);
     } else {
-        stream.write((uint8_t)0); // 0 represents no error
+        stream.write((byte)0); // 0 represents no error
     }
 }
 
@@ -161,6 +165,6 @@ void StmSerial::processGetSpeedTarget(Stream& stream) {
         speed = state->targetSpeed;
     }
           
-    byte const * data = reinterpret_cast<byte const *>(&speed);
+    byte const* data = reinterpret_cast<byte const*>(&speed);
     stream.write(data, sizeof(float));
 }
