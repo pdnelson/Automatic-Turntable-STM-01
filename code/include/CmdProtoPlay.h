@@ -1,5 +1,5 @@
 #include <CommandResult.h>
-#include <ActionCommand.h>
+#include <CommandId.h>
 #include <BaseTurntableCommand.h>
 #include <SubCmdLiftTonearm.h>
 
@@ -11,7 +11,7 @@ class CmdProtoPlay : public BaseTurntableCommand {
     public:
         CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuthSpeed);
 
-        ActionCommand getCommandId() override;
+        CommandId getCommandId() override;
         void doInitialize() override;
         void doUninitialize() override;
 };

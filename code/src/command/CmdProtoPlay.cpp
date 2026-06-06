@@ -2,7 +2,7 @@
 #include <memory>
 #include <StmShiftPin.h>
 #include <CommandResult.h>
-#include <ActionCommand.h>
+#include <CommandId.h>
 #include <BaseTurntableCommand.h>
 #include <BaseTurntableSubCommand.h>
 #include <SubCmdLiftTonearm.h>
@@ -31,8 +31,8 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         ->next(std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED));
 }
 
-ActionCommand CmdProtoPlay::getCommandId() {
-    return ActionCommand::Pause;
+CommandId CmdProtoPlay::getCommandId() {
+    return CommandId::Pause;
 }
 
 void CmdProtoPlay::doInitialize() {

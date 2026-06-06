@@ -1,5 +1,5 @@
 #include <CommandResult.h>
-#include <ActionCommand.h>
+#include <CommandId.h>
 #include <BaseTurntableCommand.h>
 
 #ifndef CmdPause_h
@@ -10,7 +10,7 @@ class CmdPause : public BaseTurntableCommand {
     public:
         CmdPause(TurntableState* state);
 
-        ActionCommand getCommandId() override;
+        CommandId getCommandId() override;
         void doInitialize() override;
         void doUninitialize() override;
 };

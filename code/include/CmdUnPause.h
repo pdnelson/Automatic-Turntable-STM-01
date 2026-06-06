@@ -1,5 +1,5 @@
 #include <CommandResult.h>
-#include <ActionCommand.h>
+#include <CommandId.h>
 #include <BaseTurntableCommand.h>
 #include <SubCmdSetDownTonearm.h>
 
@@ -10,7 +10,7 @@ class TurntableState;
 class CmdUnPause : public BaseTurntableCommand {
     public:
         CmdUnPause(TurntableState* state);
-        ActionCommand getCommandId() override;
+        CommandId getCommandId() override;
         void doInitialize() override;
         void doUninitialize() override;
 };

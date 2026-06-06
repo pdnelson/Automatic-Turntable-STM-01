@@ -1,4 +1,4 @@
-#include <ActionCommand.h>
+#include <CommandId.h>
 #include <CommandResult.h>
 #include <memory>
 #include <BaseTurntableSubCommand.h>
@@ -13,7 +13,7 @@ class BaseTurntableCommand {
         BaseTurntableCommand(TurntableState* state);
 
         virtual ~BaseTurntableCommand() = default;
-        virtual ActionCommand getCommandId() = 0;
+        virtual CommandId getCommandId() = 0;
         TurntableState* state;
         std::shared_ptr<BaseTurntableSubCommand> subCommands;
 

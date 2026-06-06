@@ -1,7 +1,7 @@
-#ifndef ACTIONCOMMAND_H
-#define ACTIONCOMMAND_H
+#ifndef COMMANDID_H
+#define COMMANDID_H
 
-enum ActionCommand {
+enum CommandId {
     NoAction,
     Pause,
     UnPause,

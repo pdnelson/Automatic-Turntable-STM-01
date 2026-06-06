@@ -1,5 +1,5 @@
 #include <CommandResult.h>
-#include <ActionCommand.h>
+#include <CommandId.h>
 #include <BaseTurntableCommand.h>
 #include <CommandResult.h>
 
@@ -11,7 +11,7 @@ class CmdError : public BaseTurntableCommand {
     public:
         CmdError(TurntableState* state, CommandResult error);
 
-        ActionCommand getCommandId() override;
+        CommandId getCommandId() override;
         void doInitialize() override;
         void doUninitialize() override;
         CommandResult error;

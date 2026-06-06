@@ -130,7 +130,7 @@ void StmSerial::processGetVerticalEncoderPos(Stream& stream) {
 }
 
 void StmSerial::processGetCurrentCommand(Stream& stream) {
-    ActionCommand current = ActionCommand::NoAction;
+    CommandId current = CommandId::NoAction;
           
     if(state->currentCommand != nullptr) {
         current = state->currentCommand->getCommandId();
@@ -140,7 +140,7 @@ void StmSerial::processGetCurrentCommand(Stream& stream) {
 }
 
 void StmSerial::processGetErrorCode(Stream& stream) {
-    if(state->currentCommand != nullptr && state->currentCommand->getCommandId() == ActionCommand::Error) {
+    if(state->currentCommand != nullptr && state->currentCommand->getCommandId() == CommandId::Error) {
         BaseTurntableCommand* base = state->currentCommand.get();
         CmdError* errorCommand = static_cast<CmdError*>(base);
         stream.write(errorCommand->error);

@@ -1,7 +1,7 @@
 #include <CmdError.h>
 #include <StmShiftPin.h>
 #include <CommandResult.h>
-#include <ActionCommand.h>
+#include <CommandId.h>
 #include <BaseTurntableCommand.h>
 #include <SubCmdError.h>
 #include <TurntableState.h>
@@ -14,8 +14,8 @@ CmdError::CmdError(TurntableState* state, CommandResult error) : BaseTurntableCo
     subCommands = std::make_unique<SubCmdError>(state);
 }
 
-ActionCommand CmdError::getCommandId() {
-    return ActionCommand::Error;
+CommandId CmdError::getCommandId() {
+    return CommandId::Error;
 }
 
 void CmdError::doInitialize() {
