@@ -26,27 +26,27 @@ I designed a prototype turntable previously, separately from this repository, ar
 ## Planned Features
 The built-in features of this turntable will be kept to a minimum, so that development can go more quickly. These features will be able to be expanded using the 5 expansion ports on the back of the turntable.
 
-## Commands
+### Commands
 Built-in, the plan is to have two commands: Play and pause. 
 
 "Play" will move the tonearm from the "home" position to the outer edge of the record on the turntable. If the tonearm is not in the home position when "play" is pressed, then it will return home.
 
 "Pause" will lift the tonearm up if it's set down, and set the tonearm down if it's lifted. "Up" movement will be quick, while "down" movement will be slow, to keep records from being damaged.
 
-## Automatic pickup
+### Automatic pickup
 The turntable will be able to automatically detect the end of the record, and pick itself up when it reaches that point.
 
-## Size Selection
+### Size Selection
 There will be four settings for size selection: 7", 10" and 12". The fourth option is "auto," where the turntable will use the built-in IR sensor to detect the record edge.
 
 One caveat of using "auto" is that the record edge detection will likely be slower, while selecting a specific size will immediately know where to go.
 
-## Speed Selection
+### Speed Selection
 There will be four settings for speed selection: 33 1/3, 45, and 78 RPM. The fourth option is "auto," where the turntable will guess, based on the record size, what speed you want.
 
 For 12" records, the 33 1/3 RPM speed will be used. For 10" records, the 78 RPM speed will be used. For 7" records, the 45 RPM speed will be used. If an unusual size is detected, the fallback will be 78 RPM. Why? There are a lot of unusual 78-RPM record sizes out there, so I feel like this one's fitting.
 
-## Statistics
+### Statistics
 The turntable will maintain a set of statistics that will be able to be viewed on the "Control Panel" module, or "Web Server" module.
 
 These statistics could include:
@@ -56,7 +56,7 @@ These statistics could include:
 - How long you've had the turntable powered on
 - How long you've had the turntable playing a record
 
-## Modularity
+### Modularity
 
 The plan is to allow connection of up to 5 external modules to the turntable, concurrently. The intention is to design the turntable as its own standalone unit, before any modules, so that each module can be designed in isolation.
 
