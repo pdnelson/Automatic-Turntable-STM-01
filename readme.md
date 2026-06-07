@@ -65,6 +65,9 @@ These statistics could include:
 
 The plan is to allow connection of up to 5 external modules to the turntable, concurrently. The intention is to design the turntable as its own standalone unit, before any modules, so that each module can be designed in isolation.
 
+<img width="1368" height="823" alt="mod-all-modules-clock" src="https://github.com/user-attachments/assets/7fb54b00-15cf-4e43-a67d-0cf0cc34333e" />
+
+
 These could be, for example:
 - Record flipper
 - Record changer
