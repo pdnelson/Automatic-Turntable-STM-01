@@ -11,6 +11,11 @@ This project is driven by a Teensy 4.1, three stepper motors to facilitate movem
 Development is progressing on a breadboard, with questionable organization. Eventually, the plan is to etch a custom PCB.
 <img width="4032" height="2268" alt="20260521_190106" src="https://github.com/user-attachments/assets/b46482c6-eddd-4caf-a0df-032dace4a9f7" />
 
+### Schematic
+
+This is the schematic as of 7 June 2026. The objective is to eliminate as much multiplexing as possible at the end of the project, if there are extra Teensy pins left over. The movement stepper demultiplexers (part `SN74LVC1G18DBVR`) will be the first to go. So far, it's looking like I may be able to eliminate these, as their use only saves me 3 pins. I'm not going to pull the trigger on this quite yet, though, because I may encounter other difficulties later on in the project, requiring the use of more pins. It's up in the air at this point.
+<img width="1590" height="1023" alt="schematic" src="https://github.com/user-attachments/assets/fc749197-0279-4190-abf4-df47288ec137" />
+
 ## Mechanisms
 The automatic tonerm's operation is facilitated by two mechanisms: One for vertical movement (right), and one for horizontal (left).
 
