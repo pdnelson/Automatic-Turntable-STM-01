@@ -11,6 +11,11 @@ This project is driven by a Teensy 4.1, three stepper motors to facilitate movem
 Development is progressing on a breadboard, with questionable organization. Eventually, the plan is to etch a custom PCB.
 <img width="4032" height="2268" alt="20260521_190106" src="https://github.com/user-attachments/assets/b46482c6-eddd-4caf-a0df-032dace4a9f7" />
 
+### Schematic
+
+This is the schematic as of 7 June 2026. The objective is to eliminate as much multiplexing as possible at the end of the project, if there are extra Teensy pins left over. The movement stepper demultiplexers (part `SN74LVC1G18DBVR`) will be the first to go. So far, it's looking like I may be able to eliminate these, as their use only saves me 3 pins. I'm not going to pull the trigger on this quite yet, though, because I may encounter other difficulties later on in the project, requiring the use of more pins. It's up in the air at this point.
+<img width="1590" height="1023" alt="schematic" src="https://github.com/user-attachments/assets/fc749197-0279-4190-abf4-df47288ec137" />
+
 ## Mechanisms
 The automatic tonerm's operation is facilitated by two mechanisms: One for vertical movement (right), and one for horizontal (left).
 
@@ -26,27 +31,27 @@ I designed a prototype turntable previously, separately from this repository, ar
 ## Planned Features
 The built-in features of this turntable will be kept to a minimum, so that development can go more quickly. These features will be able to be expanded using the 5 expansion ports on the back of the turntable.
 
-## Commands
+### Commands
 Built-in, the plan is to have two commands: Play and pause. 
 
 "Play" will move the tonearm from the "home" position to the outer edge of the record on the turntable. If the tonearm is not in the home position when "play" is pressed, then it will return home.
 
 "Pause" will lift the tonearm up if it's set down, and set the tonearm down if it's lifted. "Up" movement will be quick, while "down" movement will be slow, to keep records from being damaged.
 
-## Automatic pickup
+### Automatic pickup
 The turntable will be able to automatically detect the end of the record, and pick itself up when it reaches that point.
 
-## Size Selection
+### Size Selection
 There will be four settings for size selection: 7", 10" and 12". The fourth option is "auto," where the turntable will use the built-in IR sensor to detect the record edge.
 
 One caveat of using "auto" is that the record edge detection will likely be slower, while selecting a specific size will immediately know where to go.
 
-## Speed Selection
+### Speed Selection
 There will be four settings for speed selection: 33 1/3, 45, and 78 RPM. The fourth option is "auto," where the turntable will guess, based on the record size, what speed you want.
 
 For 12" records, the 33 1/3 RPM speed will be used. For 10" records, the 78 RPM speed will be used. For 7" records, the 45 RPM speed will be used. If an unusual size is detected, the fallback will be 78 RPM. Why? There are a lot of unusual 78-RPM record sizes out there, so I feel like this one's fitting.
 
-## Statistics
+### Statistics
 The turntable will maintain a set of statistics that will be able to be viewed on the "Control Panel" module, or "Web Server" module.
 
 These statistics could include:
@@ -56,7 +61,7 @@ These statistics could include:
 - How long you've had the turntable powered on
 - How long you've had the turntable playing a record
 
-## Modularity
+### Modularity
 
 The plan is to allow connection of up to 5 external modules to the turntable, concurrently. The intention is to design the turntable as its own standalone unit, before any modules, so that each module can be designed in isolation.
 
