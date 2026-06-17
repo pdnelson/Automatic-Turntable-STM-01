@@ -18,25 +18,25 @@ void SubCmdLiftTonearm::doInitialize() {
 }
 
 CommandResult SubCmdLiftTonearm::doExecute() {
-    state->movementStepper.step(VerticalDirection::Up);
     int currentPosition = analogRead(Pin::VerticalPosition);
-
-    bool stalled = checkVerticalStall(VerticalDirection::Up, currentPosition);
 
     CommandResult result = CommandResult::Running;
 
-    if(stalled) {
-        result = CommandResult::LiftStalledMovingUp;
+    if(!reachedLimit && currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
+        reachedLimit = true;
+        timeLimitReached = state->clockMicros;
+    } else if(reachedLimit) {
+        if(state->getLiftStatus() == LiftStatus::Lifted) {
+            result = CommandResult::Success;
+        } else if(state->clockMicros - timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
+            result = CommandResult::NotLifted;
+        }
     } else {
-        if(!reachedLimit && currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
-            reachedLimit = true;
-            timeLimitReached = state->clockMicros;
-        } else if(reachedLimit) {
-            if(state->getLiftStatus() == LiftStatus::Lifted) {
-                result = CommandResult::Success;
-            } else if(state->clockMicros - timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
-                result = CommandResult::NotLifted;
-            }
+        state->movementStepper.step(VerticalDirection::Up);
+        bool stalled = checkVerticalStall(VerticalDirection::Up, currentPosition);
+
+        if(stalled) {
+            result = CommandResult::LiftStalledMovingUp;
         }
     }
 

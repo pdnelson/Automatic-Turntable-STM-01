@@ -18,21 +18,21 @@ void SubCmdSetDownTonearm::doInitialize() {
 }
 
 CommandResult SubCmdSetDownTonearm::doExecute() {
-    state->movementStepper.step(VerticalDirection::Down);
     int currentPosition = analogRead(Pin::VerticalPosition);
-
-    bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
 
     CommandResult result = CommandResult::Running;
 
-    if(stalled) {
-        result = CommandResult::LiftStalledMovingDown;
+    if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT || (isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD)) {
+        result = CommandResult::Success;
+    } else if(!isSetDown && state->getLiftStatus() == LiftStatus::SetDown) {
+        isSetDown = true;
+        setDownPosition = currentPosition;
     } else {
-        if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT || (isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD)) {
-            result = CommandResult::Success;
-        } else if(!isSetDown && state->getLiftStatus() == LiftStatus::SetDown) {
-            isSetDown = true;
-            setDownPosition = currentPosition;
+        state->movementStepper.step(VerticalDirection::Down);
+        bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
+        
+        if(stalled) {
+            result = CommandResult::LiftStalledMovingDown;
         }
     }
 
