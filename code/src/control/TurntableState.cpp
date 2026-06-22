@@ -223,14 +223,6 @@ void TurntableState::monitorCommandInput() {
         else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
             playOrReturn();
         }
-
-        else if(inputMux.getValue(MuxPin::BtnCalibration) == ButtonResult::OnRelease) {
-            // todo
-        }
-
-        else if(inputMux.getValue(MuxPin::BtnTestMode) == ButtonResult::OnRelease) {
-            // todo
-        }
     }
 
     // Settings buttons 
