@@ -31,8 +31,6 @@ enum Pin {
     Serial3Rx = 28,
     Serial3Tx = 29,
     Lift = 30,
-    HorizontalPositionEncoderA = 31,
-    HorizontalPositionEncoderB = 32,
     Serial4Rx = 34,
     Serial4Tx = 35,
     HomeMount = 37,
@@ -44,6 +42,8 @@ enum Pin {
     // Unused pins
     Unused26 = 26,
     Unused27 = 27,
+    Unused31 = 31,
+    Unused32 = 32,
     Unused33 = 33,
     Unused36 = 36
 };
