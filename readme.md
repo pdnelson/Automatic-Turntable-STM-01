@@ -14,7 +14,8 @@ Development is progressing on a breadboard, with questionable organization. Even
 ### Schematic
 
 This is the schematic as of 7 June 2026. The objective is to eliminate as much multiplexing as possible at the end of the project, if there are extra Teensy pins left over. The movement stepper demultiplexers (part `SN74LVC1G18DBVR`) will be the first to go. So far, it's looking like I may be able to eliminate these, as their use only saves me 3 pins. I'm not going to pull the trigger on this quite yet, though, because I may encounter other difficulties later on in the project, requiring the use of more pins. It's up in the air at this point.
-<img width="1590" height="1023" alt="schematic" src="https://github.com/user-attachments/assets/fc749197-0279-4190-abf4-df47288ec137" />
+<img width="1590" height="1038" alt="schematic" src="https://github.com/user-attachments/assets/157d63a6-9e6b-4a52-a04b-6f32d3de2962" />
+
 
 ## Mechanisms
 The automatic tonerm's operation is facilitated by two mechanisms: One for vertical movement (right), and one for horizontal (left).
