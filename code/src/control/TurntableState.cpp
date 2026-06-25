@@ -18,7 +18,7 @@
 #include <CmdProtoPlay.h>
 
 TurntableState::TurntableState() : 
-    outputShift(Pin::OutputShiftSda, Pin::OutputShiftScl),
+    outputShift(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
     serialComm(this),
     inputMux(Pin::InputMuxA, Pin::InputMuxB, Pin::InputMuxC, Pin::InputMuxResult, MUX_POLL_INTERVAL, BUTTON_HOLD_INTERVAL, BUTTON_DEBOUNCE_INTERVAL),
     movementStepper(STEPS_PER_REVOLUTION, Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),

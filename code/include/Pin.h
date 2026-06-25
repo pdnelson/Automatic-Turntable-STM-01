@@ -26,8 +26,8 @@ enum Pin {
     TurntableMotorPhase1 = 21,
     HorizontalClutchSwitch = 22,
     VerticalPosition = 23,
-    OutputShiftScl = 24, // Wire2
-    OutputShiftSda = 25, // Wire2
+    ReservedI2CScl = 24, // Wire2
+    ReservedI2CSda = 25, // Wire2
     Serial3Rx = 28,
     Serial3Tx = 29,
     Lift = 30,
