@@ -1,6 +1,5 @@
 #include <StmShift.h>
 #include <Wire.h>
-#include "StmShiftConstants.h"
 
 StmShift::StmShift(uint8_t sda, uint8_t scl) {
     currentValue = 0x0000;
@@ -11,22 +10,22 @@ StmShift::StmShift(uint8_t sda, uint8_t scl) {
 
     Wire2.begin();
 
-    Wire2.beginTransmission(START_ADDR);
+    Wire2.beginTransmission(SHIFT_START_ADDR);
     Wire2.write(BANK_A_MODE);
     Wire2.write(OUTPUT_MODE);
     Wire2.endTransmission();
 
-    Wire2.beginTransmission(START_ADDR);
+    Wire2.beginTransmission(SHIFT_START_ADDR);
     Wire2.write(BANK_B_MODE);
     Wire2.write(OUTPUT_MODE);
     Wire2.endTransmission();
 
-    Wire2.beginTransmission(START_ADDR);
+    Wire2.beginTransmission(SHIFT_START_ADDR);
     Wire2.write(BANK_A_WRITE);
     Wire2.write(CLEAR_BANK);
     Wire2.endTransmission();
 
-    Wire2.beginTransmission(START_ADDR);
+    Wire2.beginTransmission(SHIFT_START_ADDR);
     Wire2.write(BANK_B_WRITE);
     Wire2.write(CLEAR_BANK);
     Wire2.endTransmission();
@@ -41,7 +40,7 @@ void StmShift::monitor() {
 
     // Rewrite bank A if it has changed at all
     if(bankACurrValue != bankANextValue) {
-      Wire2.beginTransmission(START_ADDR);
+      Wire2.beginTransmission(SHIFT_START_ADDR);
       Wire2.write(BANK_A_WRITE);
       Wire2.write(bankANextValue);
       Wire2.endTransmission();
@@ -52,7 +51,7 @@ void StmShift::monitor() {
 
     // Rewrite bank B if it has changed at all
     if(bankBCurrValue != bankBNextValue) {
-      Wire2.beginTransmission(START_ADDR);
+      Wire2.beginTransmission(SHIFT_START_ADDR);
       Wire2.write(BANK_B_WRITE);
       Wire2.write(bankBNextValue);
       Wire2.endTransmission();

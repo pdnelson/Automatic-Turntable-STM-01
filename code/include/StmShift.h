@@ -11,8 +11,20 @@
  * of this project. But, I doubt I'll do this any time soon (or at all).
  */
 
- #ifndef STMSHIFT_H
- #define STMSHIFT_H
+#ifndef STMSHIFT_H
+#define STMSHIFT_H
+
+/** Constants */
+#define SHIFT_START_ADDR 0x20
+
+#define BANK_A_MODE 0x00
+#define BANK_B_MODE 0x01
+#define OUTPUT_MODE 0x00
+
+#define BANK_A_WRITE 0x12
+#define BANK_B_WRITE 0x13
+
+#define CLEAR_BANK 0x00
 
  class StmShift {
     public:
@@ -21,11 +33,6 @@
          * Constructor to instantiate an instance of this class.
          */
         StmShift(uint8_t sda, uint8_t scl);
-
-        /**
-         * Initializes base values. Call this in your `setup` routine.
-         */
-        void initialize();
 
         /**
          * Monitors the values that should be written to the shift register, and writes them if a value needs to be changed. Place this at the end of your `loop`.

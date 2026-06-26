@@ -1,6 +1,12 @@
+#ifndef CONSTANTS_H
+
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 0
 #define VERSION_PATCH 1
+
+#define SERIAL_COMMAND_INIT_KEY 0b00001100
+#define SERIAL_COMMAND_MODEL_KEY 0b01101101 // 109 in decimal; 'm' in ASCII
+#define SERIAL_COMMAND_CONNECTION_SUCCESS 0b10010010
 
 // The speed at which serial devices should communicate with this turntable.
 #define SERIAL_SPEED 115200
@@ -80,6 +86,4 @@
 #define STM_SERIAL_4 Serial8
 #define STM_SERIAL_5 Serial3
 
-#define SERIAL_COMMAND_INIT_KEY 0b00001100
-#define SERIAL_COMMAND_MODEL_KEY 0b01101101 // 109 in decimal; 'm' in ASCII
-#define SERIAL_COMMAND_CONNECTION_SUCCESS 0b10010010
+#endif

@@ -8,6 +8,7 @@
 #include <BaseTurntableCommand.h>
 #include <StmShift.h>
 #include <StmSerial.h>
+#include <StmEncoder.h>
 
 #ifndef TurntableState_h
 #define TurntableState_h
@@ -21,6 +22,7 @@ class TurntableState {
         InputMux inputMux;
         Stepper movementStepper;
         Stepper clutchStepper;
+        StmEncoder azEncoder;
         std::unique_ptr<BaseTurntableCommand> currentCommand;
 
         unsigned long clockMicros = 0;
