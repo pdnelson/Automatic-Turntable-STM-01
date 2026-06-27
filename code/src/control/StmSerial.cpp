@@ -66,7 +66,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetClearActionCommand:    state->currentCommand = nullptr;                    break;
                 
                 // Get Commands
-                case ExternalCommand::GetHorizontalEncoderPos:                                                      break; // todo
+                case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);             break;
                 case ExternalCommand::GetVerticalEncoderPos:    processGetVerticalEncoderPos(stream);               break;
                 case ExternalCommand::GetLiftStatus:            stream.write(state->getLiftStatus());               break;
                 case ExternalCommand::GetHomeStatus:            stream.write(state->getHomeStatus());               break;
@@ -120,6 +120,16 @@ void StmSerial::processSetCustomSpeed(Stream& stream) {
     } else {
         state->updateSpeed(TurntableSpeed::RpmCustom);
     }
+}
+
+void StmSerial::processGetHorizontalEncoderPos(Stream& stream) {
+    uint16_t horizontalPosition = state->azEncoder.getPosition();
+
+    byte data[2];
+    data[0] = horizontalPosition & 0x00FF;
+    data[1] = (horizontalPosition >> 8) & 0x00FF;
+
+    stream.write(data, 2);
 }
 
 void StmSerial::processGetVerticalEncoderPos(Stream& stream) {

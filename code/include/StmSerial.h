@@ -18,6 +18,7 @@ class StmSerial {
         void processInitKey(Stream& stream);
         void processProtoPlay(Stream& stream);
         void processSetCustomSpeed(Stream& stream);
+        void processGetHorizontalEncoderPos(Stream& stream);
         void processGetVerticalEncoderPos(Stream& stream);
         void processGetCurrentCommand(Stream& stream);
         void processGetCurrentSubCommand(Stream& stream);
