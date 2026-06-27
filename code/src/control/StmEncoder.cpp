@@ -11,12 +11,16 @@ StmEncoder::StmEncoder(uint8_t sda, uint8_t scl) {
 uint16_t StmEncoder::getPosition() {
     Wire2.beginTransmission(ENCODER_START_ADDR);
     Wire2.write(ENCODER_POSITION_START_ADDR);
+    uint8_t result = Wire2.endTransmission(false);
+    if(result > 0) {
+        return 0;
+    }
+
+    Wire2.requestFrom(ENCODER_START_ADDR, 2);
 
     // Calculation adapted from sosandroid's AMS_AS5048B library
     uint16_t finalValue = ((uint16_t) Wire2.read()) << 6;
     finalValue += (Wire2.read() & 0x3F);
-
-    Wire2.endTransmission();
 
     return finalValue;
 }
