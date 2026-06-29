@@ -100,7 +100,7 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [x] Error handling
 - [x] External Commands
 - [x] Horizontal clutch mechanism
-- [ ] Horizontal position tracking
+- [x] Horizontal position tracking
 - [ ] "Specific Size" play routine
 - [ ] IR record/track detection
 - [ ] "Automatic" play routine
