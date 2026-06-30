@@ -17,6 +17,7 @@
 #include <CmdUnPause.h>
 #include <CmdProtoPlay.h>
 #include <StmEncoder.h>
+#include <ClutchStatus.h>
 
 TurntableState::TurntableState() : 
     outputShift(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
@@ -121,6 +122,10 @@ HomeStatus TurntableState::getHomeStatus() {
 
 bool TurntableState::isPaused() {
     return outputShift.getValue(StmShiftPin::LedPauseStatus);
+}
+
+ClutchStatus TurntableState::clutchEngaged() {
+    return (ClutchStatus)digitalRead(Pin::HorizontalClutchSwitch);
 }
 
 void TurntableState::updateSpeed(TurntableSpeed newSpeed) {

@@ -7,6 +7,8 @@ enum ExternalCommand {
     // Action commands (1-30)
     ActionPauseUnPause = 1,
     ActionProtoPlay = 2,
+    ActionToggleClutch = 3,
+    ActionStepHorizontally = 4,
 
     // Data/setting set commands (31-100)
     SetSpeed = 31,

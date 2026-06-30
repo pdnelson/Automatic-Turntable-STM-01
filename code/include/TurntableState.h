@@ -9,6 +9,7 @@
 #include <StmShift.h>
 #include <StmSerial.h>
 #include <StmEncoder.h>
+#include <ClutchStatus.h>
 
 #ifndef TurntableState_h
 #define TurntableState_h
@@ -45,6 +46,7 @@ class TurntableState {
         LiftStatus getLiftStatus();
         HomeStatus getHomeStatus();
         bool isPaused();
+        ClutchStatus clutchEngaged();
         void updateSpeed(TurntableSpeed newSpeed);
         void rotateSize();
         void updateSize(RecordSize newSize);

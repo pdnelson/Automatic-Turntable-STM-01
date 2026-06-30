@@ -17,6 +17,8 @@ class StmSerial {
         // Request processing methods
         void processInitKey(Stream& stream);
         void processProtoPlay(Stream& stream);
+        void processToggleClutch();
+        void processStepHorizontally(Stream& stream);
         void processSetCustomSpeed(Stream& stream);
         void processGetHorizontalEncoderPos(Stream& stream);
         void processGetVerticalEncoderPos(Stream& stream);
