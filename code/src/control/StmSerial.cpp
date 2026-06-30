@@ -123,7 +123,7 @@ void StmSerial::processSetCustomSpeed(Stream& stream) {
 }
 
 void StmSerial::processGetHorizontalEncoderPos(Stream& stream) {
-    uint16_t horizontalPosition = state->azEncoder.getPosition();
+    uint16_t horizontalPosition = state->azEncoder.getNormalizedPosition();
 
     byte data[2];
     data[0] = horizontalPosition & 0x00FF;

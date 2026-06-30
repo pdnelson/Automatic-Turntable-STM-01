@@ -52,6 +52,7 @@ void TurntableState::monitor() {
     serialComm.monitor();
     monitorCommandInput();
     executeCommand();
+    azEncoder.monitor(clockMicros);
 
     // Output statuses
     blinkCustomSpeedIndicator();

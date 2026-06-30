@@ -16,7 +16,6 @@ SubCmdEngageAzClutch::SubCmdEngageAzClutch(TurntableState* state) : BaseTurntabl
 
 void SubCmdEngageAzClutch::doInitialize() {
     state->clutchStepper.setSpeed(CLUTCH_SPEED);
-    Serial.println("made it here");
 }
 
 CommandResult SubCmdEngageAzClutch::doExecute() {
