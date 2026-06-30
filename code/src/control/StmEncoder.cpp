@@ -54,17 +54,22 @@ uint16_t StmEncoder::getPosition() {
 }
 
 void StmEncoder::logData() {
-    // This is NOT looped through in order to avoid the overhead of C++ looping.
-    data[0] = data[1];
-    data[1] = data[2];
-    data[2] = data[3];
-    data[3] = data[4];
-    data[4] = data[5];
-    data[5] = data[6];
-    data[6] = data[7];
-    data[7] = data[8];
-    data[8] = data[9];
-    data[9] = getPosition();
+    uint16_t newData = getPosition();
+
+    // Only log the new data if it's not 0, because 0 is an erroneous value that we don't want to ruin the average.
+    if(newData != 0) {
+        // This is NOT looped through in order to avoid the overhead of C++ looping.
+        data[0] = data[1];
+        data[1] = data[2];
+        data[2] = data[3];
+        data[3] = data[4];
+        data[4] = data[5];
+        data[5] = data[6];
+        data[6] = data[7];
+        data[7] = data[8];
+        data[8] = data[9];
+        data[9] = newData;
+    }
 }
 
 void StmEncoder::computeAverage() {
