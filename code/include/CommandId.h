@@ -11,7 +11,8 @@ enum CommandId {
     TestMode =      6,
     Error =         7,
     ToggleClutch =  8,
-    StepHMotor =    9
+    StepHMotor =    9,
+    GoToPosition =  10
 };
 
 #endif

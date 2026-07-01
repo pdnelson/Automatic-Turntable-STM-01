@@ -13,6 +13,7 @@
 #include <SubCommandId.h>
 #include <CmdToggleClutch.h>
 #include <CmdStepHorizontally.h>
+#include <CmdGoToPositionH.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -60,6 +61,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionProtoPlay:          processProtoPlay(stream);                           break;
                 case ExternalCommand::ActionToggleClutch:       processToggleClutch();                              break;
                 case ExternalCommand::ActionStepHorizontally:   processStepHorizontally(stream);                    break;
+                case ExternalCommand::ActionGoToPositionH:      processGoToPositionH(stream);                       break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
@@ -114,6 +116,14 @@ void StmSerial::processStepHorizontally(Stream& stream) {
     int16_t stepCount = data1 | data2;
 
     state->currentCommand = std::make_unique<CmdStepHorizontally>(state, stepCount, stream.read());
+}
+
+void StmSerial::processGoToPositionH(Stream& stream) {
+    int16_t data1 = stream.read() & 0x00FF;
+    int16_t data2 = stream.read() << 8 & 0xFF00;
+    int16_t position = data1 | data2;
+    
+    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, position, stream.read());
 }
 
 void StmSerial::processSetCustomSpeed(Stream& stream) {

@@ -19,6 +19,7 @@ class StmSerial {
         void processProtoPlay(Stream& stream);
         void processToggleClutch();
         void processStepHorizontally(Stream& stream);
+        void processGoToPositionH(Stream& stream);
         void processSetCustomSpeed(Stream& stream);
         void processGetHorizontalEncoderPos(Stream& stream);
         void processGetVerticalEncoderPos(Stream& stream);

@@ -9,7 +9,7 @@ class TurntableState;
 
 class SubCmdMoveNSteps : public BaseTurntableSubCommand {
     public:
-        SubCmdMoveNSteps(TurntableState* state, uint8_t speed, int16_t steps);
+        SubCmdMoveNSteps(TurntableState* state, int16_t steps, uint8_t speed);
         SubCommandId getSubCommandId() override;
 
     private:

@@ -8,7 +8,8 @@ enum SubCommandId {
     EngageAzClutch = 3,
     LiftTonearm = 4,
     SetDownTonearm = 5,
-    MoveNSteps = 6
+    MoveNSteps = 6,
+    SubGoToPosition = 7
 };
 
 #endif

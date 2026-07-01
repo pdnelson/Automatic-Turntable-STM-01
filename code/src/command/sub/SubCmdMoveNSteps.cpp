@@ -8,7 +8,7 @@
 #include <MovementAxis.h>
 #include <SubCommandId.h>
 
-SubCmdMoveNSteps::SubCmdMoveNSteps(TurntableState* state, uint8_t speed, int16_t steps) : BaseTurntableSubCommand(state) {
+SubCmdMoveNSteps::SubCmdMoveNSteps(TurntableState* state, int16_t steps, uint8_t speed) : BaseTurntableSubCommand(state) {
     this->state = state;
     this->speed = speed;
     this->steps = abs(steps);
