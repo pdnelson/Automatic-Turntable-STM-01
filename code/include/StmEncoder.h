@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <StmEncoderPolarity.h>
 
 #ifndef STMENCODER_H
 #define STMENCODER_H
@@ -13,6 +14,8 @@
 #define ENCODER_DATA_POINT_INTERVAL_MICROS 1000
 #define ENCODER_AVG_INTERVAL_MICROS 5000
 
+#define ENCODER_MAX_VALUE 16384
+
 class StmEncoder {
     public:
         StmEncoder(uint8_t sda, uint8_t scl);
@@ -20,6 +23,7 @@ class StmEncoder {
         void monitor(unsigned long clockMicros);
         void zeroOutEncoder();
         uint16_t getNormalizedPosition();
+        void setPolarity(StmEncoderPolarity polarity);
     private:
         /**
          * Sets the current position to "zero"
@@ -33,6 +37,7 @@ class StmEncoder {
         unsigned long dataAvgCounter = 0;
         uint16_t rollingDataAvg = 0;
         uint16_t data[ENCODER_AVG_RESOLUTION] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        StmEncoderPolarity polarity = StmEncoderPolarity::NORMAL;
 };
 
 #endif

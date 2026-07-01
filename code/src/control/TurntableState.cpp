@@ -18,6 +18,7 @@
 #include <CmdProtoPlay.h>
 #include <StmEncoder.h>
 #include <ClutchStatus.h>
+#include <StmEncoderPolarity.h>
 
 TurntableState::TurntableState() : 
     outputShift(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
@@ -45,6 +46,9 @@ TurntableState::TurntableState() :
     updateSize(selectedSize);
 
     clutchStepper.setSpeed(CLUTCH_SPEED);
+
+    // TODO: Derive this from a calibration setting
+    azEncoder.setPolarity(StmEncoderPolarity::REVERSED);
 }
 
 void TurntableState::monitor() {
