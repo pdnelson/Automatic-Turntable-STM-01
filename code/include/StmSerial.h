@@ -27,7 +27,7 @@ class StmSerial {
         byte processGetCurrentSubCommand();
         byte processGetCommandStatus();
         void processGetUpTime(Stream& stream);
-        const byte* processGetSpeedTarget();
+        void processGetSpeedTarget(Stream& stream);
         void processGetAdvancedSuiteData(Stream& stream);
 
         int16_t readInt16(Stream& stream);

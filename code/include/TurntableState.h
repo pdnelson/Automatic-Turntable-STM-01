@@ -52,6 +52,7 @@ class TurntableState {
         void updateSize(RecordSize newSize);
         void pauseOrUnPause();
         void playOrReturn();
+        float getTargetSpeed();
 
     private:
         unsigned long liftDebounce = 0;

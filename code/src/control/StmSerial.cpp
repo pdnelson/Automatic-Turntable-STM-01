@@ -81,7 +81,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::GetCommandStatus:         stream.write(processGetCommandStatus());            break;
                 case ExternalCommand::GetUpTime:                processGetUpTime(stream);                           break;
                 case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed);                 break;
-                case ExternalCommand::GetSpeedTarget:           stream.write(processGetSpeedTarget(),sizeof(float));break;
+                case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream);                      break;
                 case ExternalCommand::GetSizeSetting:           stream.write(state->selectedSize);                  break;
                 case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                break;
             }
@@ -206,14 +206,12 @@ void StmSerial::processGetUpTime(Stream& stream) {
     stream.write(data, 4);
 }
 
-const byte* StmSerial::processGetSpeedTarget() {
-    float speed = -1;
-    if(state->getHomeStatus() == HomeStatus::NotHomed) {
-        speed = state->targetSpeed;
-    }
+void StmSerial::processGetSpeedTarget(Stream& stream) {
+    float speed = state->getTargetSpeed();
           
     byte const* data = reinterpret_cast<byte const*>(&speed);
-    return data;
+
+    stream.write(data, sizeof(float));
 }
 
 void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
@@ -255,11 +253,12 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
     data[13] = state->selectedSpeed;
 
     // Speed Target
-    const byte* speedTarget = processGetSpeedTarget();
-    data[14] = speedTarget[0];
-    data[15] = speedTarget[1];
-    data[16] = speedTarget[2];
-    data[17] = speedTarget[3];
+    float targetSpeed = state->getTargetSpeed();
+    byte const* targetSpeedBytes = reinterpret_cast<byte const*>(&targetSpeed);
+    data[14] = targetSpeedBytes[0];
+    data[15] = targetSpeedBytes[1];
+    data[16] = targetSpeedBytes[2];
+    data[17] = targetSpeedBytes[3];
 
     // Size Setting
     data[18] = state->selectedSize;

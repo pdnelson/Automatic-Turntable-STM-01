@@ -223,6 +223,14 @@ void TurntableState::playOrReturn() {
     }
 }
 
+float TurntableState::getTargetSpeed() {
+    if(getHomeStatus() == HomeStatus::NotHomed) {
+        return targetSpeed;
+    } else {
+        return 0;
+    }
+}
+
 void TurntableState::monitorCommandInput() {
     inputMux.monitor(clockMicros);
 
