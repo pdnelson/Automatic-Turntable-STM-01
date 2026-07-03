@@ -23,11 +23,14 @@ class StmSerial {
         void processSetCustomSpeed(Stream& stream);
         void processGetHorizontalEncoderPos(Stream& stream);
         void processGetVerticalEncoderPos(Stream& stream);
-        void processGetCurrentCommand(Stream& stream);
-        void processGetCurrentSubCommand(Stream& stream);
-        void processGetErrorCode(Stream& stream);
+        byte processGetCurrentCommand();
+        byte processGetCurrentSubCommand();
+        byte processGetCommandStatus();
         void processGetUpTime(Stream& stream);
-        void processGetSpeedTarget(Stream& stream);
+        const byte* processGetSpeedTarget();
+        void processGetAdvancedSuiteData(Stream& stream);
+
+        int16_t readInt16(Stream& stream);
 };
 
 #endif

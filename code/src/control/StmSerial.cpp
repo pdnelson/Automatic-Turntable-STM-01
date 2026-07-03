@@ -76,13 +76,14 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::GetVerticalEncoderPos:    processGetVerticalEncoderPos(stream);               break;
                 case ExternalCommand::GetLiftStatus:            stream.write(state->getLiftStatus());               break;
                 case ExternalCommand::GetHomeStatus:            stream.write(state->getHomeStatus());               break;
-                case ExternalCommand::GetCurrentCommand:        processGetCurrentCommand(stream);                   break;
-                case ExternalCommand::GetCurrentSubCommand:     processGetCurrentSubCommand(stream);                break;
-                case ExternalCommand::GetErrorCode:             processGetErrorCode(stream);                        break;
+                case ExternalCommand::GetCurrentCommand:        stream.write(processGetCurrentCommand());           break;
+                case ExternalCommand::GetCurrentSubCommand:     stream.write(processGetCurrentSubCommand());        break;
+                case ExternalCommand::GetCommandStatus:         stream.write(processGetCommandStatus());            break;
                 case ExternalCommand::GetUpTime:                processGetUpTime(stream);                           break;
                 case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed);                 break;
-                case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream);                      break;
+                case ExternalCommand::GetSpeedTarget:           stream.write(processGetSpeedTarget(),sizeof(float));break;
                 case ExternalCommand::GetSizeSetting:           stream.write(state->selectedSize);                  break;
+                case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                break;
             }
         }
     }
@@ -99,11 +100,10 @@ void StmSerial::processInitKey(Stream& stream) {
 }
 
 void StmSerial::processProtoPlay(Stream& stream) {
-    int16_t data1 = stream.read() & 0x00FF;
-    int16_t data2 = stream.read() << 8 & 0xFF00;
-    int16_t stepCount = data1 | data2;
+    int16_t stepCount = readInt16(stream);
+    uint8_t speed = stream.read();
 
-    state->currentCommand = std::make_unique<CmdProtoPlay>(state, stepCount, stream.read());
+    state->currentCommand = std::make_unique<CmdProtoPlay>(state, stepCount, speed);
 }
 
 void StmSerial::processToggleClutch() {
@@ -111,19 +111,17 @@ void StmSerial::processToggleClutch() {
 }
 
 void StmSerial::processStepHorizontally(Stream& stream) {
-    int16_t data1 = stream.read() & 0x00FF;
-    int16_t data2 = stream.read() << 8 & 0xFF00;
-    int16_t stepCount = data1 | data2;
+    int16_t stepCount = readInt16(stream);
+    uint8_t speed = stream.read();
 
-    state->currentCommand = std::make_unique<CmdStepHorizontally>(state, stepCount, stream.read());
+    state->currentCommand = std::make_unique<CmdStepHorizontally>(state, stepCount, speed);
 }
 
 void StmSerial::processGoToPositionH(Stream& stream) {
-    int16_t data1 = stream.read() & 0x00FF;
-    int16_t data2 = stream.read() << 8 & 0xFF00;
-    int16_t position = data1 | data2;
+    int16_t position = readInt16(stream);
+    uint8_t speed = stream.read();
     
-    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, position, stream.read());
+    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, position, speed);
 }
 
 void StmSerial::processSetCustomSpeed(Stream& stream) {
@@ -168,33 +166,33 @@ void StmSerial::processGetVerticalEncoderPos(Stream& stream) {
     stream.write(data, 2);
 }
 
-void StmSerial::processGetCurrentCommand(Stream& stream) {
+byte StmSerial::processGetCurrentCommand() {
     CommandId current = CommandId::NoCommand;
           
     if(state->currentCommand != nullptr) {
         current = state->currentCommand->getCommandId();
     }
           
-    stream.write(current);
+    return current;
 }
 
-void StmSerial::processGetCurrentSubCommand(Stream& stream) {
+byte StmSerial::processGetCurrentSubCommand() {
     SubCommandId current = SubCommandId::NoSubCommand;
 
     if(state->currentCommand != nullptr) {
         current = state->currentCommand->currentSubCommandId();
     }
 
-    stream.write(current);
+    return current;
 }
 
-void StmSerial::processGetErrorCode(Stream& stream) {
+byte StmSerial::processGetCommandStatus() {
     if(state->currentCommand != nullptr && state->currentCommand->getCommandId() == CommandId::Error) {
         BaseTurntableCommand* base = state->currentCommand.get();
         CmdError* errorCommand = static_cast<CmdError*>(base);
-        stream.write(errorCommand->error);
+        return errorCommand->error;
     } else {
-        stream.write((byte)0); // 0 represents no error
+        return CommandResult::Running;
     }
 }
 
@@ -208,12 +206,69 @@ void StmSerial::processGetUpTime(Stream& stream) {
     stream.write(data, 4);
 }
 
-void StmSerial::processGetSpeedTarget(Stream& stream) {
+const byte* StmSerial::processGetSpeedTarget() {
     float speed = -1;
     if(state->getHomeStatus() == HomeStatus::NotHomed) {
         speed = state->targetSpeed;
     }
           
     byte const* data = reinterpret_cast<byte const*>(&speed);
-    stream.write(data, sizeof(float));
+    return data;
+}
+
+void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
+    uint8_t dataSize = 19;
+    byte data[dataSize];
+
+    // Vertical position
+    uint16_t verticalPosition = analogRead(Pin::VerticalPosition);
+    data[0] = verticalPosition & 0x00FF;
+    data[1] = (verticalPosition >> 8) & 0x00FF;
+
+    // Horizontal position
+    uint16_t horizontalPosition = state->azEncoder.getNormalizedPosition();
+    data[2] = horizontalPosition & 0x00FF;
+    data[3] = (horizontalPosition >> 8) & 0x00FF;
+
+    // Lift status
+    data[4] = state->getLiftStatus();
+
+    // Home status
+    data[5] = state->getHomeStatus();
+
+    // Current command
+    data[6] = processGetCurrentCommand();
+
+    // Current subcommand
+    data[7] = processGetCurrentSubCommand();
+
+    // Command status
+    data[8] = processGetCommandStatus();
+
+    // Up time
+    data[9] = state->upTimeSeconds & 0x000000FF;
+    data[10] = (state->upTimeSeconds >> 8) & 0x000000FF;
+    data[11] = (state->upTimeSeconds >> 16) & 0x000000FF;
+    data[12] = (state->upTimeSeconds >> 24) & 0x000000FF;
+
+    // Speed Setting
+    data[13] = state->selectedSpeed;
+
+    // Speed Target
+    const byte* speedTarget = processGetSpeedTarget();
+    data[14] = speedTarget[0];
+    data[15] = speedTarget[1];
+    data[16] = speedTarget[2];
+    data[17] = speedTarget[3];
+
+    // Size Setting
+    data[18] = state->selectedSize;
+
+    stream.write(data, dataSize);
+}
+
+int16_t StmSerial::readInt16(Stream& stream) {
+    int16_t data1 = stream.read() & 0x00FF;
+    int16_t data2 = stream.read() << 8 & 0xFF00;
+    return data1 | data2;
 }

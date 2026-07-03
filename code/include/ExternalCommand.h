@@ -25,12 +25,13 @@ enum ExternalCommand {
     GetLiftStatus = 102,
     GetHomeStatus = 103,
     GetCurrentCommand = 104,
-    GetErrorCode = 105,
+    GetCommandStatus = 105,
     GetUpTime = 106,
     GetSpeedSetting = 107,
     GetSpeedTarget = 108,
     GetSizeSetting = 109,
-    GetCurrentSubCommand = 110
+    GetCurrentSubCommand = 110,
+    GetAdvancedSuiteData = 111,
 };
 
 #endif
