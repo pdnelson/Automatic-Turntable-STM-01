@@ -32,7 +32,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
 }
 
 CommandId CmdProtoPlay::getCommandId() {
-    return CommandId::Pause;
+    return CommandId::MoveNStepsH;
 }
 
 void CmdProtoPlay::doInitialize() {

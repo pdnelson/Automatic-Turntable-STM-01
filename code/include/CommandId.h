@@ -5,7 +5,7 @@ enum CommandId {
     NoCommand =     0,
     Pause =         1,
     UnPause =       2,
-    Play =          3,
+    MoveNStepsH =   3,
     Home =          4,
     Calibration =   5,
     TestMode =      6,
