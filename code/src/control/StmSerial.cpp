@@ -58,10 +58,11 @@ void StmSerial::readSerialData(Stream& stream) {
                 
                 // Action Commands
                 case ExternalCommand::ActionPauseUnPause:       state->pauseOrUnPause();                            break;
-                case ExternalCommand::ActionProtoPlay:          processProtoPlay(stream);                           break;
+                case ExternalCommand::ActionMoveNStepsH:        processProtoPlay(stream);                           break;
                 case ExternalCommand::ActionToggleClutch:       processToggleClutch();                              break;
                 case ExternalCommand::ActionStepHorizontally:   processStepHorizontally(stream);                    break;
                 case ExternalCommand::ActionGoToPositionH:      processGoToPositionH(stream);                       break;
+                case ExternalCommand::ActionPlayOrReturn:       state->playOrReturn();                              break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
@@ -215,7 +216,7 @@ void StmSerial::processGetSpeedTarget(Stream& stream) {
 }
 
 void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
-    uint8_t dataSize = 19;
+    uint8_t dataSize = 20;
     byte data[dataSize];
 
     // Vertical position
@@ -262,6 +263,9 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
 
     // Size Setting
     data[18] = state->selectedSize;
+
+    // Clutch status
+    data[19] = state->clutchEngaged();
 
     stream.write(data, dataSize);
 }
