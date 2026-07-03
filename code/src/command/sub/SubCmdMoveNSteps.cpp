@@ -8,12 +8,13 @@
 #include <MovementAxis.h>
 #include <SubCommandId.h>
 
-SubCmdMoveNSteps::SubCmdMoveNSteps(TurntableState* state, int16_t steps, uint8_t speed) : BaseTurntableSubCommand(state) {
+SubCmdMoveNSteps::SubCmdMoveNSteps(TurntableState* state, int16_t steps, uint8_t speed, bool releaseCurrentAfterMovement) : BaseTurntableSubCommand(state) {
     this->state = state;
     this->speed = speed;
     this->steps = abs(steps);
     this->direction = (this->steps == steps) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
     stepCount = 0;
+    this->releaseCurrentAfterMovement = releaseCurrentAfterMovement;
 }
 
 void SubCmdMoveNSteps::doInitialize() {
@@ -33,7 +34,9 @@ CommandResult SubCmdMoveNSteps::doExecute() {
 }
 
 void SubCmdMoveNSteps::doUninitialize() {
-    state->movementStepper.releaseMotorCurrent();
+    if(releaseCurrentAfterMovement) {
+        state->movementStepper.releaseMotorCurrent();
+    }
 }
 
 SubCommandId SubCmdMoveNSteps::getSubCommandId() {
