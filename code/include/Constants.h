@@ -8,6 +8,9 @@
 #define SERIAL_COMMAND_MODEL_KEY 0b01101101 // 109 in decimal; 'm' in ASCII
 #define SERIAL_COMMAND_CONNECTION_SUCCESS 0b10010010
 
+#define SERIAL_ADVANCED_START_KEY 0b01010111
+#define SERIAL_ADVANCED_END_KEY 0b10101000
+
 // The speed at which serial devices should communicate with this turntable.
 #define SERIAL_SPEED 115200
 

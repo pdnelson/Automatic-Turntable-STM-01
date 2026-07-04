@@ -216,56 +216,60 @@ void StmSerial::processGetSpeedTarget(Stream& stream) {
 }
 
 void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
-    uint8_t dataSize = 20;
+    uint8_t dataSize = 22;
     byte data[dataSize];
+
+    data[0] = SERIAL_ADVANCED_START_KEY;
 
     // Vertical position
     uint16_t verticalPosition = analogRead(Pin::VerticalPosition);
-    data[0] = verticalPosition & 0x00FF;
-    data[1] = (verticalPosition >> 8) & 0x00FF;
+    data[1] = verticalPosition & 0x00FF;
+    data[2] = (verticalPosition >> 8) & 0x00FF;
 
     // Horizontal position
     uint16_t horizontalPosition = state->azEncoder.getNormalizedPosition();
-    data[2] = horizontalPosition & 0x00FF;
-    data[3] = (horizontalPosition >> 8) & 0x00FF;
+    data[3] = horizontalPosition & 0x00FF;
+    data[4] = (horizontalPosition >> 8) & 0x00FF;
 
     // Lift status
-    data[4] = state->getLiftStatus();
+    data[5] = state->getLiftStatus();
 
     // Home status
-    data[5] = state->getHomeStatus();
+    data[6] = state->getHomeStatus();
 
     // Current command
-    data[6] = processGetCurrentCommand();
+    data[7] = processGetCurrentCommand();
 
     // Current subcommand
-    data[7] = processGetCurrentSubCommand();
+    data[8] = processGetCurrentSubCommand();
 
     // Command status
-    data[8] = processGetCommandStatus();
+    data[9] = processGetCommandStatus();
 
     // Up time
-    data[9] = state->upTimeSeconds & 0x000000FF;
-    data[10] = (state->upTimeSeconds >> 8) & 0x000000FF;
-    data[11] = (state->upTimeSeconds >> 16) & 0x000000FF;
-    data[12] = (state->upTimeSeconds >> 24) & 0x000000FF;
+    data[10] = state->upTimeSeconds & 0x000000FF;
+    data[11] = (state->upTimeSeconds >> 8) & 0x000000FF;
+    data[12] = (state->upTimeSeconds >> 16) & 0x000000FF;
+    data[13] = (state->upTimeSeconds >> 24) & 0x000000FF;
 
     // Speed Setting
-    data[13] = state->selectedSpeed;
+    data[14] = state->selectedSpeed;
 
     // Speed Target
     float targetSpeed = state->getTargetSpeed();
     byte const* targetSpeedBytes = reinterpret_cast<byte const*>(&targetSpeed);
-    data[14] = targetSpeedBytes[0];
-    data[15] = targetSpeedBytes[1];
-    data[16] = targetSpeedBytes[2];
-    data[17] = targetSpeedBytes[3];
+    data[15] = targetSpeedBytes[0];
+    data[16] = targetSpeedBytes[1];
+    data[17] = targetSpeedBytes[2];
+    data[18] = targetSpeedBytes[3];
 
     // Size Setting
-    data[18] = state->selectedSize;
+    data[19] = state->selectedSize;
 
     // Clutch status
-    data[19] = state->clutchEngaged();
+    data[20] = state->clutchEngaged();
+
+    data[21] = SERIAL_ADVANCED_END_KEY;
 
     stream.write(data, dataSize);
 }
