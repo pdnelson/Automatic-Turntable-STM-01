@@ -1,5 +1,5 @@
 #include <InputMux.h>
-#include <Stepper.h>
+#include <StmStepper.h>
 #include <TurntableSpeed.h>
 #include <RecordSize.h>
 #include <LiftStatus.h>
@@ -21,8 +21,8 @@ class TurntableState {
         StmShift outputShift;
         StmSerial serialComm;
         InputMux inputMux;
-        Stepper movementStepper;
-        Stepper clutchStepper;
+        StmStepper movementStepper;
+        StmStepper clutchStepper;
         StmEncoder azEncoder;
         std::unique_ptr<BaseTurntableCommand> currentCommand;
 

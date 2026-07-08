@@ -23,9 +23,6 @@
 // The interval, in microseconds, at which to poll the input multiplexer.
 #define MUX_POLL_INTERVAL 100
 
-// The number of steps to make a full revolution on a 28BYJ-48 stepper motor.
-#define STEPS_PER_REVOLUTION 2048
-
 // One seconds, in microseconds.
 #define ONE_SECOND_MICROS 1000000
 

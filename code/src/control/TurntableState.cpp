@@ -24,8 +24,8 @@ TurntableState::TurntableState() :
     outputShift(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
     serialComm(this),
     inputMux(Pin::InputMuxA, Pin::InputMuxB, Pin::InputMuxC, Pin::InputMuxResult, MUX_POLL_INTERVAL, BUTTON_HOLD_INTERVAL, BUTTON_DEBOUNCE_INTERVAL),
-    movementStepper(STEPS_PER_REVOLUTION, Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
-    clutchStepper(STEPS_PER_REVOLUTION, Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4),
+    movementStepper(Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
+    clutchStepper(Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4),
     azEncoder(Pin::ReservedI2CSda, Pin::ReservedI2CScl)
 {
     pinMode(Pin::VerticalPosition, INPUT);
