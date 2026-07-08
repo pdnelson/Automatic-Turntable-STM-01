@@ -40,7 +40,7 @@ bool StmStepper::step(unsigned long clockMicros) {
 }
 
 void StmStepper::releaseMotorCurrent() {
-    firstStep = true;
+    rampingUp = true;
     digitalWrite(pin1, LOW);
     digitalWrite(pin2, LOW);
     digitalWrite(pin3, LOW);
