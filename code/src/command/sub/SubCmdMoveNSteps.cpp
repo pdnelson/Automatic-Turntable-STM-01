@@ -14,11 +14,12 @@ SubCmdMoveNSteps::SubCmdMoveNSteps(TurntableState* state, int16_t steps, uint8_t
     this->steps = abs(steps);
     stepCount = 0;
     this->releaseCurrentAfterMovement = releaseCurrentAfterMovement;
-    state->movementStepper.setDirection((this->steps == steps) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise);
+    direction = this->steps == steps ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
 }
 
 void SubCmdMoveNSteps::doInitialize() {
     digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
+    state->movementStepper.setDirection(direction);
     state->movementStepper.setSpeed(this->speed);
 }
 

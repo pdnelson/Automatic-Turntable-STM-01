@@ -20,6 +20,7 @@ class SubCmdMoveNSteps : public BaseTurntableSubCommand {
         uint8_t speed;
         uint16_t steps;
         uint16_t stepCount;
+        AzimuthDirection direction;
 };
 
 #endif

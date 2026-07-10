@@ -7,6 +7,11 @@ StmStepper::StmStepper(Pin pin1, Pin pin2, Pin pin3, Pin pin4) {
     this->pin2 = pin2;
     this->pin3 = pin3;
     this->pin4 = pin4;
+
+    pinMode(pin1, OUTPUT);
+    pinMode(pin2, OUTPUT);
+    pinMode(pin3, OUTPUT);
+    pinMode(pin4, OUTPUT);
 }
 
 void StmStepper::setSpeed(uint8_t speedRpm) {
