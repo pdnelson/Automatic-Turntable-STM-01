@@ -9,7 +9,7 @@
 #include <MuxPin.h>
 #include <Pin.h>
 #include <RecordSize.h>
-#include <Stepper.h>
+#include <StmStepper.h>
 #include <StmShift.h>
 #include <TurntableSpeed.h>
 #include <CmdError.h>

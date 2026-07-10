@@ -15,6 +15,7 @@ SubCmdLiftTonearm::SubCmdLiftTonearm(TurntableState* state, uint8_t speed) : Bas
 
 void SubCmdLiftTonearm::doInitialize() {
     baseInitialize();
+    state->movementStepper.setDirection(VerticalDirection::Up);
 }
 
 CommandResult SubCmdLiftTonearm::doExecute() {
@@ -32,11 +33,12 @@ CommandResult SubCmdLiftTonearm::doExecute() {
             result = CommandResult::NotLifted;
         }
     } else {
-        state->movementStepper.step(VerticalDirection::Up);
-        bool stalled = checkVerticalStall(VerticalDirection::Up, currentPosition);
+        if(state->movementStepper.stepBlind(state->clockMicros)) {
+            bool stalled = checkVerticalStall(VerticalDirection::Up, currentPosition);
 
-        if(stalled) {
-            result = CommandResult::LiftStalledMovingUp;
+            if(stalled) {
+                result = CommandResult::LiftStalledMovingUp;
+            }
         }
     }
 

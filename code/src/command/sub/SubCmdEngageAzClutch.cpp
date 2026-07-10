@@ -16,21 +16,24 @@ SubCmdEngageAzClutch::SubCmdEngageAzClutch(TurntableState* state) : BaseTurntabl
 
 void SubCmdEngageAzClutch::doInitialize() {
     state->clutchStepper.setSpeed(CLUTCH_SPEED);
+    state->clutchStepper.setDirection(ClutchDirection::Engage);
 }
 
 CommandResult SubCmdEngageAzClutch::doExecute() {
-    state->clutchStepper.step(ClutchDirection::Engage);
+    if(state->clutchStepper.stepBlind(state->clockMicros)) {
+        if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
+            stepsSinceStatusChange++;
+        } else {
+            stepsBeforeStatusChange++;
+        }
 
-    if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
-        stepsSinceStatusChange++;
-    } else {
-        stepsBeforeStatusChange++;
-    }
-
-    if(stepsSinceStatusChange >= CLUTCH_ENGAGE_STEPS) {
-        return CommandResult::Success;
-    } else if(stepsBeforeStatusChange > CLUTCH_TIMEOUT_STEPS) {
-        return CommandResult::ClutchFailedToEngage;
+        if(stepsSinceStatusChange >= CLUTCH_ENGAGE_STEPS) {
+            return CommandResult::Success;
+        } else if(stepsBeforeStatusChange > CLUTCH_TIMEOUT_STEPS) {
+            return CommandResult::ClutchFailedToEngage;
+        } else {
+            return CommandResult::Running;
+        }
     } else {
         return CommandResult::Running;
     }

@@ -15,11 +15,13 @@ SubCmdDisengageAzClutch::SubCmdDisengageAzClutch(TurntableState* state) : BaseTu
 
 void SubCmdDisengageAzClutch::doInitialize() {
     state->clutchStepper.setSpeed(CLUTCH_SPEED);
+    state->clutchStepper.setDirection(ClutchDirection::Disengage);
 }
 
 CommandResult SubCmdDisengageAzClutch::doExecute() {
-    state->clutchStepper.step(ClutchDirection::Disengage);
-    totalSteps++;
+    if(state->clutchStepper.stepBlind(state->clockMicros)) {
+        totalSteps++;
+    }
 
     if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Disengaged) {
         return CommandResult::Success;

@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #ifndef AZIMUTHDIRECTION_H
 #define AZIMUTHDIRECTION_H
 

@@ -15,6 +15,7 @@ SubCmdSetDownTonearm::SubCmdSetDownTonearm(TurntableState* state, uint8_t speed)
 
 void SubCmdSetDownTonearm::doInitialize() {
     baseInitialize();
+    state->movementStepper.setDirection(VerticalDirection::Down);
 }
 
 CommandResult SubCmdSetDownTonearm::doExecute() {
@@ -28,11 +29,12 @@ CommandResult SubCmdSetDownTonearm::doExecute() {
         isSetDown = true;
         setDownPosition = currentPosition;
     } else {
-        state->movementStepper.step(VerticalDirection::Down);
-        bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
+        if(state->movementStepper.stepBlind(state->clockMicros)) {
+            bool stalled = checkVerticalStall(VerticalDirection::Down, currentPosition);
         
-        if(stalled) {
-            result = CommandResult::LiftStalledMovingDown;
+            if(stalled) {
+                result = CommandResult::LiftStalledMovingDown;
+            }
         }
     }
 

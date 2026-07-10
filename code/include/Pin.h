@@ -1,7 +1,9 @@
+#include <Arduino.h>
+
 #ifndef PIN_H
 #define PIN_H
 
-enum Pin {
+enum Pin : uint8_t {
     Serial1Rx = 0,
     Serial1Tx = 1,
     InputMuxA = 2,

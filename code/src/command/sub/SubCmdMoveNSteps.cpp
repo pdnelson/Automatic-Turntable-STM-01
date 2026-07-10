@@ -12,9 +12,9 @@ SubCmdMoveNSteps::SubCmdMoveNSteps(TurntableState* state, int16_t steps, uint8_t
     this->state = state;
     this->speed = speed;
     this->steps = abs(steps);
-    this->direction = (this->steps == steps) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
     stepCount = 0;
     this->releaseCurrentAfterMovement = releaseCurrentAfterMovement;
+    state->movementStepper.setDirection((this->steps == steps) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise);
 }
 
 void SubCmdMoveNSteps::doInitialize() {
@@ -23,8 +23,9 @@ void SubCmdMoveNSteps::doInitialize() {
 }
 
 CommandResult SubCmdMoveNSteps::doExecute() {
-    state->movementStepper.step(this->direction);
-    stepCount++;
+    if(state->movementStepper.stepBlind(state->clockMicros)) {
+        stepCount++;
+    }
 
     if(stepCount == steps) {
         return CommandResult::Success;
