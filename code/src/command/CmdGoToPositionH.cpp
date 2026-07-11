@@ -12,7 +12,7 @@
 #include <Constants.h>
 #include <memory>
 
-CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t speed) : BaseTurntableCommand(state) {
+CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t delta, uint8_t speed) : BaseTurntableCommand(state) {
     this->state = state;
 
     // Lift up
@@ -22,7 +22,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         
         // Move to specific position
-        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, speed))
+        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, delta, speed))
         
         // Disengage the clutch
         ->next(std::make_unique<SubCmdDisengageAzClutch>(state))

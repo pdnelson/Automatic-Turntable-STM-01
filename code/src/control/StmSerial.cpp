@@ -120,9 +120,10 @@ void StmSerial::processStepHorizontally(Stream& stream) {
 
 void StmSerial::processGoToPositionH(Stream& stream) {
     int16_t position = readInt16(stream);
+    uint8_t delta = stream.read();
     uint8_t speed = stream.read();
     
-    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, position, speed);
+    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, position, delta, speed);
 }
 
 void StmSerial::processSetCustomSpeed(Stream& stream) {

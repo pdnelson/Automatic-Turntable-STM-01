@@ -1,6 +1,7 @@
 #include <StmStepper.h>
 #include <Arduino.h>
 #include <Pin.h>
+#include <AzimuthDirection.h>
 
 StmStepper::StmStepper(Pin pin1, Pin pin2, Pin pin3, Pin pin4) {
     this->pin1 = pin1;
@@ -30,12 +31,11 @@ void StmStepper::setRampDownEncoderTicks(uint16_t rampDown) {
     rampDownEncoderTicks = rampDown;
 }
 
-void StmStepper::setDestinationEncoderPosition(uint16_t destinationEncoderPosition) {
-    this->destinationEncoderPosition = destinationEncoderPosition;
-}
-
-void StmStepper::setDestinationEncoderPositionDelta(uint16_t destinationEncoderPositionDelta) {
-    this->destinationEncoderPositionDelta = destinationEncoderPositionDelta;
+void StmStepper::setEncoderRange(uint16_t start, uint16_t end, uint8_t delta) {
+    startEncoderPosition = start;
+    destinationEncoderPosition = end;
+    destinationEncoderPositionDelta = delta;
+    direction = (start > end) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
 }
 
 bool StmStepper::step(unsigned long clockMicros, uint16_t currentEncoderPosition) {
@@ -59,7 +59,6 @@ bool StmStepper::stepBlind(unsigned long clockMicros) {
 }
 
 void StmStepper::releaseMotorCurrent() {
-    rampingUp = true;
     lastStepMicros = 0;
     digitalWrite(pin1, LOW);
     digitalWrite(pin2, LOW);

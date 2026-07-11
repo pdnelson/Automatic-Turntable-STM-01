@@ -15,8 +15,8 @@ class StmStepper {
         void setRampUpEncoderTicks(uint16_t rampUp);
         void setRampDownEncoderTicks(uint16_t rampDown);
 
-        void setDestinationEncoderPosition(uint16_t destinationEncoderPosition);
-        void setDestinationEncoderPositionDelta(uint16_t destinationEncoderPositionDelta);
+        // This automatically sets the direction
+        void setEncoderRange(uint16_t start, uint16_t end, uint8_t delta);
 
         void setDirection(int8_t direction);
 
@@ -39,15 +39,14 @@ class StmStepper {
 
         uint16_t rampUpEncoderTicks = 0;
         uint16_t rampDownEncoderTicks = 0;
-
+        
+        uint16_t startEncoderPosition = 0;
         uint16_t destinationEncoderPosition = 0;
         uint8_t destinationEncoderPositionDelta = 0;
 
         int8_t direction = 1;
 
         int8_t currentStep = 0;
-
-        bool rampingUp = false;
 
         unsigned long lastStepMicros = 0;
 
