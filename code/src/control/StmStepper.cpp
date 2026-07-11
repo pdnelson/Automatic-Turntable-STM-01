@@ -31,10 +31,10 @@ void StmStepper::setRampDownEncoderTicks(uint16_t rampDown) {
     rampDownEncoderTicks = rampDown;
 }
 
-void StmStepper::setEncoderRange(uint16_t start, uint16_t end, uint8_t delta) {
+void StmStepper::setEncoderRange(uint16_t start, uint16_t end, uint8_t tolerance) {
     startEncoderPosition = start;
     destinationEncoderPosition = end;
-    destinationEncoderPositionDelta = delta;
+    destinationEncoderPositionTolerance = tolerance;
     direction = (start > end) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
 }
 

@@ -8,17 +8,17 @@
 #include <SubCommandId.h>
 #include <AzimuthDirection.h>
 
-SubCmdGoToPositionH::SubCmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t delta, uint8_t speed) : BaseTurntableSubCommand(state) {
+SubCmdGoToPositionH::SubCmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed) : BaseTurntableSubCommand(state) {
     this->state = state;
     this->speed = speed;
     destinationEncoderPosition = position;
-    encoderDelta = delta;
+    encoderTolerance = tolerance;
 }
 
 void SubCmdGoToPositionH::doInitialize() {
     digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
     state->movementStepper.setSpeed(speed);
-    state->movementStepper.setEncoderRange(state->azEncoder.getNormalizedPosition(), destinationEncoderPosition, encoderDelta);
+    state->movementStepper.setEncoderRange(state->azEncoder.getNormalizedPosition(), destinationEncoderPosition, encoderTolerance);
 }
 
 CommandResult SubCmdGoToPositionH::doExecute() {

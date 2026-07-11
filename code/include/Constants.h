@@ -31,7 +31,7 @@
  */
 
 // A margin of error for the slide potentiometer "encoders."
-#define VERTICAL_ENCODER_DELTA 5
+#define VERTICAL_ENCODER_TOLERANCE 5
 
 // The number of encoder ticks to move the tonearm down after contact with the lift has been terminated.
 #define TICKS_BELOW_RECORD 15 // Set to 0 because the debounce ends up doing this well enough for now (or forever, maybe)
