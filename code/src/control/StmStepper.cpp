@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <Pin.h>
 #include <AzimuthDirection.h>
+#include <StmStepperResult.h>
 
 StmStepper::StmStepper(Pin pin1, Pin pin2, Pin pin3, Pin pin4) {
     this->pin1 = pin1;
@@ -38,14 +39,38 @@ void StmStepper::setEncoderRange(uint16_t start, uint16_t end, uint8_t tolerance
     direction = (start > end) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
 }
 
-bool StmStepper::step(unsigned long clockMicros, uint16_t currentEncoderPosition) {
-    if(clockMicros - lastStepMicros > currentTimeBetweenStepsMicros) {
-        performStep();
-        lastStepMicros = clockMicros;
-        return true;
+StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEncoderPosition) {
+    StmStepperResult result = StmStepperResult();
+
+    // The movement has completed.
+    if(movementCompleted(currentEncoderPosition)) {
+        result.movementCompleted = true;
+    } 
+    
+    // The movement has not completed, and we need to take a step.
+    else {
+        uint16_t speed = topSpeedTimeBetweenStepsMicros;
+
+        // Ramp down calculation
+        // prioritize ramp down since that's the functional one; ramp up just looks pretty
+        if(rampingDown(currentEncoderPosition)) {
+            speed = rampDownSpeed(currentEncoderPosition);
+        }
+
+        // Ramp up calculation
+        else if(rampingUp(currentEncoderPosition)) {
+            speed = rampUpSpeed(currentEncoderPosition);
+        }
+
+        if(clockMicros - lastStepMicros > speed) {
+            performStep();
+            lastStepMicros = clockMicros;
+            result.stepTaken = true;
+        }
     }
 
-    return false;
+
+    return result;
 }
 
 bool StmStepper::stepBlind(unsigned long clockMicros) {
@@ -64,6 +89,37 @@ void StmStepper::releaseMotorCurrent() {
     digitalWrite(pin2, LOW);
     digitalWrite(pin3, LOW);
     digitalWrite(pin4, LOW);
+}
+
+bool StmStepper::rampingDown(uint16_t currentEncoderPosition) {
+    bool movingNegative = destinationEncoderPosition < startEncoderPosition;
+
+    return (movingNegative && currentEncoderPosition - rampDownEncoderTicks < destinationEncoderPosition) ||
+            (!movingNegative && currentEncoderPosition + rampDownEncoderTicks > destinationEncoderPosition);
+}
+
+bool StmStepper::rampingUp(uint16_t currentEncoderPosition) {
+    bool movingNegative = destinationEncoderPosition < startEncoderPosition;
+
+    return (movingNegative && currentEncoderPosition > startEncoderPosition - rampUpEncoderTicks) ||
+            (!movingNegative && currentEncoderPosition < startEncoderPosition + rampUpEncoderTicks);
+}
+
+uint16_t StmStepper::rampDownSpeed(uint16_t currentEncoderPosition) {
+    uint16_t ticksSoFar = 0; // todo
+    return ((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / rampDownEncoderTicks) * ticksSoFar;
+}
+
+uint16_t StmStepper::rampUpSpeed(uint16_t currentEncoderPosition) {
+    uint16_t ticksSoFar = 0; // todo
+    return ((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / rampDownEncoderTicks) * ticksSoFar;
+}
+
+bool StmStepper::movementCompleted(uint16_t currentEncoderPosition) {
+    bool movingNegative = destinationEncoderPosition < startEncoderPosition;
+    
+    return (movingNegative && currentEncoderPosition - destinationEncoderPositionTolerance < destinationEncoderPosition) ||
+        (!movingNegative && currentEncoderPosition + destinationEncoderPositionTolerance > destinationEncoderPosition);
 }
 
 void StmStepper::performStep() {

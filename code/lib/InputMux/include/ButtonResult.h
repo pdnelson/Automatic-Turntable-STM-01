@@ -1,7 +1,9 @@
+#include <Arduino.h>
+
 #ifndef BUTTONRESULT_H
 #define BUTTONRESULT_H
 
-enum ButtonResult {
+enum ButtonResult : uint8_t {
 
     /**
      * The button was just released from the `Pressed` status. This will be set
