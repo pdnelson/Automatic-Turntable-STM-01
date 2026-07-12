@@ -16,11 +16,7 @@
 #define PROP_DELAY 10
 
 void setUp() {
-    digitalWrite(MUX_A, LOW);
-    digitalWrite(MUX_B, LOW);
-    digitalWrite(MUX_C, LOW);
-    digitalWrite(MUX_D, LOW);
-    digitalWrite(MUX_OUTPUT, LOW);
+    /* do nothing */
 }
 
 /* Begin selector tests */
