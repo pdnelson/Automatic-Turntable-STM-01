@@ -45,6 +45,7 @@ class StmStepper {
         uint16_t rampDownSpeed(uint16_t currentEncoderPosition);
         uint16_t rampUpSpeed(uint16_t currentEncoderPosition);
         bool movementCompleted(uint16_t currentEncoderPosition);
+        bool onBoundary(uint16_t currentEncoderPosition, uint8_t tolerance);
 
     private:
         uint8_t pin1;

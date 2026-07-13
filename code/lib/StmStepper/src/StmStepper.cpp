@@ -46,7 +46,7 @@ StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEnc
     StmStepperResult result = StmStepperResult();
 
     // The movement has completed.
-    if(movementCompleted(currentEncoderPosition)) {
+    if(onBoundary(currentEncoderPosition, destinationEncoderPositionTolerance)) {
         result.movementCompleted = true;
     } 
     
@@ -56,12 +56,12 @@ StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEnc
 
         // Ramp down calculation
         // prioritize ramp down since that's the functional one; ramp up just looks pretty
-        if(rampingDown(currentEncoderPosition)) {
+        if(onBoundary(currentEncoderPosition, rampDownEncoderTicks)) {
             speed = rampDownSpeed(currentEncoderPosition);
         }
 
         // Ramp up calculation
-        else if(rampingUp(currentEncoderPosition)) {
+        else if(onBoundary(currentEncoderPosition, rampUpEncoderTicks)) {
             speed = rampUpSpeed(currentEncoderPosition);
         }
 
@@ -94,20 +94,6 @@ void StmStepper::releaseMotorCurrent() {
     digitalWrite(pin4, LOW);
 }
 
-bool StmStepper::rampingDown(uint16_t currentEncoderPosition) {
-    bool movingNegative = destinationEncoderPosition < startEncoderPosition;
-
-    return (movingNegative && currentEncoderPosition - rampDownEncoderTicks < destinationEncoderPosition) ||
-            (!movingNegative && currentEncoderPosition + rampDownEncoderTicks > destinationEncoderPosition);
-}
-
-bool StmStepper::rampingUp(uint16_t currentEncoderPosition) {
-    bool movingNegative = destinationEncoderPosition < startEncoderPosition;
-
-    return (movingNegative && currentEncoderPosition > startEncoderPosition - rampUpEncoderTicks) ||
-            (!movingNegative && currentEncoderPosition < startEncoderPosition + rampUpEncoderTicks);
-}
-
 uint16_t StmStepper::rampDownSpeed(uint16_t currentEncoderPosition) {
     uint16_t ticksSoFar = 0; // todo
     return ((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / rampDownEncoderTicks) * ticksSoFar;
@@ -118,11 +104,11 @@ uint16_t StmStepper::rampUpSpeed(uint16_t currentEncoderPosition) {
     return ((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / rampDownEncoderTicks) * ticksSoFar;
 }
 
-bool StmStepper::movementCompleted(uint16_t currentEncoderPosition) {
-    uint16_t lowerToleranceBounary = destinationEncoderPosition - destinationEncoderPositionTolerance;
-    uint16_t upperToleranceBoundary = destinationEncoderPosition + destinationEncoderPositionTolerance;
+bool StmStepper::onBoundary(uint16_t currentEncoderPosition, uint8_t tolerance) {
+    uint16_t lowerToleranceBoundary = destinationEncoderPosition - tolerance;
+    uint16_t upperToleranceBoundary = destinationEncoderPosition + tolerance;
     
-    return currentEncoderPosition >= lowerToleranceBounary && currentEncoderPosition <= upperToleranceBoundary;
+    return currentEncoderPosition >= lowerToleranceBoundary && currentEncoderPosition <= upperToleranceBoundary;
 }
 
 void StmStepper::performStep() {
