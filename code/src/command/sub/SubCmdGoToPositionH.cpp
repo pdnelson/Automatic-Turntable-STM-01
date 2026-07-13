@@ -19,6 +19,7 @@ void SubCmdGoToPositionH::doInitialize() {
     digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
     state->movementStepper.setSpeed(speed);
     state->movementStepper.setEncoderRange(state->azEncoder.getNormalizedPosition(), destinationEncoderPosition, encoderTolerance);
+    state->movementStepper.calibrateDirection(AzimuthDirection::Clockwise, AzimuthDirection::CounterClockwise);
 }
 
 CommandResult SubCmdGoToPositionH::doExecute() {

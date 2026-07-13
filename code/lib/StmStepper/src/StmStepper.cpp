@@ -1,10 +1,8 @@
 #include <StmStepper.h>
 #include <Arduino.h>
-#include <Pin.h>
-#include <AzimuthDirection.h>
 #include <StmStepperResult.h>
 
-StmStepper::StmStepper(Pin pin1, Pin pin2, Pin pin3, Pin pin4) {
+StmStepper::StmStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4) {
     this->pin1 = pin1;
     this->pin2 = pin2;
     this->pin3 = pin3;
@@ -24,6 +22,11 @@ void StmStepper::setDirection(int8_t direction) {
     this->direction = direction;
 }
 
+void StmStepper::calibrateDirection(uint8_t positive, uint8_t negative) {
+    positiveDirection = positive;
+    negativeDirection = negative;
+}
+
 void StmStepper::setRampUpEncoderTicks(uint16_t rampUp) {
     rampUpEncoderTicks = rampUp;
 }
@@ -36,7 +39,7 @@ void StmStepper::setEncoderRange(uint16_t start, uint16_t end, uint8_t tolerance
     startEncoderPosition = start;
     destinationEncoderPosition = end;
     destinationEncoderPositionTolerance = tolerance;
-    direction = (start > end) ? AzimuthDirection::Clockwise : AzimuthDirection::CounterClockwise;
+    direction = (start > end) ? positiveDirection : negativeDirection;
 }
 
 StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEncoderPosition) {

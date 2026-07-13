@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Pin.h>
 #include <StmStepperResult.h>
 
 #ifndef STMSTEPPER_H
@@ -14,7 +13,7 @@
 
 class StmStepper {
     public:
-        StmStepper(Pin pin1, Pin pin2, Pin pin3, Pin pin4);
+        StmStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4);
 
         void setSpeed(uint8_t speedRpm);
 
@@ -25,6 +24,12 @@ class StmStepper {
         void setEncoderRange(uint16_t start, uint16_t end, uint8_t tolerance);
 
         void setDirection(int8_t direction);
+
+        /**
+         * Calibrates the direction so the `step` method can properly calculate which direction the the stepper needs to step
+         * to elicit a positive increment from the encoder.
+         */
+        void calibrateDirection(uint8_t positive, uint8_t negative);
 
         // Step in accordance with the currentEncoderPosition.
         StmStepperResult step(unsigned long clockMicros, uint16_t currentEncoderPosition);
@@ -42,10 +47,10 @@ class StmStepper {
         bool movementCompleted(uint16_t currentEncoderPosition);
 
     private:
-        Pin pin1;
-        Pin pin2;
-        Pin pin3;
-        Pin pin4;
+        uint8_t pin1;
+        uint8_t pin2;
+        uint8_t pin3;
+        uint8_t pin4;
 
         unsigned long topSpeedTimeBetweenStepsMicros = 0;
 
@@ -57,6 +62,9 @@ class StmStepper {
         uint8_t destinationEncoderPositionTolerance = 0;
 
         int8_t direction = 1;
+
+        uint8_t positiveDirection = 1;
+        uint8_t negativeDirection = -1;
 
         int8_t currentStep = 0;
 

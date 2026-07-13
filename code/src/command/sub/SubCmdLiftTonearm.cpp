@@ -16,6 +16,7 @@ SubCmdLiftTonearm::SubCmdLiftTonearm(TurntableState* state, uint8_t speed) : Bas
 void SubCmdLiftTonearm::doInitialize() {
     baseInitialize();
     state->movementStepper.setDirection(VerticalDirection::Up);
+    state->movementStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
 }
 
 CommandResult SubCmdLiftTonearm::doExecute() {
