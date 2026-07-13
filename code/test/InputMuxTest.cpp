@@ -630,6 +630,7 @@ void test_inputMux_buttonHeldHighForHoldInterval_held() {
 
 void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromReleasedToOnPressToPressedToOnHoldToHeldToReleased() {
     InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
+    pinMode(MUX_OUTPUT, OUTPUT); // This is usually set as "INPUT," but we need it to be "OUTPUT" for testing purposes here.
 
     unsigned long totalClock = 0;
     unsigned long pressStartTime = DEBOUNCE_INTERVAL_MICROS;
@@ -666,7 +667,7 @@ void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromRel
 
     // Index 0 goes straight from held to released (to not double-execute events)
     digitalWrite(MUX_OUTPUT, LOW);
-    totalClock += PROP_DELAY;
+    totalClock += PROP_DELAY + 1000;
     testMux.monitor(totalClock);
     TEST_ASSERT_EQUAL(ButtonResult::Released, testMux.getValue(0));
 
@@ -675,6 +676,7 @@ void test_inputMux_fullButtonCycleFromReleasedToHeldToReleased_transitionFromRel
 
 void test_inputMux_fullButtonCycleFromReleasedToPressedToReleased_transitionFromReleasedToOnPressToPressedToOnReleasedToReleased() {
     InputMux testMux = InputMux(MUX_A, MUX_OUTPUT, PROP_DELAY, BUTTON_HOLD_INTERVAL_MS, DEBOUNCE_INTERVAL_MS);
+    pinMode(MUX_OUTPUT, OUTPUT); // This is usually set as "INPUT," but we need it to be "OUTPUT" for testing purposes here.
 
     unsigned long totalClock = 0;
     unsigned long pressStartTime = DEBOUNCE_INTERVAL_MICROS;
@@ -755,12 +757,6 @@ int runUnityTests() {
 
 void setup() {
     delay(2000);
-
-    pinMode(MUX_A, OUTPUT);
-    pinMode(MUX_B, OUTPUT);
-    pinMode(MUX_C, OUTPUT);
-    pinMode(MUX_D, OUTPUT);
-    pinMode(MUX_OUTPUT, OUTPUT);
 
     runUnityTests();
 }
