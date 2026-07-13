@@ -119,10 +119,10 @@ uint16_t StmStepper::rampUpSpeed(uint16_t currentEncoderPosition) {
 }
 
 bool StmStepper::movementCompleted(uint16_t currentEncoderPosition) {
-    bool movingNegative = destinationEncoderPosition < startEncoderPosition;
+    uint16_t lowerToleranceBounary = destinationEncoderPosition - destinationEncoderPositionTolerance;
+    uint16_t upperToleranceBoundary = destinationEncoderPosition + destinationEncoderPositionTolerance;
     
-    return (movingNegative && currentEncoderPosition - destinationEncoderPositionTolerance <= destinationEncoderPosition) ||
-        (!movingNegative && currentEncoderPosition + destinationEncoderPositionTolerance >= destinationEncoderPosition);
+    return currentEncoderPosition >= lowerToleranceBounary && currentEncoderPosition <= upperToleranceBoundary;
 }
 
 void StmStepper::performStep() {
