@@ -22,7 +22,7 @@ void StmStepper::setDirection(int8_t direction) {
     this->direction = direction;
 }
 
-void StmStepper::calibrateDirection(uint8_t positive, uint8_t negative) {
+void StmStepper::calibrateDirection(int8_t positive, int8_t negative) {
     positiveDirection = positive;
     negativeDirection = negative;
 }
@@ -39,14 +39,14 @@ void StmStepper::setEncoderRange(uint16_t start, uint16_t end, uint8_t tolerance
     startEncoderPosition = start;
     destinationEncoderPosition = end;
     destinationEncoderPositionTolerance = tolerance;
-    direction = (start > end) ? positiveDirection : negativeDirection;
+    direction = (start < end) ? positiveDirection : negativeDirection;
 }
 
 StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEncoderPosition) {
     StmStepperResult result = StmStepperResult();
 
     // The movement has completed.
-    if(onBoundary(currentEncoderPosition, destinationEncoderPositionTolerance)) {
+    if(movementCompleted(currentEncoderPosition)) {
         result.movementCompleted = true;
     } 
     
@@ -56,12 +56,12 @@ StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEnc
 
         // Ramp down calculation
         // prioritize ramp down since that's the functional one; ramp up just looks pretty
-        if(onBoundary(currentEncoderPosition, rampDownEncoderTicks)) {
+        if(onBoundary(currentEncoderPosition, destinationEncoderPosition, rampDownEncoderTicks)) {
             speed = rampDownSpeed(currentEncoderPosition);
         }
 
         // Ramp up calculation
-        else if(onBoundary(currentEncoderPosition, rampUpEncoderTicks)) {
+        else if(onBoundary(currentEncoderPosition, startEncoderPosition, rampUpEncoderTicks)) {
             speed = rampUpSpeed(currentEncoderPosition);
         }
 
@@ -104,11 +104,23 @@ uint16_t StmStepper::rampUpSpeed(uint16_t currentEncoderPosition) {
     return ((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / rampDownEncoderTicks) * ticksSoFar;
 }
 
-bool StmStepper::onBoundary(uint16_t currentEncoderPosition, uint8_t tolerance) {
-    uint16_t lowerToleranceBoundary = destinationEncoderPosition - tolerance;
-    uint16_t upperToleranceBoundary = destinationEncoderPosition + tolerance;
+bool StmStepper::movementCompleted(uint16_t currentEncoderPosition) {
+    // Negative movement
+    return (direction == negativeDirection && currentEncoderPosition - destinationEncoderPositionTolerance <= destinationEncoderPosition) ||
+        	
+        // Positive movement
+        (direction == positiveDirection && currentEncoderPosition + destinationEncoderPositionTolerance >= destinationEncoderPosition);
+}
+
+bool StmStepper::onBoundary(uint16_t currentEncoderPosition, uint16_t boundary, uint8_t tolerance) {
+    uint16_t lowerToleranceBoundary = boundary - tolerance;
+    uint16_t upperToleranceBoundary = boundary + tolerance;
     
     return currentEncoderPosition >= lowerToleranceBoundary && currentEncoderPosition <= upperToleranceBoundary;
+}
+
+uint16_t StmStepper::ticksToBoundarySoFar(uint16_t currentEncoderPosition, uint16_t boundary, uint16_t rampEncoderTicks) {
+    return 0;
 }
 
 void StmStepper::performStep() {

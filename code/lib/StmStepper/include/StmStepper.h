@@ -29,24 +29,30 @@ class StmStepper {
          * Calibrates the direction so the `step` method can properly calculate which direction the the stepper needs to step
          * to elicit a positive increment from the encoder.
          */
-        void calibrateDirection(uint8_t positive, uint8_t negative);
+        void calibrateDirection(int8_t positive, int8_t negative);
 
-        // Step in accordance with the currentEncoderPosition.
+        /**
+         * Step in accordance with the currentEncoderPosition.
+         */
         StmStepperResult step(unsigned long clockMicros, uint16_t currentEncoderPosition);
 
-        // Step without acknowledging any encoder position. This will ignore any ramp up/ramp down logic.
+        /**
+         * Step without acknowledging any encoder position. This will ignore any ramp up/ramp down logic.
+         */
         bool stepBlind(unsigned long clockMicros);
 
         void releaseMotorCurrent();
 
         // Methods we want to be able to unit test
-        bool rampingDown(uint16_t currentEncoderPosition);
-        bool rampingUp(uint16_t currentEncoderPosition);
         uint16_t rampDownSpeed(uint16_t currentEncoderPosition);
         uint16_t rampUpSpeed(uint16_t currentEncoderPosition);
         bool movementCompleted(uint16_t currentEncoderPosition);
-        bool onBoundary(uint16_t currentEncoderPosition, uint8_t tolerance);
+        bool onBoundary(uint16_t currentEncoderPosition, uint16_t boundary, uint8_t tolerance);
 
+        /**
+         * How many ticks that have been made, so far, within the rampEncoderTicks-to-boundary range.
+         */
+        uint16_t ticksToBoundarySoFar(uint16_t currentEncoderPosition, uint16_t boundary, uint16_t rampEncoderTicks);
     private:
         uint8_t pin1;
         uint8_t pin2;
@@ -64,8 +70,8 @@ class StmStepper {
 
         int8_t direction = 1;
 
-        uint8_t positiveDirection = 1;
-        uint8_t negativeDirection = -1;
+        int8_t positiveDirection = 1;
+        int8_t negativeDirection = -1;
 
         int8_t currentStep = 0;
 
