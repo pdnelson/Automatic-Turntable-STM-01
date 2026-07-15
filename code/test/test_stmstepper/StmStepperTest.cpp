@@ -359,6 +359,7 @@ void test_ticksToBoundarySoFar_beforeStartOfEncoderTicksPositiveMovement_zero() 
     uint16_t range = 5;
     uint16_t current = range - 1;
     uint16_t end = 10;
+    stepper.setEncoderRange(0, end, 0);
 
     uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
 
@@ -371,6 +372,7 @@ void test_ticksToBoundarySoFar_atStartOfEncoderTicksPositiveMovement_zero() {
     uint16_t range = 5;
     uint16_t current = range;
     uint16_t end = 10;
+    stepper.setEncoderRange(0, end, 0);
 
     uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
 
@@ -383,10 +385,37 @@ void test_ticksToBoundarySoFar_oneAboveStartOfEncoderTicksPositiveMovement_one()
     uint16_t range = 5;
     uint16_t current = range + 1;
     uint16_t end = 10;
+    stepper.setEncoderRange(0, end, 0);
 
     uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
 
     TEST_ASSERT_EQUAL(1, result);
+}
+
+void test_ticksToBoundarySoFar_twoAboveStartOfEncoderTicksPositiveMovement_two() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t current = range + 2;
+    uint16_t end = 10;
+    stepper.setEncoderRange(0, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(2, result);
+}
+
+void test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksPositiveMovement_four() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t end = 10;
+    uint16_t current = end - 1;
+    stepper.setEncoderRange(0, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(4, result);
 }
 
 void test_ticksToBoundarySoFar_atEndOfEncoderTicksPositiveMovement_max() {
@@ -395,6 +424,7 @@ void test_ticksToBoundarySoFar_atEndOfEncoderTicksPositiveMovement_max() {
     uint16_t range = 5;
     uint16_t end = 10;
     uint16_t current = end;
+    stepper.setEncoderRange(0, end, 0);
 
     uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
 
@@ -407,6 +437,106 @@ void test_ticksToBoundarySoFar_beyondEncoderTicksPositiveMovement_max() {
     uint16_t range = 5;
     uint16_t end = 10;
     uint16_t current = end + 1;
+    stepper.setEncoderRange(0, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(range, result);
+}
+
+// ticksToBoundarySoFar calculations (negative movement)
+void test_ticksToBoundarySoFar_beforeStartOfEncoderTicksNegativeMovement_zero() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t current = range + 1;
+    uint16_t end = 0;
+    uint16_t start = 10;
+    stepper.setEncoderRange(start, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(0, result);
+}
+
+void test_ticksToBoundarySoFar_atStartOfEncoderTicksNegativeMovement_zero() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t end = 0;
+    uint16_t start = 10;
+    uint16_t current = range;
+    stepper.setEncoderRange(start, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(0, result);
+}
+
+void test_ticksToBoundarySoFar_oneAboveStartOfEncoderTicksNegativeMovement_one() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t current = range - 1;
+    uint16_t end = 0;
+    uint16_t start = 10;
+    stepper.setEncoderRange(start, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(1, result);
+}
+
+void test_ticksToBoundarySoFar_twoAboveStartOfEncoderTicksNegativeMovement_two() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t current = range - 2;
+    uint16_t end = 0;
+    uint16_t start = 10;
+    stepper.setEncoderRange(start, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(2, result);
+}
+
+void test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksNegativeMovement_four() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t end = 0;
+    uint16_t start = 10;
+    uint16_t current = end + 1;
+    stepper.setEncoderRange(start, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(4, result);
+}
+
+void test_ticksToBoundarySoFar_atEndOfEncoderTicksNegativeMovement_min() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t end = 0;
+    uint16_t current = end;
+    uint16_t start = 10;
+    stepper.setEncoderRange(start, end, 0);
+
+    uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
+
+    TEST_ASSERT_EQUAL(range, result);
+}
+
+void test_ticksToBoundarySoFar_beyondEncoderTicksNegativeMovement_min() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    
+    uint16_t range = 5;
+    uint16_t end = 1;
+    uint16_t current = end - 1;
+    uint16_t start = 10;
+    stepper.setEncoderRange(start, end, 0);
 
     uint16_t result = stepper.ticksToBoundarySoFar(current, end, range);
 
@@ -445,8 +575,17 @@ int runUnityTests() {
     RUN_TEST(test_ticksToBoundarySoFar_beforeStartOfEncoderTicksPositiveMovement_zero);
     RUN_TEST(test_ticksToBoundarySoFar_atStartOfEncoderTicksPositiveMovement_zero);
     RUN_TEST(test_ticksToBoundarySoFar_oneAboveStartOfEncoderTicksPositiveMovement_one);
+    RUN_TEST(test_ticksToBoundarySoFar_twoAboveStartOfEncoderTicksPositiveMovement_two);
+    RUN_TEST(test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksPositiveMovement_four);
     RUN_TEST(test_ticksToBoundarySoFar_atEndOfEncoderTicksPositiveMovement_max);
     RUN_TEST(test_ticksToBoundarySoFar_beyondEncoderTicksPositiveMovement_max);
+    RUN_TEST(test_ticksToBoundarySoFar_beforeStartOfEncoderTicksNegativeMovement_zero);
+    RUN_TEST(test_ticksToBoundarySoFar_atStartOfEncoderTicksNegativeMovement_zero);
+    RUN_TEST(test_ticksToBoundarySoFar_oneAboveStartOfEncoderTicksNegativeMovement_one);
+    RUN_TEST(test_ticksToBoundarySoFar_twoAboveStartOfEncoderTicksNegativeMovement_two);
+    RUN_TEST(test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksNegativeMovement_four);
+    RUN_TEST(test_ticksToBoundarySoFar_atEndOfEncoderTicksNegativeMovement_min);
+    RUN_TEST(test_ticksToBoundarySoFar_beyondEncoderTicksNegativeMovement_min);
 
     return UNITY_END();
 }

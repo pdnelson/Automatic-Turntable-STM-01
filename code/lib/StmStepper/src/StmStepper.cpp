@@ -120,7 +120,23 @@ bool StmStepper::onBoundary(uint16_t currentEncoderPosition, uint16_t boundary, 
 }
 
 uint16_t StmStepper::ticksToBoundarySoFar(uint16_t currentEncoderPosition, uint16_t boundary, uint16_t rampEncoderTicks) {
-    return 0;
+    if(direction == negativeDirection) {
+        if(currentEncoderPosition <= boundary) {
+            return rampEncoderTicks;
+        } else if(currentEncoderPosition >= boundary + rampEncoderTicks) {
+            return 0;
+        } else {
+            return rampEncoderTicks - (currentEncoderPosition - boundary);
+        }
+    } else {
+        if(currentEncoderPosition >= boundary) {
+            return rampEncoderTicks;
+        } else if(currentEncoderPosition <= boundary - rampEncoderTicks) {
+            return 0;
+        } else {
+            return rampEncoderTicks - (boundary - currentEncoderPosition);
+        }
+    }
 }
 
 void StmStepper::performStep() {
