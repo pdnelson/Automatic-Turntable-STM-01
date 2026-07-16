@@ -543,6 +543,96 @@ void test_ticksToBoundarySoFar_beyondEncoderTicksNegativeMovement_min() {
     TEST_ASSERT_EQUAL(range, result);
 }
 
+void test_rampDownSpeed_atBeginningOfRampDown_delayLowest() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+
+    uint16_t range = 200;
+    uint16_t start = 0;
+    uint16_t end = 1000;
+    stepper.setSpeed(10);
+    stepper.setRampDownEncoderTicks(range);
+    stepper.setEncoderRange(start, end, 0);
+
+    unsigned long result = stepper.rampDownSpeed(800);
+
+    TEST_ASSERT_EQUAL(stepper.topSpeedTimeBetweenStepsMicros, result);
+}
+
+void test_rampDownSpeed_firstTickOfRampDown_delayIncreased() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+
+    uint16_t range = 200;
+    uint16_t start = 0;
+    uint16_t end = 1000;
+    stepper.setSpeed(10);
+    stepper.setRampDownEncoderTicks(range);
+    stepper.setEncoderRange(start, end, 0);
+
+    unsigned long result = stepper.rampDownSpeed(800 + 1);
+
+    TEST_ASSERT_EQUAL(3214, result);
+}
+
+void test_rampDownSpeed_secondTickOfRampDown_delayIncreased() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+
+    uint16_t range = 200;
+    uint16_t start = 0;
+    uint16_t end = 1000;
+    stepper.setSpeed(10);
+    stepper.setRampDownEncoderTicks(range);
+    stepper.setEncoderRange(start, end, 0);
+
+    unsigned long result = stepper.rampDownSpeed(800 + 2);
+
+    TEST_ASSERT_EQUAL(3499, result);
+}
+
+void test_rampDownSpeed_oneBeforeLastTickOfRampDown_delayBelowHighest() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+
+    uint16_t range = 200;
+    uint16_t start = 0;
+    uint16_t end = 1000;
+    stepper.setSpeed(10);
+    stepper.setRampDownEncoderTicks(range);
+    stepper.setEncoderRange(start, end, 0);
+
+    unsigned long result = stepper.rampDownSpeed(1000 - 1);
+
+    TEST_ASSERT_EQUAL(59714, result);
+}
+
+void test_rampDownSpeed_lastTickOfRampDown_delayHighest() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+
+    uint16_t range = 200;
+    uint16_t start = 0;
+    uint16_t end = 1000;
+    stepper.setSpeed(10);
+    stepper.setRampDownEncoderTicks(range);
+    stepper.setEncoderRange(start, end, 0);
+
+    unsigned long result = stepper.rampDownSpeed(end);
+
+    TEST_ASSERT_EQUAL(STEPPER_MAX_DELAY_BETWEEN_STEPS, result);
+}
+
+void test_rampDownSpeed_lastTickPlusOneOfRampDown_delayHighest() {
+    StmStepper stepper = StmStepper(0, 0, 0, 0);
+
+    uint16_t range = 200;
+    uint16_t start = 0;
+    uint16_t end = 1000;
+    stepper.setSpeed(10);
+    stepper.setRampDownEncoderTicks(range);
+    stepper.setEncoderRange(start, end, 0);
+
+    unsigned long result = stepper.rampDownSpeed(end + 1);
+
+    TEST_ASSERT_EQUAL(STEPPER_MAX_DELAY_BETWEEN_STEPS, result);
+}
+
 int runUnityTests() {
     UNITY_BEGIN();
 
@@ -586,6 +676,13 @@ int runUnityTests() {
     RUN_TEST(test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksNegativeMovement_four);
     RUN_TEST(test_ticksToBoundarySoFar_atEndOfEncoderTicksNegativeMovement_min);
     RUN_TEST(test_ticksToBoundarySoFar_beyondEncoderTicksNegativeMovement_min);
+
+    RUN_TEST(test_rampDownSpeed_atBeginningOfRampDown_delayLowest);
+    RUN_TEST(test_rampDownSpeed_firstTickOfRampDown_delayIncreased);
+    RUN_TEST(test_rampDownSpeed_secondTickOfRampDown_delayIncreased);
+    RUN_TEST(test_rampDownSpeed_oneBeforeLastTickOfRampDown_delayBelowHighest);
+    RUN_TEST(test_rampDownSpeed_lastTickOfRampDown_delayHighest);
+    RUN_TEST(test_rampDownSpeed_lastTickPlusOneOfRampDown_delayHighest);
 
     return UNITY_END();
 }

@@ -9,13 +9,13 @@
 /**
  * The slowest the tonearm can move; this is a little less than 1 RPM.
  */
-#define STEPPER_MAX_DELAY_BETWEEN_STEPS 30000
+#define STEPPER_MAX_DELAY_BETWEEN_STEPS 60000 // 0.5 RPM
 
 class StmStepper {
     public:
         StmStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4);
 
-        void setSpeed(uint8_t speedRpm);
+        void setSpeed(float speedRpm);
 
         void setRampDownEncoderTicks(uint16_t rampDown);
 
@@ -52,13 +52,15 @@ class StmStepper {
          * How many ticks that have been made, so far, within the rampEncoderTicks-to-boundary range.
          */
         uint16_t ticksToBoundarySoFar(uint16_t currentEncoderPosition, uint16_t boundary, uint16_t rampEncoderTicks);
+    
+        unsigned long topSpeedTimeBetweenStepsMicros = 0;
+
     private:
         uint8_t pin1;
         uint8_t pin2;
         uint8_t pin3;
         uint8_t pin4;
 
-        unsigned long topSpeedTimeBetweenStepsMicros = 0;
 
         uint16_t rampDownEncoderTicks = 0;
         

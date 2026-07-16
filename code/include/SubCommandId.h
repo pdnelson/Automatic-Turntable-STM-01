@@ -9,7 +9,8 @@ enum SubCommandId {
     LiftTonearm = 4,
     SetDownTonearm = 5,
     MoveNSteps = 6,
-    SubGoToPosition = 7
+    SubGoToPosition = 7,
+    SubDelay = 8
 };
 
 #endif

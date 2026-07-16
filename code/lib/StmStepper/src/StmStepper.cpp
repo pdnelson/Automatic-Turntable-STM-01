@@ -14,7 +14,7 @@ StmStepper::StmStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4) {
     pinMode(pin4, OUTPUT);
 }
 
-void StmStepper::setSpeed(uint8_t speedRpm) {
+void StmStepper::setSpeed(float speedRpm) {
     this->topSpeedTimeBetweenStepsMicros = 60000000L / STEPPER_STEPS_PER_REVOLUTION / speedRpm;
 }
 
@@ -86,7 +86,14 @@ void StmStepper::releaseMotorCurrent() {
 
 uint16_t StmStepper::rampDownSpeed(uint16_t currentEncoderPosition) {
     uint16_t ticksSoFar = ticksToBoundarySoFar(currentEncoderPosition, destinationEncoderPosition, rampDownEncoderTicks);
-    return ((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / rampDownEncoderTicks) * ticksSoFar;
+    
+    uint16_t value = (((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / (float)rampDownEncoderTicks) * ticksSoFar) + topSpeedTimeBetweenStepsMicros;
+
+    if(ticksSoFar >= rampDownEncoderTicks || value > STEPPER_MAX_DELAY_BETWEEN_STEPS) {
+        value = STEPPER_MAX_DELAY_BETWEEN_STEPS;
+    }
+    
+    return value;
 }
 
 bool StmStepper::movementCompleted(uint16_t currentEncoderPosition) {

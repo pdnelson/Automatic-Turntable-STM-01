@@ -11,6 +11,7 @@
 #include <TurntableState.h>
 #include <Constants.h>
 #include <memory>
+#include <SubCmdDelay.h>
 
 CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed) : BaseTurntableCommand(state) {
     this->state = state;
@@ -23,6 +24,30 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         
         // Move to specific position
         ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, speed, 500))
+
+        // Delay 100 ms
+        ->next(std::make_unique<SubCmdDelay>(state, 100))
+
+        // Correct any overshoot
+        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
+
+        // Delay 100 ms
+        ->next(std::make_unique<SubCmdDelay>(state, 100))
+
+        // Correct any overshoot
+        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
+
+        // Delay 100 ms
+        ->next(std::make_unique<SubCmdDelay>(state, 100))
+
+        // Correct any overshoot
+        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
+
+        // Delay 100 ms
+        ->next(std::make_unique<SubCmdDelay>(state, 100))
+
+        // Correct any overshoot
+        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
         
         // Disengage the clutch
         ->next(std::make_unique<SubCmdDisengageAzClutch>(state))
@@ -36,9 +61,12 @@ CommandId CmdGoToPositionH::getCommandId() {
 }
 
 void CmdGoToPositionH::doInitialize() {
-    // Do nothing.
+    state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
+    state->outputShift.setValue(StmShiftPin::LedPlayStatus, true);
+    state->outputShift.setValue(StmShiftPin::AudioCutOff, true);
 }
 
 void CmdGoToPositionH::doUninitialize() {
-    // Do nothing.
+    state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
+    state->outputShift.setValue(StmShiftPin::AudioCutOff, false);
 }

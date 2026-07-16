@@ -217,13 +217,11 @@ void TurntableState::pauseOrUnPause() {
 }
 
 void TurntableState::playOrReturn() {
-    //if(getHomeStatus() == HomeStatus::Homed) {
-    //    currentCommand = std::make_unique<CmdProtoPlay>(this, 140, 14);
-    //} else {
-    //    currentCommand = std::make_unique<CmdProtoPlay>(this, -350, 14);
-    //}
-
-    currentCommand = std::make_unique<CmdGoToPositionH>(this, 2980, 0, 5);
+    if(getHomeStatus() == HomeStatus::Homed) {
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, 2980, 5, 10);
+    } else {
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, 2045, 5, 14);
+    }
 }
 
 float TurntableState::getTargetSpeed() {
