@@ -19,6 +19,7 @@
 #include <StmEncoder.h>
 #include <ClutchStatus.h>
 #include <StmEncoderPolarity.h>
+#include <CmdGoToPositionH.h>
 
 TurntableState::TurntableState() : 
     outputShift(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
@@ -216,11 +217,13 @@ void TurntableState::pauseOrUnPause() {
 }
 
 void TurntableState::playOrReturn() {
-    if(getHomeStatus() == HomeStatus::Homed) {
-        currentCommand = std::make_unique<CmdProtoPlay>(this, 140, 14);
-    } else {
-        currentCommand = std::make_unique<CmdProtoPlay>(this, -350, 14);
-    }
+    //if(getHomeStatus() == HomeStatus::Homed) {
+    //    currentCommand = std::make_unique<CmdProtoPlay>(this, 140, 14);
+    //} else {
+    //    currentCommand = std::make_unique<CmdProtoPlay>(this, -350, 14);
+    //}
+
+    currentCommand = std::make_unique<CmdGoToPositionH>(this, 2980, 0, 5);
 }
 
 float TurntableState::getTargetSpeed() {

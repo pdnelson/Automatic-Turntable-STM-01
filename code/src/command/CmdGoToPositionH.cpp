@@ -22,7 +22,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         
         // Move to specific position
-        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, speed))
+        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, speed, 500))
         
         // Disengage the clutch
         ->next(std::make_unique<SubCmdDisengageAzClutch>(state))

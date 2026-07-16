@@ -44,6 +44,10 @@ CommandResult BaseTurntableSubCommand::execute() {
     }
 }
 
+void BaseTurntableSubCommand::setCommandResult(CommandResult result) {
+    this->result = result;
+}
+
 void BaseTurntableSubCommand::initialize() {
     if(!initialized) {
         doInitialize();

@@ -100,7 +100,7 @@ bool StmStepper::movementCompleted(uint16_t currentEncoderPosition) {
 bool StmStepper::onBoundary(uint16_t currentEncoderPosition, uint16_t boundary, uint8_t tolerance) {
     uint16_t lowerToleranceBoundary = boundary - tolerance;
     uint16_t upperToleranceBoundary = boundary + tolerance;
-    
+
     return currentEncoderPosition >= lowerToleranceBoundary && currentEncoderPosition <= upperToleranceBoundary;
 }
 

@@ -7,23 +7,44 @@
 #include <MovementAxis.h>
 #include <SubCommandId.h>
 #include <AzimuthDirection.h>
+#include <StmStepperResult.h>
+#include <CommandResult.h>
 
-SubCmdGoToPositionH::SubCmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed) : BaseTurntableSubCommand(state) {
+SubCmdGoToPositionH::SubCmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed, uint16_t rampDownTicks) : BaseTurntableSubCommand(state) {
     this->state = state;
     this->speed = speed;
     destinationEncoderPosition = position;
+    this->rampDownEncoderTicks = rampDownTicks;
     encoderTolerance = tolerance;
 }
 
 void SubCmdGoToPositionH::doInitialize() {
-    digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
-    state->movementStepper.setSpeed(speed);
-    state->movementStepper.setEncoderRange(state->azEncoder.getNormalizedPosition(), destinationEncoderPosition, encoderTolerance);
-    state->movementStepper.calibrateDirection(AzimuthDirection::Clockwise, AzimuthDirection::CounterClockwise);
+    uint16_t currentPosition = state->azEncoder.getNormalizedPosition();
+
+    // Immediately succeed the command if we're on the boundary
+    if(state->movementStepper.onBoundary(currentPosition, destinationEncoderPosition, encoderTolerance)) {
+        setCommandResult(CommandResult::Success);
+    } 
+    
+    // Otherwise, carry out the movement
+    else {
+        digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
+        state->movementStepper.setSpeed(speed);
+        state->movementStepper.setEncoderRange(currentPosition, destinationEncoderPosition, encoderTolerance);
+        state->movementStepper.setRampDownEncoderTicks(rampDownEncoderTicks);
+        state->movementStepper.calibrateDirection(AzimuthDirection::Clockwise, AzimuthDirection::CounterClockwise);
+    }
 }
 
 CommandResult SubCmdGoToPositionH::doExecute() {
-    return CommandResult::Success;
+    StmStepperResult result = state->movementStepper.step(state->clockMicros, state->azEncoder.getNormalizedPosition());
+
+    if(result.movementCompleted) {
+        return CommandResult::Success;
+    } else {
+        // TO DO: Stall check
+        return CommandResult::Running;
+    }
 }
 
 void SubCmdGoToPositionH::doUninitialize() {
