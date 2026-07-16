@@ -27,10 +27,6 @@ void StmStepper::calibrateDirection(int8_t positive, int8_t negative) {
     negativeDirection = negative;
 }
 
-void StmStepper::setRampUpEncoderTicks(uint16_t rampUp) {
-    rampUpEncoderTicks = rampUp;
-}
-
 void StmStepper::setRampDownEncoderTicks(uint16_t rampDown) {
     rampDownEncoderTicks = rampDown;
 }
@@ -55,14 +51,8 @@ StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEnc
         uint16_t speed = topSpeedTimeBetweenStepsMicros;
 
         // Ramp down calculation
-        // prioritize ramp down since that's the functional one; ramp up just looks pretty
         if(onBoundary(currentEncoderPosition, destinationEncoderPosition, rampDownEncoderTicks)) {
             speed = rampDownSpeed(currentEncoderPosition);
-        }
-
-        // Ramp up calculation
-        else if(onBoundary(currentEncoderPosition, startEncoderPosition, rampUpEncoderTicks)) {
-            speed = rampUpSpeed(currentEncoderPosition);
         }
 
         if(clockMicros - lastStepMicros > speed) {
@@ -95,12 +85,7 @@ void StmStepper::releaseMotorCurrent() {
 }
 
 uint16_t StmStepper::rampDownSpeed(uint16_t currentEncoderPosition) {
-    uint16_t ticksSoFar = 0; // todo
-    return ((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / rampDownEncoderTicks) * ticksSoFar;
-}
-
-uint16_t StmStepper::rampUpSpeed(uint16_t currentEncoderPosition) {
-    uint16_t ticksSoFar = 0; // todo
+    uint16_t ticksSoFar = ticksToBoundarySoFar(currentEncoderPosition, destinationEncoderPosition, rampDownEncoderTicks);
     return ((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / rampDownEncoderTicks) * ticksSoFar;
 }
 
@@ -119,6 +104,9 @@ bool StmStepper::onBoundary(uint16_t currentEncoderPosition, uint16_t boundary, 
     return currentEncoderPosition >= lowerToleranceBoundary && currentEncoderPosition <= upperToleranceBoundary;
 }
 
+
+// Note: This only calculates ticks based on ramp down requirements. If the need ever arises to
+// also calculate ramp up ticks, the "rampEncoderTicks -" part of the calculation should be conditionally omitted.
 uint16_t StmStepper::ticksToBoundarySoFar(uint16_t currentEncoderPosition, uint16_t boundary, uint16_t rampEncoderTicks) {
     if(direction == negativeDirection) {
         if(currentEncoderPosition <= boundary) {

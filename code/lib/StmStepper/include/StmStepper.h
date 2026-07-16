@@ -17,7 +17,6 @@ class StmStepper {
 
         void setSpeed(uint8_t speedRpm);
 
-        void setRampUpEncoderTicks(uint16_t rampUp);
         void setRampDownEncoderTicks(uint16_t rampDown);
 
         // This automatically sets the direction
@@ -61,7 +60,6 @@ class StmStepper {
 
         unsigned long topSpeedTimeBetweenStepsMicros = 0;
 
-        uint16_t rampUpEncoderTicks = 0;
         uint16_t rampDownEncoderTicks = 0;
         
         uint16_t startEncoderPosition = 0;
