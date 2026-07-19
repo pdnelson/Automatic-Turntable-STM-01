@@ -218,9 +218,9 @@ void TurntableState::pauseOrUnPause() {
 
 void TurntableState::playOrReturn() {
     if(getHomeStatus() == HomeStatus::Homed) {
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, 2980, 5, 10);
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, 2987, 2, 10);
     } else {
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, 2045, 5, 14);
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, 2045, 2, 14);
     }
 }
 

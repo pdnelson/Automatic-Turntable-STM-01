@@ -40,7 +40,7 @@
 #define TEST_VERTICAL_LOWER_LIMIT 20
 
 // A hard-coded test value for the upper vertical encoder limit. This will eventually be replaced by a calibration value.
-#define TEST_VERTICAL_UPPER_LIMIT 1000
+#define TEST_VERTICAL_UPPER_LIMIT 950
 
 // The amount of time, in microseconds, that must pass between status changes of the lift.
 #define LIFT_DEBOUNCE_MICROS 50000
