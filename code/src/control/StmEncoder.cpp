@@ -8,16 +8,9 @@ StmEncoder::StmEncoder(uint8_t sda, uint8_t scl) {
     Wire2.begin();
 
     // Fill out encoder data
-    data[0] = getPosition();
-    data[1] = getPosition();
-    data[2] = getPosition();
-    data[3] = getPosition();
-    data[4] = getPosition();
-    data[5] = getPosition();
-    data[6] = getPosition();
-    data[7] = getPosition();
-    data[8] = getPosition();
-    data[9] = getPosition();
+    for(int i = 0; i < ENCODER_AVG_RESOLUTION; i++) {
+        data[i] = getPosition();
+    }
 }
 
 void StmEncoder::monitor(unsigned long clockMicros) {
@@ -76,12 +69,43 @@ void StmEncoder::logData() {
         data[6] = data[7];
         data[7] = data[8];
         data[8] = data[9];
-        data[9] = newData;
+        data[9] = data[10];
+        data[10] = data[11];
+        data[11] = data[12];
+        data[12] = data[13];
+        data[13] = data[14];
+        data[14] = data[15];
+        data[15] = data[16];
+        data[16] = data[17];
+        data[17] = data[18];
+        data[18] = data[19];
+        data[19] = newData;
     }
 }
 
 void StmEncoder::computeAverage() {
-    rollingDataAvg = (data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7] + data[8] + data[9]) / ENCODER_AVG_RESOLUTION;
+    rollingDataAvg = (
+        data[0] + 
+        data[1] + 
+        data[2] + 
+        data[3] + 
+        data[4] + 
+        data[5] + 
+        data[6] + 
+        data[7] + 
+        data[8] + 
+        data[9] +
+        data[10] + 
+        data[11] + 
+        data[12] + 
+        data[13] + 
+        data[14] + 
+        data[15] + 
+        data[16] + 
+        data[17] + 
+        data[18] + 
+        data[19]
+    ) / ENCODER_AVG_RESOLUTION;
 }
 
 void StmEncoder::zeroOutEncoder() {

@@ -10,8 +10,8 @@
 #define ENCODER_ZERO_MSB_ADDR 0x16
 #define ENCODER_ZERO_LSB_ADDR 0x17
 
-#define ENCODER_AVG_RESOLUTION 10
-#define ENCODER_DATA_POINT_INTERVAL_MICROS 1000
+#define ENCODER_AVG_RESOLUTION 20
+#define ENCODER_DATA_POINT_INTERVAL_MICROS 500
 #define ENCODER_AVG_INTERVAL_MICROS 5000
 
 #define ENCODER_MAX_VALUE 16384
@@ -36,7 +36,7 @@ class StmEncoder {
         unsigned long dataCollectCounter = 0;
         unsigned long dataAvgCounter = 0;
         uint16_t rollingDataAvg = 0;
-        uint16_t data[ENCODER_AVG_RESOLUTION] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        uint16_t data[ENCODER_AVG_RESOLUTION] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         StmEncoderPolarity polarity = StmEncoderPolarity::NORMAL;
 };
 
