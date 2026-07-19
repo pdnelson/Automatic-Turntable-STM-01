@@ -26,34 +26,16 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         // Move to specific position
         ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, speed, 800))
 
-        // Delay 100 ms
+        // Error correction
         ->next(std::make_unique<SubCmdDelay>(state, 100))
-
-        // Correct any overshoot
         ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-
-        // Delay 100 ms
         ->next(std::make_unique<SubCmdDelay>(state, 100))
-
-        // Correct any overshoot
         ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-
-        // Delay 100 ms
         ->next(std::make_unique<SubCmdDelay>(state, 100))
-
-        // Correct any overshoot
         ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-
-        // Delay 100 ms
         ->next(std::make_unique<SubCmdDelay>(state, 100))
-
-        // Correct any overshoot
         ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-
-        // Delay 100 ms
         ->next(std::make_unique<SubCmdDelay>(state, 100))
-
-        // Correct any overshoot
         ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
         
         // Set to vertical, with a delay, so we don't accidentally send any steps to the H stepper
@@ -65,9 +47,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED))
 
         // Disengage the clutch
-        ->next(std::make_unique<SubCmdDisengageAzClutch>(state))
-        
-        ;
+        ->next(std::make_unique<SubCmdDisengageAzClutch>(state));
 }
 
 CommandId CmdGoToPositionH::getCommandId() {
