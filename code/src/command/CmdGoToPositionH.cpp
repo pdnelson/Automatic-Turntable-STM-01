@@ -41,7 +41,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         // Set to vertical, with a delay, so we don't accidentally send any steps to the H stepper
         ->next(std::make_unique<SubCmdDelay>(state, 25))
         ->next(std::make_unique<SubCmdSetMovementVertical>(state))
-        ->next(std::make_unique<SubCmdDelay>(state, 25))
+        ->next(std::make_unique<SubCmdDelay>(state, 1000))
 
         // Set down
         ->next(std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED))
