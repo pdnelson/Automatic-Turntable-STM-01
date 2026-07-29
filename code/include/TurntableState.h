@@ -52,6 +52,7 @@ class TurntableState {
         void updateSize(RecordSize newSize);
         void pauseOrUnPause();
         void playOrReturn();
+        void beginCalibrationRoutine();
         float getTargetSpeed();
 
     private:

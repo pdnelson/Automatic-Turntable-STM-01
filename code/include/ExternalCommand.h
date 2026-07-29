@@ -11,6 +11,7 @@ enum ExternalCommand {
     ActionStepHorizontally = 4,
     ActionGoToPositionH = 5,
     ActionPlayOrReturn = 6,
+    ActionCalibrate = 7,
 
     // Data/setting set commands (31-100)
     SetSpeed = 31,

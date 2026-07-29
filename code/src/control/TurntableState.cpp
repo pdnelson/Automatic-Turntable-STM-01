@@ -20,6 +20,7 @@
 #include <ClutchStatus.h>
 #include <StmEncoderPolarity.h>
 #include <CmdGoToPositionH.h>
+#include <CmdCalibration.h>
 
 TurntableState::TurntableState() : 
     outputShift(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
@@ -222,6 +223,10 @@ void TurntableState::playOrReturn() {
     } else {
         currentCommand = std::make_unique<CmdGoToPositionH>(this, 2045, 2, 14);
     }
+}
+
+void TurntableState::beginCalibrationRoutine() {
+    currentCommand = std::make_unique<CmdCalibration>(this);
 }
 
 float TurntableState::getTargetSpeed() {

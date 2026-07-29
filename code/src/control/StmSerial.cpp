@@ -63,6 +63,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionStepHorizontally:   processStepHorizontally(stream);                    break;
                 case ExternalCommand::ActionGoToPositionH:      processGoToPositionH(stream);                       break;
                 case ExternalCommand::ActionPlayOrReturn:       state->playOrReturn();                              break;
+                case ExternalCommand::ActionCalibrate:          state->beginCalibrationRoutine();                   break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
