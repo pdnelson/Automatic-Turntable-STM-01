@@ -28,7 +28,8 @@ TurntableState::TurntableState() :
     inputMux(Pin::InputMuxA, Pin::InputMuxB, Pin::InputMuxC, Pin::InputMuxResult, MUX_POLL_INTERVAL, BUTTON_HOLD_INTERVAL, BUTTON_DEBOUNCE_INTERVAL),
     movementStepper(Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
     clutchStepper(Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4),
-    azEncoder(Pin::ReservedI2CSda, Pin::ReservedI2CScl)
+    azEncoder(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
+    calibration()
 {
     pinMode(Pin::VerticalPosition, INPUT);
     pinMode(Pin::HorizontalClutchSwitch, INPUT_PULLUP);
@@ -49,8 +50,9 @@ TurntableState::TurntableState() :
 
     clutchStepper.setSpeed(CLUTCH_SPEED);
 
-    // TODO: Derive this from a calibration setting
-    azEncoder.setPolarity(StmEncoderPolarity::REVERSED);
+    calibration.load();
+
+    azEncoder.setPolarity(calibration.polarity);
 }
 
 void TurntableState::monitor() {
@@ -219,9 +221,22 @@ void TurntableState::pauseOrUnPause() {
 
 void TurntableState::playOrReturn() {
     if(getHomeStatus() == HomeStatus::Homed) {
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, 3010, 2, 10);
+        uint16_t position = 0;
+
+        switch(selectedSize) {
+            case RecordSize::In7: position = calibration.in7; break;
+            case RecordSize::In10: position = calibration.in10; break;
+            case RecordSize::In12: position = calibration.in12; break;
+            case RecordSize::InAuto: break;
+        }
+
+        if(position != 0) {
+            currentCommand = std::make_unique<CmdGoToPositionH>(this, position, 2, 3);
+        } else {
+            // to do: implement automatic routine
+        }
     } else {
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, 2045, 2, 14);
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 2, 14);
     }
 }
 

@@ -24,7 +24,7 @@ CommandResult SubCmdSetDownTonearm::doExecute() {
 
     CommandResult result = CommandResult::Running;
 
-    if(currentPosition <= TEST_VERTICAL_LOWER_LIMIT || (isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD)) {
+    if(currentPosition <= state->calibration.verticalLowerLimit || (isSetDown && setDownPosition - currentPosition >= TICKS_BELOW_RECORD)) {
         result = CommandResult::Success;
     } else if(!isSetDown && state->getLiftStatus() == LiftStatus::SetDown) {
         isSetDown = true;

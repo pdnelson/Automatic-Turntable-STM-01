@@ -14,6 +14,13 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
     // "Play" advances to the next calibration step, saving the calibration value
     // "Pause" skips the calibration step, saving nothing
 
+    // What's being saved?
+    // 
+    // - 7in position
+    // - 10in position
+    // - 12in position
+    // 
+
     // Routine:
     //
     // Calibrate basic movements

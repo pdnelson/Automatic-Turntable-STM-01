@@ -24,7 +24,7 @@ CommandResult SubCmdLiftTonearm::doExecute() {
 
     CommandResult result = CommandResult::Running;
 
-    if(!reachedLimit && currentPosition >= TEST_VERTICAL_UPPER_LIMIT) {
+    if(!reachedLimit && currentPosition >= state->calibration.verticalUpperLimit) {
         reachedLimit = true;
         timeLimitReached = state->clockMicros;
     } else if(reachedLimit) {

@@ -10,6 +10,7 @@
 #include <StmSerial.h>
 #include <StmEncoder.h>
 #include <ClutchStatus.h>
+#include <CalibrationValues.h>
 
 #ifndef TurntableState_h
 #define TurntableState_h
@@ -24,6 +25,7 @@ class TurntableState {
         StmStepper movementStepper;
         StmStepper clutchStepper;
         StmEncoder azEncoder;
+        CalibrationValues calibration;
         std::unique_ptr<BaseTurntableCommand> currentCommand;
 
         unsigned long clockMicros = 0;
