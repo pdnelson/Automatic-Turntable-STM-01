@@ -1,5 +1,7 @@
+#include <Arduino.h>
 #include <CommandResult.h>
 #include <BaseTurntableCommand.h>
+#include <StmShiftPin.h>
 
 #ifndef BaseCalibrationSubCommand_h
 #define BaseCalibrationSubCommand_h
@@ -11,6 +13,11 @@ class BaseCalibrationSubCommand : public BaseTurntableSubCommand {
         BaseCalibrationSubCommand(TurntableState* state, CmdCalibration* calCommand);
 
         CmdCalibration* calCommand;
+
+        CommandResult baseSizeExecute(StmShiftPin pin, uint16_t &destination, uint16_t content);
+
+    private:
+        unsigned long lightBlinkIndicator = 0;
 };
 
 #endif

@@ -20,23 +20,7 @@ void SubCmdCalibrate7In::doInitialize() {
 }
 
 CommandResult SubCmdCalibrate7In::doExecute() {
-
-    // to do: move this to the base class
-    if(state->clockMicros - lightBlinkIndicator > ONE_SECOND_MICROS) {
-        lightBlinkIndicator = state->clockMicros;
-        state->outputShift.setValue(StmShiftPin::Led7In, !state->outputShift.getValue(StmShiftPin::Led7In));
-    }
-
-    if(state->inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
-        return CommandResult::Success;
-    } 
-    else if(state->inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-        state->calibration.in7 = state->azEncoder.getNormalizedPosition();
-        return CommandResult::Success;
-    }
-    else {
-        return CommandResult::Running;
-    }
+    return baseSizeExecute(StmShiftPin::Led7In, state->calibration.in7, state->azEncoder.getNormalizedPosition());
 }
 
 void SubCmdCalibrate7In::doUninitialize() {

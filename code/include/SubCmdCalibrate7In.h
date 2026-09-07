@@ -15,8 +15,7 @@ class SubCmdCalibrate7In : public BaseCalibrationSubCommand {
     private:
         void doInitialize() override;
         CommandResult doExecute() override;
-        void doUninitialize() override; 
-        unsigned long lightBlinkIndicator = 0;
+        void doUninitialize() override;
 };
 
 #endif
