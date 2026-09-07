@@ -15,7 +15,6 @@ class SubCmdDelay : public BaseTurntableSubCommand {
         void doInitialize() override;
         CommandResult doExecute() override;
         void doUninitialize() override;
-        uint16_t totalSteps;
         unsigned long delayMicros;
         unsigned long startTimeMicros;
 };

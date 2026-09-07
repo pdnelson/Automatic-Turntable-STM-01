@@ -14,6 +14,7 @@
 #include <CmdToggleClutch.h>
 #include <CmdStepHorizontally.h>
 #include <CmdGoToPositionH.h>
+#include <StmShiftPin.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -71,7 +72,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetCustomSpeed:           processSetCustomSpeed(stream);                      break;
                 case ExternalCommand::SetSize:                  state->updateSize((RecordSize)stream.read());       break;
                 case ExternalCommand::SetRotateSize:            state->rotateSize();                                break;
-                case ExternalCommand::SetClearActionCommand:    state->currentCommand = nullptr;                    break;
+                case ExternalCommand::SetClearActionCommand:    clearCommand();                                     break;
                 
                 // Get Commands
                 case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);             break;
@@ -280,4 +281,16 @@ int16_t StmSerial::readInt16(Stream& stream) {
     int16_t data1 = stream.read() & 0x00FF;
     int16_t data2 = stream.read() << 8 & 0xFF00;
     return data1 | data2;
+}
+
+void StmSerial::clearCommand() {
+    state->currentCommand = nullptr;
+    state->updateSize(state->selectedSize);
+    state->updateSpeed(state->selectedSpeed);
+    state->outputShift.setValue(StmShiftPin::LedPower, true);
+    state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
+    state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
+    state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
+    state->outputShift.setValue(StmShiftPin::AudioCutOff, true);
+    state->outputShift.setValue(StmShiftPin::LedHeadshellIR, false);
 }

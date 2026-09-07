@@ -29,6 +29,7 @@ class StmSerial {
         void processGetUpTime(Stream& stream);
         void processGetSpeedTarget(Stream& stream);
         void processGetAdvancedSuiteData(Stream& stream);
+        void clearCommand();
 
         int16_t readInt16(Stream& stream);
 };

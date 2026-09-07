@@ -6,9 +6,10 @@
 #include <TurntableState.h>
 #include <Constants.h>
 #include <memory>
+#include <SubCmdCalibrate7In.h>
 
 CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
-    //subCommands = std::make_unique<SubCmdLiftTonearm>(state, LIFT_UP_SPEED);
+    subCommands = std::make_unique<SubCmdCalibrate7In>(state, this);
 
     // Basic controls:
     // "Play" advances to the next calibration step, saving the calibration value
@@ -16,10 +17,13 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
 
     // What's being saved?
     // 
-    // - 7in position
-    // - 10in position
-    // - 12in position
-    // 
+    // - home az position
+    // - upper vertical limit
+    // - lower vertical limit
+    // - az encoder polarity
+    // - 7in az position
+    // - 10in az position
+    // - 12in az position
 
     // Routine:
     //
@@ -58,6 +62,8 @@ void CmdCalibration::doInitialize() {
     state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
     outputShiftValues = state->outputShift.getValues();
+
+    state->outputShift.setValues(0);
 }
 
 void CmdCalibration::doUninitialize() {

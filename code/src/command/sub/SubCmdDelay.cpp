@@ -4,7 +4,6 @@
 #include <TurntableState.h>
 
 SubCmdDelay::SubCmdDelay(TurntableState* state, uint16_t delayMillis) : BaseTurntableSubCommand(state) {
-    this->state = state;
     delayMicros = delayMillis * 1000;
 }
 
