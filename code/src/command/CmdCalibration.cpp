@@ -12,7 +12,8 @@
 #include <SubCommandId.h>
 
 CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
-    subCommands = std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate7In, StmShiftPin::Led7In, state->calibration.in7)
+    subCommands = std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::CalibrateHome, StmShiftPin::Led33Rpm, state->calibration.home)
+        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate7In, StmShiftPin::Led7In, state->calibration.in7))
         ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate10In, StmShiftPin::Led10In, state->calibration.in10))
         ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate12In, StmShiftPin::Led12In, state->calibration.in12));
 
