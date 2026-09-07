@@ -22,13 +22,13 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         
         // Move CW or CCW
-        ->next(std::make_unique<SubCmdMoveNSteps>(state, steps, azimuthSpeed, true))
+        ->next(std::make_shared<SubCmdMoveNSteps>(state, steps, azimuthSpeed, true))
         
         // Disengage the clutch
-        ->next(std::make_unique<SubCmdDisengageAzClutch>(state))
+        ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
         
         // Set down
-        ->next(std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED));
+        ->next(std::make_shared<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED));
 }
 
 CommandId CmdProtoPlay::getCommandId() {

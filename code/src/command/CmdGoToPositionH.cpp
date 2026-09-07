@@ -27,27 +27,27 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, speed, 800))
 
         // Error correction
-        ->next(std::make_unique<SubCmdDelay>(state, 100))
-        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        ->next(std::make_unique<SubCmdDelay>(state, 100))
-        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        ->next(std::make_unique<SubCmdDelay>(state, 100))
-        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        ->next(std::make_unique<SubCmdDelay>(state, 100))
-        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        ->next(std::make_unique<SubCmdDelay>(state, 100))
-        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
+        ->next(std::make_shared<SubCmdDelay>(state, 100))
+        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
+        ->next(std::make_shared<SubCmdDelay>(state, 100))
+        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
+        ->next(std::make_shared<SubCmdDelay>(state, 100))
+        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
+        ->next(std::make_shared<SubCmdDelay>(state, 100))
+        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
+        ->next(std::make_shared<SubCmdDelay>(state, 100))
+        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
         
         // Set to vertical, with a delay, so we don't accidentally send any steps to the H stepper
-        ->next(std::make_unique<SubCmdDelay>(state, 25))
-        ->next(std::make_unique<SubCmdSetMovementVertical>(state))
-        ->next(std::make_unique<SubCmdDelay>(state, 1000))
+        ->next(std::make_shared<SubCmdDelay>(state, 25))
+        ->next(std::make_shared<SubCmdSetMovementVertical>(state))
+        ->next(std::make_shared<SubCmdDelay>(state, 1000))
 
         // Set down
-        ->next(std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED))
+        ->next(std::make_shared<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED))
 
         // Disengage the clutch
-        ->next(std::make_unique<SubCmdDisengageAzClutch>(state));
+        ->next(std::make_shared<SubCmdDisengageAzClutch>(state));
 }
 
 CommandId CmdGoToPositionH::getCommandId() {
