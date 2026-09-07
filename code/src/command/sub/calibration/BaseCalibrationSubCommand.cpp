@@ -7,7 +7,7 @@ BaseCalibrationSubCommand::BaseCalibrationSubCommand(TurntableState* state, CmdC
     this->calCommand = calCommand;
 }
 
-CommandResult BaseCalibrationSubCommand::baseSizeExecute(StmShiftPin pin, uint16_t &destination, uint16_t content) {
+CommandResult BaseCalibrationSubCommand::baseExecute(StmShiftPin pin, uint16_t &destination, uint16_t content) {
     if(state->clockMicros - lightBlinkIndicator > ONE_SECOND_MICROS) {
         lightBlinkIndicator = state->clockMicros;
         state->outputShift.setValue(pin, !state->outputShift.getValue(pin));

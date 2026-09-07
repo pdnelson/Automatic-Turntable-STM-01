@@ -6,14 +6,15 @@
 #include <TurntableState.h>
 #include <Constants.h>
 #include <memory>
-#include <SubCmdCalibrateSize.h>
+#include <SubCmdCalibrateAzimuth.h>
 #include <RecordSize.h>
 #include <SubCmdDelay.h>
+#include <SubCommandId.h>
 
 CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
-    subCommands = std::make_shared<SubCmdCalibrateSize>(state, this, RecordSize::In7)
-        ->next(std::make_shared<SubCmdCalibrateSize>(state, this, RecordSize::In10))
-        ->next(std::make_shared<SubCmdCalibrateSize>(state, this, RecordSize::In12));
+    subCommands = std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate7In, StmShiftPin::Led7In, state->calibration.in7)
+        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate10In, StmShiftPin::Led10In, state->calibration.in10))
+        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate12In, StmShiftPin::Led12In, state->calibration.in12));
 
     // Basic controls:
     // "Play" advances to the next calibration step, saving the calibration value

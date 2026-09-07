@@ -14,7 +14,7 @@ class BaseCalibrationSubCommand : public BaseTurntableSubCommand {
 
         CmdCalibration* calCommand;
 
-        CommandResult baseSizeExecute(StmShiftPin pin, uint16_t &destination, uint16_t content);
+        CommandResult baseExecute(StmShiftPin pin, uint16_t &destination, uint16_t content);
 
     private:
         unsigned long lightBlinkIndicator = 0;
