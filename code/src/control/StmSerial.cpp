@@ -15,6 +15,7 @@
 #include <CmdStepHorizontally.h>
 #include <CmdGoToPositionH.h>
 #include <StmShiftPin.h>
+#include <CmdGoToPositionV.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -65,6 +66,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionGoToPositionH:      processGoToPositionH(stream);                       break;
                 case ExternalCommand::ActionPlayOrReturn:       state->playOrReturn();                              break;
                 case ExternalCommand::ActionCalibrate:          state->beginCalibrationRoutine();                   break;
+                case ExternalCommand::ActionGoToPositionV:      processGoToPositionV(stream);
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
@@ -126,6 +128,13 @@ void StmSerial::processGoToPositionH(Stream& stream) {
     uint8_t speed = stream.read();
     
     state->currentCommand = std::make_unique<CmdGoToPositionH>(state, position, tolerance, speed);
+}
+
+void StmSerial::processGoToPositionV(Stream& stream) {
+    int16_t position = readInt16(stream);
+    uint8_t speed = stream.read();
+    
+    state->currentCommand = std::make_unique<CmdGoToPositionV>(state, position, speed);
 }
 
 void StmSerial::processSetCustomSpeed(Stream& stream) {

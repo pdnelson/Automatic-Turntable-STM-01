@@ -36,9 +36,13 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
     // Calibrate basic movements
     // 1. User sets tonearm over home mount - saves home position + offset
     //   * 33 light flashes during this step
-    // 2. Tonearm automatically lowers or raises until it "finds" where the mount is - Saves mount location
+    // 2.1 Tonearm lowers to the lowest position
     //   * "Play" light illuminated during this step
-    // 3. User sets tonearm on the stationary platter with a piece of paper on it (NO RECORD!) - Saves record location IF it is lower than the mount location
+    // 2.2 Tonearm automatically raises until it "finds" where the mount is - Saves mount location
+    //   * "Play" light illuminated during this step
+    // 3.1 Tonearm lowers to the lowest position
+    //   * "Play" light illuminated during this step
+    // 3.2 User sets tonearm on the stationary platter with a piece of paper on it (NO RECORD!) - Saves record location IF it is lower than the mount location
     //   * 78 light flashes during this step
     //   * This is to calibrate the tonearm set-down position such that a flexidisc could be played
     //
