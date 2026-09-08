@@ -3,13 +3,13 @@
 #include <AzimuthDirection.h>
 #include <SubCommandId.h>
 
-#ifndef SubCmdMoveNSteps_h
-#define SubCmdMoveNSteps_h
+#ifndef SubCmdMoveNStepsH_h
+#define SubCmdMoveNStepsH_h
 class TurntableState;
 
-class SubCmdMoveNSteps : public BaseTurntableSubCommand {
+class SubCmdMoveNStepsH : public BaseTurntableSubCommand {
     public:
-        SubCmdMoveNSteps(TurntableState* state, int16_t steps, uint8_t speed, bool releaseCurrentAfterMovement);
+        SubCmdMoveNStepsH(TurntableState* state, int16_t steps, uint8_t speed, bool releaseCurrentAfterMovement);
         SubCommandId getSubCommandId() override;
 
     private:

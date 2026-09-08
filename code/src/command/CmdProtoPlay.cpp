@@ -8,7 +8,7 @@
 #include <SubCmdGoToPositionV.h>
 #include <SubCmdEngageAzClutch.h>
 #include <SubCmdDisengageAzClutch.h>
-#include <SubCmdMoveNSteps.h>
+#include <SubCmdMoveNStepsH.h>
 #include <TurntableState.h>
 #include <Constants.h>
 
@@ -21,7 +21,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         
         // Move CW or CCW
-        ->next(std::make_shared<SubCmdMoveNSteps>(state, steps, azimuthSpeed, true))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, steps, azimuthSpeed, true))
         
         // Disengage the clutch
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state))

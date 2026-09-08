@@ -58,7 +58,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
 }
 
 CommandId CmdGoToPositionH::getCommandId() {
-    return CommandId::GoToPosition;
+    return CommandId::GoToPositionH;
 }
 
 void CmdGoToPositionH::doInitialize() {

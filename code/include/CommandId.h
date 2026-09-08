@@ -12,7 +12,7 @@ enum CommandId {
     Error =         7,
     ToggleClutch =  8,
     StepHMotor =    9,
-    GoToPosition =  10,
+    GoToPositionH = 10,
     GoToPositionV = 11
 };
 
