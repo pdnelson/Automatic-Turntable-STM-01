@@ -3,8 +3,8 @@
 #include <SubCommandId.h>
 #include <VerticalDirection.h>
 
-#ifndef SubCmdGoToPosition_h
-#define SubCmdGoToPosition_h
+#ifndef SubCmdGoToPositionV_h
+#define SubCmdGoToPositionV_h
 class TurntableState;
 
 class SubCmdGoToPositionV : public BaseLiftSubCommand {

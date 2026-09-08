@@ -5,8 +5,7 @@
 #include <CommandId.h>
 #include <BaseTurntableCommand.h>
 #include <BaseTurntableSubCommand.h>
-#include <SubCmdLiftTonearm.h>
-#include <SubCmdSetDownTonearm.h>
+#include <SubCmdGoToPositionV.h>
 #include <SubCmdEngageAzClutch.h>
 #include <SubCmdDisengageAzClutch.h>
 #include <SubCmdMoveNSteps.h>
@@ -16,7 +15,7 @@
 CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuthSpeed) : BaseTurntableCommand(state) {
 
     // Lift up
-    subCommands = std::make_shared<SubCmdLiftTonearm>(state, LIFT_UP_SPEED)
+    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED)
 
         // Engage the clutch
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
@@ -28,7 +27,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
         
         // Set down
-        ->next(std::make_shared<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED));
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, SET_DOWN_SLOWLY));
 }
 
 CommandId CmdProtoPlay::getCommandId() {

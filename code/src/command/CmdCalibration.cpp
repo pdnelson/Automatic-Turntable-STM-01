@@ -78,6 +78,5 @@ void CmdCalibration::doInitialize() {
 
 void CmdCalibration::doUninitialize() {
     state->outputShift.setValues(outputShiftValues);
-
-    // TO DO: Save values to EEPROM
+    state->calibration.persist();
 }

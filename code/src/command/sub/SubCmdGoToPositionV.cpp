@@ -47,10 +47,9 @@ CommandResult SubCmdGoToPositionV::doExecute() {
         reachedLimit = true;
         timeLimitReached = state->clockMicros;
     } else if(reachedLimit) {
-        
         // Verify the tonearm is truly lifted once we've reached the limit. It can sometimes bounce a bit after lifting,
         // so allow some time for it to stop doing that.
-        if(state->getLiftStatus() == LiftStatus::Lifted) {
+        if(direction == VerticalDirection::Down || state->getLiftStatus() == LiftStatus::Lifted) {
             result = CommandResult::Success;
         } else if(state->clockMicros - timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
             result = CommandResult::NotLifted;

@@ -1,7 +1,6 @@
 #include <CommandResult.h>
 #include <CommandId.h>
 #include <BaseTurntableCommand.h>
-#include <SubCmdLiftTonearm.h>
 
 #ifndef CmdProtoPlay_h
 #define CmdProtoPlay_h

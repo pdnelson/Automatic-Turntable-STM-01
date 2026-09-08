@@ -37,7 +37,7 @@
 #define TICKS_BELOW_RECORD 15 // Set to 0 because the debounce ends up doing this well enough for now (or forever, maybe)
 
 // A hard-coded test value for the lower vertical encoder limit. This will eventually be replaced by a calibration value.
-#define TEST_VERTICAL_LOWER_LIMIT 20
+#define TEST_VERTICAL_LOWER_LIMIT 500
 
 // A hard-coded test value for the upper vertical encoder limit. This will eventually be replaced by a calibration value.
 #define TEST_VERTICAL_UPPER_LIMIT 950
@@ -51,6 +51,10 @@
 // The number of steps the vertical stepper must reach before it is considered "stalled".
 #define VERTICAL_STALL_STEPS 100
 
+// If the tonearm is hovering over the "home" position, it should go down quickly, as opposed to slowly. This threshold
+// helps determine if it's over "home".
+#define VERTICAL_HOME_THRESHOLD 100
+
 // When the tonearm lifts up toward the center of the platter, it might bounce a little bit. This timeout represents the maximum
 // amount of time we allow for the tonearm to bounce, before it should level out.
 #define LIFT_BOUNCE_TIMEOUT_MICROS 1500000
@@ -58,8 +62,11 @@
 // How fast the tonearm should move when lifting.
 #define LIFT_UP_SPEED 10
 
-// How fast the tonearm should move when being set down.
-#define SET_DOWN_SPEED 3
+// How fast the tonearm should move when being set down gently.
+#define SET_DOWN_SLOWLY 3
+
+// How fast the tonearm should move when being set down quickly.
+#define SET_DOWN_QUICKLY 14
 
 /**
  * Constants related to the horizontal movement -----------

@@ -6,8 +6,6 @@ enum SubCommandId {
     ErrorSubCommand = 1,
     DisengageAzClutch = 2,
     EngageAzClutch = 3,
-    LiftTonearm = 4,
-    SetDownTonearm = 5,
     MoveNSteps = 6,
     SubGoToPosition = 7,
     SubDelay = 8,

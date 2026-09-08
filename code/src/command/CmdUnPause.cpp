@@ -2,13 +2,23 @@
 #include <StmShiftPin.h>
 #include <CommandResult.h>
 #include <CommandId.h>
+#include <Constants.h>
 #include <BaseTurntableCommand.h>
-#include <SubCmdSetDownTonearm.h>
+#include <SubCmdGoToPositionV.h>
 #include <TurntableState.h>
 #include <Constants.h>
 
 CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state) {
-    subCommands = std::make_unique<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED);
+    uint16_t currentPosition = state->azEncoder.getNormalizedPosition();
+    uint16_t speed = SET_DOWN_SLOWLY;
+    uint16_t difference = (int16_t)currentPosition - (int16_t)state->calibration.home;
+    
+    // If we're near the home position, go down quickly.
+    if(difference <= VERTICAL_HOME_THRESHOLD) {
+        speed = SET_DOWN_QUICKLY;
+    }
+    
+    subCommands = std::make_unique<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, speed);
 }
 
 CommandId CmdUnPause::getCommandId() {

@@ -4,8 +4,7 @@
 #include <CommandId.h>
 #include <BaseTurntableCommand.h>
 #include <SubCmdGoToPositionH.h>
-#include <SubCmdLiftTonearm.h>
-#include <SubCmdSetDownTonearm.h>
+#include <SubCmdGoToPositionV.h>
 #include <SubCmdEngageAzClutch.h>
 #include <SubCmdDisengageAzClutch.h>
 #include <TurntableState.h>
@@ -17,14 +16,22 @@
 CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed) : BaseTurntableCommand(state) {
     this->state = state;
 
+    uint16_t setDownSpeed = SET_DOWN_SLOWLY;
+    uint16_t difference = (int16_t)position - (int16_t)state->calibration.home;
+    
+    // If we're near the home position, go down quickly.
+    if(difference <= VERTICAL_HOME_THRESHOLD) {
+        setDownSpeed = SET_DOWN_QUICKLY;
+    }
+
     // Lift up
-    subCommands = std::make_shared<SubCmdLiftTonearm>(state, LIFT_UP_SPEED)
+    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED)
 
         // Engage the clutch
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         
         // Move to specific position
-        ->next(std::make_unique<SubCmdGoToPositionH>(state, position, tolerance, speed, 800))
+        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, speed, 800))
 
         // Error correction
         ->next(std::make_shared<SubCmdDelay>(state, 100))
@@ -44,7 +51,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_shared<SubCmdDelay>(state, 1000))
 
         // Set down
-        ->next(std::make_shared<SubCmdSetDownTonearm>(state, SET_DOWN_SPEED))
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, setDownSpeed))
 
         // Disengage the clutch
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state));

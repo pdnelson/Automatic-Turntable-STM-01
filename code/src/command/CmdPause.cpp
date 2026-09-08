@@ -3,13 +3,13 @@
 #include <CommandResult.h>
 #include <CommandId.h>
 #include <BaseTurntableCommand.h>
-#include <SubCmdLiftTonearm.h>
+#include <SubCmdGoToPositionV.h>
 #include <TurntableState.h>
 #include <Constants.h>
 #include <memory>
 
 CmdPause::CmdPause(TurntableState* state) : BaseTurntableCommand(state) {
-    subCommands = std::make_unique<SubCmdLiftTonearm>(state, LIFT_UP_SPEED);
+    subCommands = std::make_unique<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED);
 }
 
 CommandId CmdPause::getCommandId() {
