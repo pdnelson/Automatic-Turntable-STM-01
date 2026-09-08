@@ -73,5 +73,5 @@ void SubCmdGoToPositionV::doUninitialize() {
 }
 
 SubCommandId SubCmdGoToPositionV::getSubCommandId() {
-    return SubCommandId::SubGoToPosition;
+    return SubCommandId::SubGoToPositionV;
 }

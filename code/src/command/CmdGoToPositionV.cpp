@@ -16,16 +16,13 @@ CmdGoToPositionV::CmdGoToPositionV(TurntableState* state, uint16_t position, uin
 }
 
 CommandId CmdGoToPositionV::getCommandId() {
-    return CommandId::GoToPosition;
+    return CommandId::GoToPositionV;
 }
 
 void CmdGoToPositionV::doInitialize() {
-    state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
-    state->outputShift.setValue(StmShiftPin::LedPlayStatus, true);
-    state->outputShift.setValue(StmShiftPin::AudioCutOff, true);
+    // do nothing
 }
 
 void CmdGoToPositionV::doUninitialize() {
-    state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
-    state->outputShift.setValue(StmShiftPin::AudioCutOff, false);
+    // do nothing
 }

@@ -16,6 +16,7 @@ enum SubCommandId {
     Calibrate10In = 11,
     Calibrate12In = 12,
     CalibrateHome = 13,
+    SubGoToPositionV = 14
 };
 
 #endif
