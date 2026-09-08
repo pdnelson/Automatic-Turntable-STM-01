@@ -30,7 +30,7 @@ void SubCmdGoToPositionV::doInitialize() {
 
     state->movementStepper.setDirection(direction);
 
-    state->movementStepper.calibrateDirection(state->calibration.verticalUp, state->calibration.verticalDown);
+    state->movementStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
 }
 
 CommandResult SubCmdGoToPositionV::doExecute() {

@@ -10,9 +10,9 @@
 
 CmdToggleClutch::CmdToggleClutch(TurntableState* state) : BaseTurntableCommand(state) {
     if(state->clutchEngaged() == ClutchStatus::Engaged) {
-        subCommands = std::make_unique<SubCmdDisengageAzClutch>(state);
+        subCommands = std::make_shared<SubCmdDisengageAzClutch>(state);
     } else {
-        subCommands = std::make_unique<SubCmdEngageAzClutch>(state);
+        subCommands = std::make_shared<SubCmdEngageAzClutch>(state);
     }
 }
 

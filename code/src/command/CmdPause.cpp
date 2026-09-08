@@ -9,7 +9,7 @@
 #include <memory>
 
 CmdPause::CmdPause(TurntableState* state) : BaseTurntableCommand(state) {
-    subCommands = std::make_unique<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED);
+    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED);
 }
 
 CommandId CmdPause::getCommandId() {

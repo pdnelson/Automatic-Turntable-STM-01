@@ -16,11 +16,8 @@ class CalibrationValues {
         uint16_t home = 0;
         uint16_t verticalUpperLimit;
         uint16_t verticalLowerLimit;
-        StmEncoderPolarity polarity;
-        uint8_t verticalUp;
-        uint8_t verticalDown;
-        uint8_t horizontalClockwise;
-        uint8_t horizontalCounterclockwise;
+        StmEncoderPolarity polarityH;
+        StmEncoderPolarity polarityV;
 
         // Record sizes
         uint16_t in7 = 0;

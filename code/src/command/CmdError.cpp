@@ -11,7 +11,7 @@
 CmdError::CmdError(TurntableState* state, CommandResult error) : BaseTurntableCommand(state) {
     this->state = state;
     this->error = error;
-    subCommands = std::make_unique<SubCmdError>(state);
+    subCommands = std::make_shared<SubCmdError>(state);
 }
 
 CommandId CmdError::getCommandId() {

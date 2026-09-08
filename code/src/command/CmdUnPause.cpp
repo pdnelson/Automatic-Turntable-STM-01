@@ -18,7 +18,7 @@ CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state) {
         speed = SET_DOWN_QUICKLY;
     }
     
-    subCommands = std::make_unique<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, speed);
+    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, speed);
 }
 
 CommandId CmdUnPause::getCommandId() {

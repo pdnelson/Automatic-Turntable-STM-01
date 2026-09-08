@@ -32,7 +32,7 @@ void SubCmdGoToPositionH::doInitialize() {
         state->movementStepper.setSpeed(speed);
         state->movementStepper.setEncoderRange(currentPosition, destinationEncoderPosition, encoderTolerance);
         state->movementStepper.setRampDownEncoderTicks(rampDownEncoderTicks);
-        state->movementStepper.calibrateDirection(state->calibration.horizontalClockwise, state->calibration.horizontalCounterclockwise);
+        state->movementStepper.calibrateDirection(AzimuthDirection::Clockwise, AzimuthDirection::CounterClockwise);
     }
 }
 

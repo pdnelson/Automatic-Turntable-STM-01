@@ -6,7 +6,7 @@ enum SubCommandId {
     ErrorSubCommand = 1,
     DisengageAzClutch = 2,
     EngageAzClutch = 3,
-    MoveNSteps = 6,
+    SubMoveNStepsH = 6,
     SubGoToPosition = 7,
     SubDelay = 8,
     SubSetMovementVertical = 9,
@@ -14,7 +14,8 @@ enum SubCommandId {
     Calibrate10In = 11,
     Calibrate12In = 12,
     CalibrateHome = 13,
-    SubGoToPositionV = 14
+    SubGoToPositionV = 14,
+    SubMoveNStepsV = 15,
 };
 
 #endif

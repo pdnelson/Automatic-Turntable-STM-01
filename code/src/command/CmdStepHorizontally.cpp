@@ -8,7 +8,7 @@
 #include <SubCmdMoveNStepsH.h>
 
 CmdStepHorizontally::CmdStepHorizontally(TurntableState* state, int16_t steps, uint8_t azimuthSpeed) : BaseTurntableCommand(state) {
-    subCommands = std::make_unique<SubCmdMoveNStepsH>(state, steps, azimuthSpeed, false);
+    subCommands = std::make_shared<SubCmdMoveNStepsH>(state, steps, azimuthSpeed, false);
 }
 
 CommandId CmdStepHorizontally::getCommandId() {

@@ -52,7 +52,7 @@ TurntableState::TurntableState() :
 
     calibration.load();
 
-    azEncoder.setPolarity(calibration.polarity);
+    azEncoder.setPolarity(calibration.polarityH);
 }
 
 void TurntableState::monitor() {
