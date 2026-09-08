@@ -41,8 +41,8 @@ CommandResult SubCmdGoToPositionV::doExecute() {
     // When we reach or overshoot the target position, log the time we did it, and set a status indicating that we reached it
     if(!reachedLimit && 
         (
-            (direction == VerticalDirection::Up && currentPosition >= state->calibration.verticalUpperLimit) ||
-        (direction == VerticalDirection::Down && currentPosition <= state->calibration.verticalUpperLimit))
+            (direction == VerticalDirection::Up && currentPosition >= destinationEncoderPosition) ||
+        (direction == VerticalDirection::Down && currentPosition <= destinationEncoderPosition))
     ) {
         reachedLimit = true;
         timeLimitReached = state->clockMicros;
