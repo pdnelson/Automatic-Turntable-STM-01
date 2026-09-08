@@ -12,7 +12,7 @@
 #include <SubCommandId.h>
 
 SubCmdCalibrateAzimuth::SubCmdCalibrateAzimuth(TurntableState* state, CmdCalibration* calCommand, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination) : 
-    BaseCalibrationSubCommand(state, calCommand),
+    BaseTurntableSubCommand(state),
     destination(destination) {
 
     this->subCommandId = subCommandId;
@@ -28,7 +28,21 @@ void SubCmdCalibrateAzimuth::doInitialize() {
 }
 
 CommandResult SubCmdCalibrateAzimuth::doExecute() {
-    return baseExecute(pinToFlash, destination, state->azEncoder.getNormalizedPosition());
+    if(state->clockMicros - lightBlinkIndicator > ONE_SECOND_MICROS) {
+        lightBlinkIndicator = state->clockMicros;
+        state->outputShift.setValue(pinToFlash, !state->outputShift.getValue(pinToFlash));
+    }
+
+    if(state->inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
+        return CommandResult::Success;
+    } 
+    else if(state->inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
+        destination = state->azEncoder.getNormalizedPosition();
+        return CommandResult::Success;
+    }
+    else {
+        return CommandResult::Running;
+    }
 }
 
 void SubCmdCalibrateAzimuth::doUninitialize() {

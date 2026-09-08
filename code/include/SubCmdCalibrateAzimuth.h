@@ -1,14 +1,14 @@
 #include <CommandResult.h>
-#include <BaseCalibrationSubCommand.h>
 #include <SubCommandId.h>
 #include <CmdCalibration.h>
 #include <RecordSize.h>
+#include <StmShiftPin.h>
 
 #ifndef SubCmdCalibrateAzimuth_h
 #define SubCmdCalibrateAzimuth_h
 class TurntableState;
 
-class SubCmdCalibrateAzimuth : public BaseCalibrationSubCommand {
+class SubCmdCalibrateAzimuth : public BaseTurntableSubCommand {
     public:
         SubCmdCalibrateAzimuth(TurntableState* state, CmdCalibration* calCommand, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination);
         SubCommandId getSubCommandId() override;
@@ -21,6 +21,7 @@ class SubCmdCalibrateAzimuth : public BaseCalibrationSubCommand {
         SubCommandId subCommandId;
         StmShiftPin pinToFlash;
         uint16_t &destination;
+        unsigned long lightBlinkIndicator = 0;
 };
 
 #endif

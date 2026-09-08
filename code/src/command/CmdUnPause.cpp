@@ -11,7 +11,7 @@
 CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state) {
     uint16_t currentPosition = state->azEncoder.getNormalizedPosition();
     uint16_t speed = SET_DOWN_SLOWLY;
-    uint16_t difference = (int16_t)currentPosition - (int16_t)state->calibration.home;
+    uint16_t difference = abs((int16_t)currentPosition - (int16_t)state->calibration.home);
     
     // If we're near the home position, go down quickly.
     if(difference <= VERTICAL_HOME_THRESHOLD) {

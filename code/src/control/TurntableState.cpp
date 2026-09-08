@@ -129,7 +129,7 @@ HomeStatus TurntableState::getHomeStatus() {
 }
 
 bool TurntableState::isPaused() {
-    return outputShift.getValue(StmShiftPin::LedPauseStatus);
+    return analogRead(Pin::VerticalPosition) >= (calibration.verticalUpperLimit - PAUSE_ERROR);
 }
 
 ClutchStatus TurntableState::clutchEngaged() {
@@ -212,7 +212,7 @@ void TurntableState::updateSize(RecordSize newSize) {
 }
 
 void TurntableState::pauseOrUnPause() {
-    if(isPaused() || getLiftStatus() == LiftStatus::Lifted) {
+    if(isPaused()) {
         currentCommand = std::make_unique<CmdUnPause>(this);
     } else {
         currentCommand = std::make_unique<CmdPause>(this);
