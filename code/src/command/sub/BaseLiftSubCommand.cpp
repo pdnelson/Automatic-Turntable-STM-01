@@ -34,6 +34,6 @@ bool BaseLiftSubCommand::checkVerticalStall(VerticalDirection direction, int cur
 
 void BaseLiftSubCommand::baseInitialize() {
     digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-    verticalStallPosition = analogRead(Pin::VerticalPosition);
+    verticalStallPosition = state->getVerticalEncoderPos();
     state->movementStepper.setSpeed(speed);
 }

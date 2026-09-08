@@ -56,6 +56,7 @@ class TurntableState {
         void playOrReturn();
         void beginCalibrationRoutine();
         float getTargetSpeed();
+        uint16_t getVerticalEncoderPos();
 
     private:
         unsigned long liftDebounce = 0;

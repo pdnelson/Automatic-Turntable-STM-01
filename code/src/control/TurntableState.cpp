@@ -128,8 +128,16 @@ HomeStatus TurntableState::getHomeStatus() {
     }
 }
 
+uint16_t TurntableState::getVerticalEncoderPos() {
+    if(calibration.polarityV == StmEncoderPolarity::NORMAL) {
+        return analogRead(Pin::VerticalPosition);
+    } else {
+        return V_ENCODER_MAX_VALUE - analogRead(Pin::VerticalPosition);
+    }
+}
+
 bool TurntableState::isPaused() {
-    return analogRead(Pin::VerticalPosition) >= (calibration.verticalUpperLimit - PAUSE_ERROR);
+    return getVerticalEncoderPos() >= (calibration.verticalUpperLimit - PAUSE_ERROR);
 }
 
 ClutchStatus TurntableState::clutchEngaged() {

@@ -29,7 +29,7 @@ uint16_t StmEncoder::getNormalizedPosition() {
     if(polarity == StmEncoderPolarity::NORMAL) {
         return rollingDataAvg;
     } else {
-        return ENCODER_MAX_VALUE - rollingDataAvg;
+        return H_ENCODER_MAX_VALUE - rollingDataAvg;
     }
 }
 

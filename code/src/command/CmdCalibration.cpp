@@ -78,5 +78,6 @@ void CmdCalibration::doInitialize() {
 
 void CmdCalibration::doUninitialize() {
     state->outputShift.setValues(outputShiftValues);
+    state->azEncoder.setPolarity(state->calibration.polarityH);
     state->calibration.persist();
 }

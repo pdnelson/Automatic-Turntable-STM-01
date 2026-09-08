@@ -170,7 +170,7 @@ void StmSerial::processGetHorizontalEncoderPos(Stream& stream) {
 }
 
 void StmSerial::processGetVerticalEncoderPos(Stream& stream) {
-    uint16_t verticalPosition = analogRead(Pin::VerticalPosition);
+    uint16_t verticalPosition = state->getVerticalEncoderPos();
 
     byte data[2];
     data[0] = verticalPosition & 0x00FF;
@@ -234,7 +234,7 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
     data[0] = SERIAL_ADVANCED_START_KEY;
 
     // Vertical position
-    uint16_t verticalPosition = analogRead(Pin::VerticalPosition);
+    uint16_t verticalPosition = state->getVerticalEncoderPos();
     data[1] = verticalPosition & 0x00FF;
     data[2] = (verticalPosition >> 8) & 0x00FF;
 

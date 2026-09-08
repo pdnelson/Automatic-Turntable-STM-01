@@ -19,7 +19,7 @@ SubCmdGoToPositionV::SubCmdGoToPositionV(TurntableState* state, uint16_t positio
 void SubCmdGoToPositionV::doInitialize() {
     baseInitialize();
 
-    int currentPosition = analogRead(Pin::VerticalPosition);
+    int currentPosition = state->getVerticalEncoderPos();
 
     // If the destination is greater than the current position, move up. Otherwise, move down.
     if(destinationEncoderPosition > currentPosition) {
@@ -34,7 +34,7 @@ void SubCmdGoToPositionV::doInitialize() {
 }
 
 CommandResult SubCmdGoToPositionV::doExecute() {
-    int currentPosition = analogRead(Pin::VerticalPosition);
+    int currentPosition = state->getVerticalEncoderPos();
 
     CommandResult result = CommandResult::Running;
 
