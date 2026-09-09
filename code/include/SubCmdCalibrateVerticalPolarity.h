@@ -1,16 +1,18 @@
+#include <Arduino.h>
 #include <CommandResult.h>
 #include <SubCommandId.h>
 #include <CmdCalibration.h>
 #include <RecordSize.h>
 #include <StmShiftPin.h>
+#include <BaseTurntableSubCommand.h>
 
-#ifndef SubCmdCalibrateAzimuth_h
-#define SubCmdCalibrateAzimuth_h
+#ifndef SubCmdCalibrateVerticalPolarity_h
+#define SubCmdCalibrateVerticalPolarity_h
 class TurntableState;
 
-class SubCmdCalibrateAzimuth : public BaseTurntableSubCommand {
+class SubCmdCalibrateVerticalPolarity : public BaseTurntableSubCommand {
     public:
-        SubCmdCalibrateAzimuth(TurntableState* state, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination);
+        SubCmdCalibrateVerticalPolarity(TurntableState* state, uint16_t &destination);
         SubCommandId getSubCommandId() override;
 
     private:
@@ -18,10 +20,7 @@ class SubCmdCalibrateAzimuth : public BaseTurntableSubCommand {
         CommandResult doExecute() override;
         void doUninitialize() override;
 
-        SubCommandId subCommandId;
-        StmShiftPin pinToFlash;
         uint16_t &destination;
-        unsigned long lightBlinkIndicator = 0;
 };
 
 #endif

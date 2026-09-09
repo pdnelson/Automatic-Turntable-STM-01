@@ -11,7 +11,7 @@
 #include <StmShiftPin.h>
 #include <SubCommandId.h>
 
-SubCmdCalibrateAzimuth::SubCmdCalibrateAzimuth(TurntableState* state, CmdCalibration* calCommand, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination) : 
+SubCmdCalibrateAzimuth::SubCmdCalibrateAzimuth(TurntableState* state, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination) : 
     BaseTurntableSubCommand(state),
     destination(destination) {
 

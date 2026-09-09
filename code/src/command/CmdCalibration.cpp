@@ -10,12 +10,27 @@
 #include <RecordSize.h>
 #include <SubCmdDelay.h>
 #include <SubCommandId.h>
+#include <SubCmdCalibrateVerticalPolarity.h>
+#include <SubCmdMoveNStepsV.h>
+#include <SubCmdToggleLight.h>
 
 CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
-    subCommands = std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::CalibrateHome, StmShiftPin::Led33Rpm, state->calibration.home)
-        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate7In, StmShiftPin::Led7In, state->calibration.in7))
-        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate10In, StmShiftPin::Led10In, state->calibration.in10))
-        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, this, SubCommandId::Calibrate12In, StmShiftPin::Led12In, state->calibration.in12));
+
+    // First, calibrate the vertical polarity by going down, logging a point, then going up, and logging another point.
+    // If the second point is greater than the first, then polarity is correct. Otherwise, we need to reverse it.
+    subCommands = std::make_shared<SubCmdToggleLight>(state, StmShiftPin::LedPlayStatus, true)
+        ->next(std::make_shared<SubCmdMoveNStepsV>(state, -200, 14, true))
+        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdCalibrateVerticalPolarity>(state, lowerVerticalReferencePoint))
+        ->next(std::make_shared<SubCmdMoveNStepsV>(state, 200, 14, true))
+        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdCalibrateVerticalPolarity>(state, upperVerticalReferencePoint))
+    
+    
+        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, SubCommandId::CalibrateHome, StmShiftPin::Led33Rpm, state->calibration.home))
+        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, SubCommandId::Calibrate7In, StmShiftPin::Led7In, state->calibration.in7))
+        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, SubCommandId::Calibrate10In, StmShiftPin::Led10In, state->calibration.in10))
+        ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, SubCommandId::Calibrate12In, StmShiftPin::Led12In, state->calibration.in12));
 
     // Basic controls:
     // "Play" advances to the next calibration step, saving the calibration value
