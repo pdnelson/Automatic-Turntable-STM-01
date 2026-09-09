@@ -16,6 +16,7 @@
 #include <CmdGoToPositionH.h>
 #include <StmShiftPin.h>
 #include <CmdGoToPositionV.h>
+#include <CmdMoveNStepsV.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -67,6 +68,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionPlayOrReturn:       state->playOrReturn();                              break;
                 case ExternalCommand::ActionCalibrate:          state->beginCalibrationRoutine();                   break;
                 case ExternalCommand::ActionGoToPositionV:      processGoToPositionV(stream);                       break;
+                case ExternalCommand::ActionMoveNStepsV:        processMoveNStepsV(stream);                         break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
@@ -135,6 +137,14 @@ void StmSerial::processGoToPositionV(Stream& stream) {
     uint8_t speed = stream.read();
     
     state->currentCommand = std::make_unique<CmdGoToPositionV>(state, position, speed);
+}
+
+void StmSerial::processMoveNStepsV(Stream& stream) {
+    int16_t stepCount = readInt16(stream);
+    uint8_t speed = stream.read();
+    bool releaseCurrentAfterMovement = stream.read();
+
+    state->currentCommand = std::make_unique<CmdMoveNStepsV>(state, stepCount, speed, releaseCurrentAfterMovement);
 }
 
 void StmSerial::processSetCustomSpeed(Stream& stream) {
@@ -302,4 +312,5 @@ void StmSerial::clearCommand() {
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
     state->outputShift.setValue(StmShiftPin::AudioCutOff, true);
     state->outputShift.setValue(StmShiftPin::LedHeadshellIR, false);
+    state->movementStepper.releaseMotorCurrent();
 }

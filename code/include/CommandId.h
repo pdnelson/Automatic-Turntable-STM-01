@@ -13,7 +13,8 @@ enum CommandId {
     ToggleClutch =  8,
     StepHMotor =    9,
     GoToPositionH = 10,
-    GoToPositionV = 11
+    GoToPositionV = 11,
+    MoveNStepsV =   12
 };
 
 #endif

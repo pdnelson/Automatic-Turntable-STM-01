@@ -13,6 +13,7 @@ enum ExternalCommand {
     ActionPlayOrReturn = 6,
     ActionCalibrate = 7,
     ActionGoToPositionV = 8,
+    ActionMoveNStepsV = 9,
 
     // Data/setting set commands (31-100)
     SetSpeed = 31,
