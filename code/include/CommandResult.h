@@ -11,7 +11,10 @@ enum CommandResult {
     NotLifted = 4,
 
     ClutchFailedToEngage = 5,
-    ClutchFailedToDisengage = 6
+    ClutchFailedToDisengage = 6,
+
+    FailedToSetVerticalPolarity = 7,
+    FailedToSetHorizontalPolarity = 8
 };
 
 #endif

@@ -13,9 +13,7 @@ class SubCmdGoToPositionV : public BaseLiftSubCommand {
         SubCommandId getSubCommandId() override;
 
     private:
-        uint8_t speed = 0;
         uint16_t destinationEncoderPosition = 0;
-        uint8_t encoderTolerance = 0;
         bool reachedLimit = false;
         unsigned long timeLimitReached = 0;
         VerticalDirection direction;

@@ -17,8 +17,8 @@ class CmdCalibration : public BaseTurntableCommand {
     private:
         uint16_t outputShiftValues = 0;
 
-        uint16_t lowerVerticalReferencePoint = 0;
-        uint16_t upperVerticalReferencePoint = 0;
+        uint16_t referencePoint1 = 0;
+        uint16_t referencePoint2 = 0;
 };
 
 #endif

@@ -16,8 +16,12 @@ enum SubCommandId {
     CalibrateHome = 13,
     SubGoToPositionV = 14,
     SubMoveNStepsV = 15,
-    CalibrateVerticalPolarity = 16,
-    ToggleLight = 17
+    CalibrateVerticalPoint = 16,
+    ToggleLight = 17,
+    SetPolarity = 18,
+    CalibrateHorizontalPolarity = 16,
+    CalibratePlatterHeight = 17,
+    CalibrateHomeHeight = 18
 };
 
 #endif

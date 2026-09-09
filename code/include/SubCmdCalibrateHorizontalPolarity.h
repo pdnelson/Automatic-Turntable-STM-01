@@ -3,16 +3,15 @@
 #include <SubCommandId.h>
 #include <CmdCalibration.h>
 #include <RecordSize.h>
-#include <StmShiftPin.h>
 #include <BaseTurntableSubCommand.h>
 
-#ifndef SubCmdCalibrateVerticalPolarity_h
-#define SubCmdCalibrateVerticalPolarity_h
+#ifndef SubCmdCalibrateHorizontalPolarity_h
+#define SubCmdCalibrateHorizontalPolarity_h
 class TurntableState;
 
-class SubCmdCalibrateVerticalPolarity : public BaseTurntableSubCommand {
+class SubCmdCalibrateHorizontalPolarity : public BaseTurntableSubCommand {
     public:
-        SubCmdCalibrateVerticalPolarity(TurntableState* state, uint16_t &destination);
+        SubCmdCalibrateHorizontalPolarity(TurntableState* state, uint16_t &destination);
         SubCommandId getSubCommandId() override;
 
     private:

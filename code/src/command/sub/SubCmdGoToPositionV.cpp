@@ -11,8 +11,6 @@
 #include <CommandResult.h>
 
 SubCmdGoToPositionV::SubCmdGoToPositionV(TurntableState* state, uint16_t position, uint8_t speed) : BaseLiftSubCommand(state, speed) {
-    this->state = state;
-    this->speed = speed;
     destinationEncoderPosition = position;
 }
 
@@ -40,8 +38,7 @@ CommandResult SubCmdGoToPositionV::doExecute() {
 
     // When we reach or overshoot the target position, log the time we did it, and set a status indicating that we reached it
     if(!reachedLimit && 
-        (
-            (direction == VerticalDirection::Up && currentPosition >= destinationEncoderPosition) ||
+        ((direction == VerticalDirection::Up && currentPosition >= destinationEncoderPosition) ||
         (direction == VerticalDirection::Down && currentPosition <= destinationEncoderPosition))
     ) {
         reachedLimit = true;
@@ -59,7 +56,11 @@ CommandResult SubCmdGoToPositionV::doExecute() {
             bool stalled = checkVerticalStall(direction, currentPosition);
 
             if(stalled) {
-                result = CommandResult::LiftStalledMovingUp;
+                if(direction == VerticalDirection::Up) {
+                    result = CommandResult::LiftStalledMovingUp;
+                } else {
+                    result = CommandResult::LiftStalledMovingDown;
+                }
             }
         }
     }
