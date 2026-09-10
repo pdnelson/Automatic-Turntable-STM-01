@@ -25,7 +25,9 @@ SubCommandId SubCmdCalibrateAzimuth::getSubCommandId() {
 }
 
 void SubCmdCalibrateAzimuth::doInitialize() {
-    state->outputShift.setValues(0);
+    if(waitForUserInput) {
+        state->outputShift.setValues(0);
+    }
 }
 
 CommandResult SubCmdCalibrateAzimuth::doExecute() {

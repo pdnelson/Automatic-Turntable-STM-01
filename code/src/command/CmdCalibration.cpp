@@ -25,6 +25,7 @@
 #include <SubCmdDisengageAzClutch.h>
 
 CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
+
     // Basic controls:
     // "Play" advances to the next calibration step, saving the calibration value
     // "Pause" skips the calibration step, saving nothing
@@ -59,11 +60,9 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdSetPolarity>(state, MovementAxis::Horizontal, referencePoint1, referencePoint2, state->calibration.polarityH))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, -250, 14, true)) // Move back to the home mount
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, 14))
-        ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
 
         // Calibrate the home mount position, then height
         // TO DO: Normalize sensor output RIGHT HERE
-        ->next(std::make_shared<SubCmdDelay>(state, 200))
         ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, false, SubCommandId::CalibrateHome, StmShiftPin::Led33Rpm, state->calibration.home))
         ->next(std::make_shared<SubCmdMoveUpUntilLifted>(state, SubCommandId::CalibrateHomeHeight, 1))
         ->next(std::make_shared<SubCmdDelay>(state, 200))
@@ -80,7 +79,12 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdDelay>(state, 200))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint2))
         ->next(std::make_shared<SubCmdCalibrateVerticalBounds>(state, referencePoint1, referencePoint2))
+
+        // Go back to the home position
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -200, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_SLOWLY))
+        ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
         ->next(std::make_shared<SubCmdToggleLight>(state, StmShiftPin::LedPlayStatus, false))
 
         // Now the user can calibrate the remaining record size positions

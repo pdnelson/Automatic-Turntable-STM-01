@@ -73,7 +73,13 @@ void TurntableState::executeCommand() {
         CommandResult result = currentCommand->execute();
 
         if(result == CommandResult::Success) {
-            currentCommand = nullptr;
+
+            // When coming out of the calibration command, execute the play routine instead
+            if(currentCommand->getCommandId() == CommandId::Calibration) {
+                playOrReturn();
+            } else {
+                currentCommand = nullptr;
+            }
         } else if(result > CommandResult::Success) {
             currentCommand = std::make_unique<CmdError>(this, result);
         }
@@ -244,7 +250,7 @@ void TurntableState::playOrReturn() {
             // to do: implement automatic routine
         }
     } else {
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 2, 14);
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 10, 14);
     }
 }
 
