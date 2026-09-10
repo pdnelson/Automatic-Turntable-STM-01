@@ -91,6 +91,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream);                      break;
                 case ExternalCommand::GetSizeSetting:           stream.write(state->selectedSize);                  break;
                 case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                break;
+                case ExternalCommand::GetCalibrationValues:     processGetCalibrationValues(stream);                break;
             }
         }
     }
@@ -292,6 +293,45 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
     data[20] = state->clutchEngaged();
 
     data[21] = SERIAL_ADVANCED_END_KEY;
+
+    stream.write(data, dataSize);
+}
+
+void StmSerial::processGetCalibrationValues(Stream& stream) {
+    uint8_t dataSize = 16;
+    byte data[dataSize];
+
+    data[0] = SERIAL_ADVANCED_START_KEY;
+
+    // polarity
+    data[1] = state->calibration.polarityH;
+    data[2] = state->calibration.polarityV;
+
+    // home position
+    data[3] = state->calibration.home & 0x00FF;
+    data[4] = (state->calibration.home >> 8) & 0x00FF;
+
+    // upper limit
+    data[5] = state->calibration.verticalUpperLimit & 0x00FF;
+    data[6] = (state->calibration.verticalUpperLimit >> 8) & 0x00FF;
+
+    // lower limit
+    data[7] = state->calibration.verticalLowerLimit & 0x00FF;
+    data[8] = (state->calibration.verticalLowerLimit >> 8) & 0x00FF;
+
+    // 7in position
+    data[9] = state->calibration.in7 & 0x00FF;
+    data[10] = (state->calibration.in7 >> 8) & 0x00FF;
+
+    // 10in position
+    data[11] = state->calibration.in10 & 0x00FF;
+    data[12] = (state->calibration.in10 >> 8) & 0x00FF;
+
+    // 12in position
+    data[13] = state->calibration.in12 & 0x00FF;
+    data[14] = (state->calibration.in12 >> 8) & 0x00FF;
+
+    data[15] = SERIAL_ADVANCED_END_KEY;
 
     stream.write(data, dataSize);
 }

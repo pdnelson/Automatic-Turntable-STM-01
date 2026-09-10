@@ -11,10 +11,11 @@
 #include <StmShiftPin.h>
 #include <SubCommandId.h>
 
-SubCmdCalibrateAzimuth::SubCmdCalibrateAzimuth(TurntableState* state, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination) : 
+SubCmdCalibrateAzimuth::SubCmdCalibrateAzimuth(TurntableState* state, bool waitForUserInput, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination) : 
     BaseTurntableSubCommand(state),
     destination(destination) {
 
+    this->waitForUserInput = waitForUserInput;
     this->subCommandId = subCommandId;
     this->pinToFlash = pinToFlash;
 }
@@ -28,23 +29,32 @@ void SubCmdCalibrateAzimuth::doInitialize() {
 }
 
 CommandResult SubCmdCalibrateAzimuth::doExecute() {
-    if(state->clockMicros - lightBlinkIndicator > ONE_SECOND_MICROS) {
-        lightBlinkIndicator = state->clockMicros;
-        state->outputShift.setValue(pinToFlash, !state->outputShift.getValue(pinToFlash));
-    }
+    if(!waitForUserInput) {
+        updateDestination();
+        return CommandResult::Success;
+    } else {
+        if(state->clockMicros - lightBlinkIndicator > ONE_SECOND_MICROS) {
+            lightBlinkIndicator = state->clockMicros;
+            state->outputShift.setValue(pinToFlash, !state->outputShift.getValue(pinToFlash));
+        }
 
-    if(state->inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
-        return CommandResult::Success;
-    } 
-    else if(state->inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
-        destination = state->azEncoder.getNormalizedPosition();
-        return CommandResult::Success;
-    }
-    else {
-        return CommandResult::Running;
+        if(state->inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnRelease) {
+            return CommandResult::Success;
+        } 
+        else if(state->inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnRelease) {
+            updateDestination();
+            return CommandResult::Success;
+        }
+        else {
+            return CommandResult::Running;
+        }
     }
 }
 
 void SubCmdCalibrateAzimuth::doUninitialize() {
     // do nothing
+}
+
+void SubCmdCalibrateAzimuth::updateDestination() {
+    destination = state->azEncoder.getNormalizedPosition();
 }

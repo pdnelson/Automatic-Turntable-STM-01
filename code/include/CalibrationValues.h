@@ -14,10 +14,10 @@ class CalibrationValues {
 
         // Basic tonearm setup
         uint16_t home = 0;
-        uint16_t verticalUpperLimit;
-        uint16_t verticalLowerLimit;
-        StmEncoderPolarity polarityH;
-        StmEncoderPolarity polarityV;
+        uint16_t verticalUpperLimit = 0;
+        uint16_t verticalLowerLimit = 0;
+        StmEncoderPolarity polarityH = StmEncoderPolarity::NORMAL;
+        StmEncoderPolarity polarityV = StmEncoderPolarity::NORMAL;
 
         // Record sizes
         uint16_t in7 = 0;

@@ -21,7 +21,8 @@ enum SubCommandId {
     SetPolarity = 18,
     CalibrateHorizontalPolarity = 16,
     CalibratePlatterHeight = 17,
-    CalibrateHomeHeight = 18
+    CalibrateHomeHeight = 18,
+    CalibrateVerticalBounds = 19
 };
 
 #endif

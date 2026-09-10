@@ -9,10 +9,6 @@ CalibrationValues::CalibrationValues() {
 
 void CalibrationValues::load() {
     // to do
-    verticalUpperLimit = TEST_VERTICAL_UPPER_LIMIT;
-    verticalLowerLimit = TEST_VERTICAL_LOWER_LIMIT;
-    polarityH = StmEncoderPolarity::REVERSED;
-    polarityV = StmEncoderPolarity::NORMAL;
 }
 
 void CalibrationValues::persist() {

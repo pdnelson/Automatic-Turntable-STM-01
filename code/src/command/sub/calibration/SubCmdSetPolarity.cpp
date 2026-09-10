@@ -4,8 +4,9 @@
 #include <CmdCalibration.h>
 #include <StmEncoderPolarity.h>
 #include <MovementAxis.h>
+#include <TurntableState.h>
 
-SubCmdSetPolarity::SubCmdSetPolarity(TurntableState* state, MovementAxis axis, uint16_t lowerReferencePoint, uint16_t upperReferencePoint, StmEncoderPolarity &destination) : BaseTurntableSubCommand(state), destination(destination) {
+SubCmdSetPolarity::SubCmdSetPolarity(TurntableState* state, MovementAxis axis, uint16_t &lowerReferencePoint, uint16_t &upperReferencePoint, StmEncoderPolarity &destination) : BaseTurntableSubCommand(state), lowerReferencePoint(lowerReferencePoint), upperReferencePoint(upperReferencePoint), destination(destination) {
     this->axis = axis;
 }
 
@@ -23,6 +24,9 @@ CommandResult SubCmdSetPolarity::doExecute() {
         destination = StmEncoderPolarity::NORMAL;
     } else if(lowerReferencePoint > upperReferencePoint) {
         destination = StmEncoderPolarity::REVERSED;
+        if(axis == MovementAxis::Horizontal) {
+            state->azEncoder.setPolarity(destination);
+        }
     } else if(axis == MovementAxis::Vertical) {
         return CommandResult::FailedToSetVerticalPolarity;
     } else {

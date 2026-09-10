@@ -12,7 +12,7 @@ class CmdCalibration;
 
 class SubCmdSetPolarity : public BaseTurntableSubCommand {
     public:
-        SubCmdSetPolarity(TurntableState* state, MovementAxis axis, uint16_t lowerReferencePoint, uint16_t upperReferencePoint, StmEncoderPolarity &destination);
+        SubCmdSetPolarity(TurntableState* state, MovementAxis axis, uint16_t &lowerReferencePoint, uint16_t &upperReferencePoint, StmEncoderPolarity &destination);
         SubCommandId getSubCommandId() override;
 
     private:
@@ -21,8 +21,8 @@ class SubCmdSetPolarity : public BaseTurntableSubCommand {
         void doUninitialize() override;
 
         MovementAxis axis;
-        uint16_t lowerReferencePoint = 0;
-        uint16_t upperReferencePoint = 0;
+        uint16_t &lowerReferencePoint;
+        uint16_t &upperReferencePoint;
         StmEncoderPolarity &destination;
 };
 

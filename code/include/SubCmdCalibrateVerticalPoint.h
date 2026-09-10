@@ -1,12 +1,10 @@
 #include <Arduino.h>
 #include <CommandResult.h>
 #include <SubCommandId.h>
-#include <CmdCalibration.h>
-#include <RecordSize.h>
 #include <BaseTurntableSubCommand.h>
 
-#ifndef SubCmdCalibrateVerticalPolarity_h
-#define SubCmdCalibrateVerticalPolarity_h
+#ifndef SubCmdCalibrateVerticalPoint_h
+#define SubCmdCalibrateVerticalPoint_h
 class TurntableState;
 
 class SubCmdCalibrateVerticalPoint : public BaseTurntableSubCommand {

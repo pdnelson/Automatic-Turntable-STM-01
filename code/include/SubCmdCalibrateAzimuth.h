@@ -10,7 +10,7 @@ class TurntableState;
 
 class SubCmdCalibrateAzimuth : public BaseTurntableSubCommand {
     public:
-        SubCmdCalibrateAzimuth(TurntableState* state, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination);
+        SubCmdCalibrateAzimuth(TurntableState* state, bool waitForUserInput, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination);
         SubCommandId getSubCommandId() override;
 
     private:
@@ -18,6 +18,9 @@ class SubCmdCalibrateAzimuth : public BaseTurntableSubCommand {
         CommandResult doExecute() override;
         void doUninitialize() override;
 
+        void updateDestination();
+
+        bool waitForUserInput;
         SubCommandId subCommandId;
         StmShiftPin pinToFlash;
         uint16_t &destination;

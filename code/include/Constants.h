@@ -42,6 +42,12 @@
 // A hard-coded test value for the upper vertical encoder limit. This will eventually be replaced by a calibration value.
 #define TEST_VERTICAL_UPPER_LIMIT 950
 
+// The number of encoder ticks above the upper threshold that the turntable should move. This value is applied at the time of calibration.
+#define VERTICAL_BOUNDARY_UPPER_BUFFER 80
+
+// The number of encoder ticks below the lower threshold that the turntable should move. This value is applied at the time of calibration.
+#define VERTICAL_BOUNDARY_LOWER_BUFFER 30
+
 // The pause status is determined by the upper limit, and this is the margin of error for what can be considered "paused"
 #define PAUSE_ERROR 50
 

@@ -2,8 +2,8 @@
 #define STMENCODERPOLARITY_H
 
 enum StmEncoderPolarity {
-    NORMAL,
-    REVERSED
+    NORMAL = 0,
+    REVERSED = 1
 };
 
 #endif
