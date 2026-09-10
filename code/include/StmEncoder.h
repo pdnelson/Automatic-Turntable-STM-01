@@ -22,7 +22,7 @@ class StmEncoder {
         StmEncoder(uint8_t sda, uint8_t scl);
 
         void monitor(unsigned long clockMicros);
-        void zeroOutEncoder();
+        void zeroOutEncoder(uint16_t offset);
         uint16_t getNormalizedPosition();
         void setPolarity(StmEncoderPolarity polarity);
     private:

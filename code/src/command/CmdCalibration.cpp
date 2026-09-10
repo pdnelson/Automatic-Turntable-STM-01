@@ -23,6 +23,7 @@
 #include <StmEncoderPolarity.h>
 #include <SubCmdEngageAzClutch.h>
 #include <SubCmdDisengageAzClutch.h>
+#include <SubCmdZeroAzEncoder.h>
 
 CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
 
@@ -37,11 +38,13 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
     // Calibrate the vertical polarity by going down, logging a point, then going up, and logging another point.
     // If the second point is greater than the first, then polarity is correct. Otherwise, we need to reverse it.
     subCommands = std::make_shared<SubCmdToggleLight>(state, StmShiftPin::LedPlayStatus, true)
+        ->next(std::make_shared<SubCmdZeroAzEncoder>(state)) // First zero out the az encoder so it doesn't cross over 0 when determining polarity
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdMoveNStepsV>(state, -200, 14, true))
-        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint1))
         ->next(std::make_shared<SubCmdMoveNStepsV>(state, 200, 14, true))
-        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint2))
         ->next(std::make_shared<SubCmdSetPolarity>(state, MovementAxis::Vertical, referencePoint1, referencePoint2, state->calibration.polarityV))
 
@@ -52,20 +55,19 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         // Calibrate the horizontal polarity by going counterclockwise, logging a point, then clockwise, and logging another point.
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, -200, 14, true))
-        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateHorizontalPolarity>(state, referencePoint1))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, 200, 14, true))
-        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateHorizontalPolarity>(state, referencePoint2))
         ->next(std::make_shared<SubCmdSetPolarity>(state, MovementAxis::Horizontal, referencePoint1, referencePoint2, state->calibration.polarityH))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, -250, 14, true)) // Move back to the home mount
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, 14))
 
         // Calibrate the home mount position, then height
-        // TO DO: Normalize sensor output RIGHT HERE
         ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, false, SubCommandId::CalibrateHome, StmShiftPin::Led33Rpm, state->calibration.home))
         ->next(std::make_shared<SubCmdMoveUpUntilLifted>(state, SubCommandId::CalibrateHomeHeight, 1))
-        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint1))
 
         // Go to the middle of the platter
@@ -76,11 +78,12 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         // Calibrate the platter height
         ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, false, SubCommandId::CalibratePlatterHeight, StmShiftPin::Led45Rpm, dummyValue))
         ->next(std::make_shared<SubCmdMoveUpUntilLifted>(state, SubCommandId::CalibratePlatterHeight, 1))
-        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint2))
         ->next(std::make_shared<SubCmdCalibrateVerticalBounds>(state, referencePoint1, referencePoint2))
 
         // Go back to the home position
+        // to do: maybe calibrate the home position again here???
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, -200, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_SLOWLY))

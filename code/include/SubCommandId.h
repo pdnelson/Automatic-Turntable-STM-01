@@ -22,7 +22,8 @@ enum SubCommandId {
     CalibrateHorizontalPolarity = 16,
     CalibratePlatterHeight = 17,
     CalibrateHomeHeight = 18,
-    CalibrateVerticalBounds = 19
+    CalibrateVerticalBounds = 19,
+    NormalizeAzEncoder = 20
 };
 
 #endif

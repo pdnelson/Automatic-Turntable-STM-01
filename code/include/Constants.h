@@ -36,18 +36,6 @@
 // The number of encoder ticks to move the tonearm down after contact with the lift has been terminated.
 #define TICKS_BELOW_RECORD 15 // Set to 0 because the debounce ends up doing this well enough for now (or forever, maybe)
 
-// A hard-coded test value for the lower vertical encoder limit. This will eventually be replaced by a calibration value.
-#define TEST_VERTICAL_LOWER_LIMIT 500
-
-// A hard-coded test value for the upper vertical encoder limit. This will eventually be replaced by a calibration value.
-#define TEST_VERTICAL_UPPER_LIMIT 950
-
-// The number of encoder ticks above the upper threshold that the turntable should move. This value is applied at the time of calibration.
-#define VERTICAL_BOUNDARY_UPPER_BUFFER 80
-
-// The number of encoder ticks below the lower threshold that the turntable should move. This value is applied at the time of calibration.
-#define VERTICAL_BOUNDARY_LOWER_BUFFER 30
-
 // The pause status is determined by the upper limit, and this is the margin of error for what can be considered "paused"
 #define PAUSE_ERROR 50
 
@@ -90,6 +78,20 @@
 // If the clutch switch doesn't release after this number of steps, the clutch movement failed.
 // Similarly, if the clutch switch doesn't press after this value + CLUTCH_ENGAGE_STEPS, the clutch movement failed.
 #define CLUTCH_TIMEOUT_STEPS 100
+
+/**
+ * Calibration constants
+ */
+
+// The number of encoder ticks above the upper threshold that the turntable should move. This value is applied at the time of calibration.
+#define VERTICAL_BOUNDARY_UPPER_BUFFER 80
+
+// The number of encoder ticks below the lower threshold that the turntable should move. This value is applied at the time of calibration.
+#define VERTICAL_BOUNDARY_LOWER_BUFFER 30
+
+// When zeroing the azimuth encoder, this is the INITIAL offset when beginning the calibration routine. This value is compatible with an incorrect polarity,
+// because it's pretty close to the middle of both bounds.
+#define HOME_ZERO_OFFSET 8000
 
 /**
  * Below here are Serial aliases to make it easier to identify the STM-01's serial ports on the back in the code.

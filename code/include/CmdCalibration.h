@@ -4,6 +4,9 @@
 
 #ifndef CmdCalibration_h
 #define CmdCalibration_h
+
+#define DELAY_BETWEEN_STEPS_MS 100
+
 class TurntableState;
 
 class CmdCalibration : public BaseTurntableCommand {
