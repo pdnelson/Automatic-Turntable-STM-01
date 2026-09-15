@@ -23,6 +23,7 @@ enum ExternalCommand {
     SetClearActionCommand = 35,
     SetRotateSize = 36,
     SetAzEncoderZero = 37,
+    SetSaveSettings = 38,
 
     // Data retrieval commands (100+)
     GetVerticalEncoderPos = 100,

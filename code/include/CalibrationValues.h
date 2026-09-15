@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <StmEncoderPolarity.h>
+#include <BasePersistence.h>
 
 #ifndef CalibrationValues_h
 #define CalibrationValues_h
@@ -14,17 +15,13 @@
 #define EEPROM_12_IN_START_ADDR 12
 #define EEPROM_AZ_OFFSET 14
 
-class CalibrationValues {
+class CalibrationValues : public BasePersistence {
     public:
         CalibrationValues();
 
-        void load();
+        void load() override;
 
-        void persist();
-
-        /**
-         * Calibration values
-         */
+        void persist() override;
 
         // Basic tonearm setup
         uint16_t home = 0;
@@ -38,11 +35,6 @@ class CalibrationValues {
         uint16_t in7 = 0;
         uint16_t in10 = 0;
         uint16_t in12 = 0;
-
-    private:
-        void writeOneByteValueIfChanged(uint8_t address, uint8_t newValue);
-        void writeTwoByteValueIfChanged(uint8_t startAddress, uint16_t newValue);
-        uint16_t readUInt16(uint8_t startAddress);
 };
 
 #endif

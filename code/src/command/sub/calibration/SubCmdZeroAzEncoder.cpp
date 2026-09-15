@@ -7,7 +7,7 @@ SubCmdZeroAzEncoder::SubCmdZeroAzEncoder(TurntableState* state) : BaseTurntableS
 }
 
 SubCommandId SubCmdZeroAzEncoder::getSubCommandId() {
-    return SubCommandId::CalibrateHorizontalPolarity;
+    return SubCommandId::ZeroAzEncoder;
 }
 
 void SubCmdZeroAzEncoder::doInitialize() {

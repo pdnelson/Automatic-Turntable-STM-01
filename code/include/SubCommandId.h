@@ -23,7 +23,7 @@ enum SubCommandId {
     CalibratePlatterHeight = 17,
     CalibrateHomeHeight = 18,
     CalibrateVerticalBounds = 19,
-    NormalizeAzEncoder = 20
+    ZeroAzEncoder = 20
 };
 
 #endif

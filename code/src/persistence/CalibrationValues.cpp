@@ -4,8 +4,9 @@
 #include <AzimuthDirection.h>
 #include <EEPROM.h>
 #include <StmEncoderPolarity.h>
+#include <BasePersistence.h>
 
-CalibrationValues::CalibrationValues() {
+CalibrationValues::CalibrationValues() : BasePersistence() {
     // Do nothing (For now...)
 }
 
@@ -31,20 +32,4 @@ void CalibrationValues::persist() {
     writeTwoByteValueIfChanged(EEPROM_7_IN_START_ADDR, in7);
     writeTwoByteValueIfChanged(EEPROM_10_IN_START_ADDR, in10);
     writeTwoByteValueIfChanged(EEPROM_12_IN_START_ADDR, in12);
-}
-
-void CalibrationValues::writeOneByteValueIfChanged(uint8_t address, uint8_t newValue) {
-    uint8_t old = EEPROM.read(address);
-    if(old != newValue) {
-        EEPROM.write(address, newValue);
-    }
-}
-
-void CalibrationValues::writeTwoByteValueIfChanged(uint8_t startAddress, uint16_t newValue) {
-    writeOneByteValueIfChanged(startAddress, newValue & 0xFF);
-    writeOneByteValueIfChanged(startAddress + 1, (newValue >> 8) & 0xFF);
-}
-
-uint16_t CalibrationValues::readUInt16(uint8_t startAddress) {
-    return (EEPROM.read(startAddress) & 0x00FF) | ((EEPROM.read(startAddress + 1) << 8) & 0xFF00);
 }

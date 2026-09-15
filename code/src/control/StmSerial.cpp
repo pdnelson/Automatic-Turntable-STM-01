@@ -78,6 +78,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetRotateSize:            state->rotateSize();                                break;
                 case ExternalCommand::SetClearActionCommand:    clearCommand();                                     break;
                 case ExternalCommand::SetAzEncoderZero:         processSetAzEncoderZero(stream);                    break;
+                case ExternalCommand::SetSaveSettings:          state->saveSettings();                              break;
 
                 // Get Commands
                 case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);             break;
@@ -90,7 +91,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::GetUpTime:                processGetUpTime(stream);                           break;
                 case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed);                 break;
                 case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream);                      break;
-                case ExternalCommand::GetSizeSetting:           stream.write(state->selectedSize);                  break;
+                case ExternalCommand::GetSizeSetting:           stream.write(state->settings.size);                  break;
                 case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                break;
                 case ExternalCommand::GetCalibrationValues:     processGetCalibrationValues(stream);                break;
             }
@@ -158,17 +159,7 @@ void StmSerial::processSetCustomSpeed(Stream& stream) {
     uint32_t dataCombined = data1 | data2 | data3 | data4;
     float* finalSpeed = reinterpret_cast<float*>((void*) &dataCombined);
 
-    state->targetSpeed = *finalSpeed;
-
-    if(state->targetSpeed < 33.33333 && state->targetSpeed > 33.3) {
-        state->updateSpeed(TurntableSpeed::Rpm33);
-    } else if(state->targetSpeed == 45.0) {
-        state->updateSpeed(TurntableSpeed::Rpm45);
-    } else if(state->targetSpeed == 78.0) {
-        state->updateSpeed(TurntableSpeed::Rpm78);
-    } else {
-        state->updateSpeed(TurntableSpeed::RpmCustom);
-    }
+    state->updateCustomSpeed(*finalSpeed);
 }
 
 void StmSerial::processSetAzEncoderZero(Stream& stream) {
@@ -295,7 +286,7 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
     data[18] = targetSpeedBytes[3];
 
     // Size Setting
-    data[19] = state->selectedSize;
+    data[19] = state->settings.size;
 
     // Clutch status
     data[20] = state->clutchEngaged();
@@ -357,7 +348,7 @@ int16_t StmSerial::readInt16(Stream& stream) {
 
 void StmSerial::clearCommand() {
     state->currentCommand = nullptr;
-    state->updateSize(state->selectedSize);
+    state->updateSize(state->settings.size);
     state->updateSpeed(state->selectedSpeed);
     state->outputShift.setValue(StmShiftPin::LedPower, true);
     state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);

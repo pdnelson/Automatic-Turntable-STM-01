@@ -11,6 +11,7 @@
 #include <StmEncoder.h>
 #include <ClutchStatus.h>
 #include <CalibrationValues.h>
+#include <Settings.h>
 
 #ifndef TurntableState_h
 #define TurntableState_h
@@ -26,6 +27,7 @@ class TurntableState {
         StmStepper clutchStepper;
         StmEncoder azEncoder;
         CalibrationValues calibration;
+        Settings settings;
         std::unique_ptr<BaseTurntableCommand> currentCommand;
 
         unsigned long clockMicros = 0;
@@ -36,11 +38,7 @@ class TurntableState {
 
         // Speed variables
         TurntableSpeed selectedSpeed = TurntableSpeed::RpmAuto;
-        float targetSpeed = -1;
         unsigned long customSpeedIndicatorCounter = 0;
-
-        // Size variables
-        RecordSize selectedSize = RecordSize::InAuto;
 
         void monitor();
         void executeCommand();
@@ -49,6 +47,7 @@ class TurntableState {
         HomeStatus getHomeStatus();
         bool isPaused();
         ClutchStatus clutchEngaged();
+        void updateCustomSpeed(float newSpeed);
         void updateSpeed(TurntableSpeed newSpeed);
         void rotateSize();
         void updateSize(RecordSize newSize);
@@ -57,6 +56,7 @@ class TurntableState {
         void beginCalibrationRoutine();
         float getTargetSpeed();
         uint16_t getVerticalEncoderPos();
+        void saveSettings();
 
     private:
         unsigned long liftDebounce = 0;

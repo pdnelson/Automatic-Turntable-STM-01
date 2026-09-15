@@ -29,7 +29,8 @@ TurntableState::TurntableState() :
     movementStepper(Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
     clutchStepper(Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4),
     azEncoder(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
-    calibration()
+    calibration(),
+    settings()
 {
     pinMode(Pin::VerticalPosition, INPUT);
     pinMode(Pin::HorizontalClutchSwitch, INPUT_PULLUP);
@@ -45,8 +46,10 @@ TurntableState::TurntableState() :
     // Turn on the power LED
     outputShift.setValue(StmShiftPin::LedPower, true);
 
-    updateSpeed(selectedSpeed);
-    updateSize(selectedSize);
+    settings.load();
+
+    updateCustomSpeed(settings.speed);
+    updateSize(settings.size);
 
     clutchStepper.setSpeed(CLUTCH_SPEED);
 
@@ -151,6 +154,22 @@ ClutchStatus TurntableState::clutchEngaged() {
     return (ClutchStatus)digitalRead(Pin::HorizontalClutchSwitch);
 }
 
+void TurntableState::updateCustomSpeed(float newSpeed) {
+
+    if(settings.speed < 33.33333 && settings.speed > 33.3) {
+        updateSpeed(TurntableSpeed::Rpm33);
+    } else if(settings.speed == 45.0) {
+        updateSpeed(TurntableSpeed::Rpm45);
+    } else if(settings.speed == 78.0) {
+        updateSpeed(TurntableSpeed::Rpm78);
+    } else if(settings.speed == 0.0) {
+        updateSpeed(TurntableSpeed::RpmAuto);
+    } else {
+        settings.speed = newSpeed;
+        updateSpeed(TurntableSpeed::RpmCustom);
+    }
+}
+
 void TurntableState::updateSpeed(TurntableSpeed newSpeed) {
     // First set all speed LEDs to off
     outputShift.setValue(StmShiftPin::Led78Rpm, false);
@@ -160,15 +179,15 @@ void TurntableState::updateSpeed(TurntableSpeed newSpeed) {
 
     switch(newSpeed) {
     case TurntableSpeed::Rpm33:
-        targetSpeed = 33.3333;
+        settings.speed = 33.3333;
         outputShift.setValue(StmShiftPin::Led33Rpm, true);
         break;
     case TurntableSpeed::Rpm45:
-        targetSpeed = 45.0;
+        settings.speed = 45.0;
         outputShift.setValue(StmShiftPin::Led45Rpm, true);
         break;
     case TurntableSpeed::Rpm78:
-        targetSpeed = 78.0;
+        settings.speed = 78.0;
         outputShift.setValue(StmShiftPin::Led78Rpm, true);
         break;
     case TurntableSpeed::RpmAuto:
@@ -186,7 +205,7 @@ void TurntableState::updateSpeed(TurntableSpeed newSpeed) {
 }
 
 void TurntableState::rotateSize() {
-    switch(selectedSize) {
+    switch(settings.size) {
     case RecordSize::In7:
         updateSize(RecordSize::In10);
         break;
@@ -223,7 +242,7 @@ void TurntableState::updateSize(RecordSize newSize) {
         break;
     }
 
-    selectedSize = newSize;
+    settings.size = newSize;
 }
 
 void TurntableState::pauseOrUnPause() {
@@ -239,7 +258,7 @@ void TurntableState::playOrReturn() {
     if(getHomeStatus() == HomeStatus::Homed) {
         uint16_t position = 0;
 
-        switch(selectedSize) {
+        switch(settings.size) {
             case RecordSize::In7: position = calibration.in7; break;
             case RecordSize::In10: position = calibration.in10; break;
             case RecordSize::In12: position = calibration.in12; break;
@@ -262,7 +281,7 @@ void TurntableState::beginCalibrationRoutine() {
 
 float TurntableState::getTargetSpeed() {
     if(getHomeStatus() == HomeStatus::NotHomed) {
-        return targetSpeed;
+        return settings.speed;
     } else {
         return 0;
     }
@@ -294,6 +313,10 @@ void TurntableState::monitorCommandInput() {
     else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnRelease) {
         rotateSpeed();
     }
+}
+
+void TurntableState::saveSettings() {
+    settings.persist();
 }
 
 void TurntableState::advanceCounts() {
