@@ -53,6 +53,7 @@ TurntableState::TurntableState() :
     calibration.load();
 
     azEncoder.setPolarity(calibration.polarityH);
+    azEncoder.zeroOutEncoder(calibration.azEncoderOffset);
 }
 
 void TurntableState::monitor() {
@@ -234,6 +235,7 @@ void TurntableState::pauseOrUnPause() {
 }
 
 void TurntableState::playOrReturn() {
+    // TO DO: Make this use the calibrated home position to determine this
     if(getHomeStatus() == HomeStatus::Homed) {
         uint16_t position = 0;
 

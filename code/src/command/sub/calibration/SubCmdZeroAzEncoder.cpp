@@ -15,7 +15,9 @@ void SubCmdZeroAzEncoder::doInitialize() {
 }
 
 CommandResult SubCmdZeroAzEncoder::doExecute() {
-    state->azEncoder.zeroOutEncoder(HOME_ZERO_OFFSET);
+    state->azEncoder.setZero(0);
+    state->calibration.azEncoderOffset = state->azEncoder.getPosition() - HOME_ZERO_OFFSET;
+    state->azEncoder.zeroOutEncoder(state->calibration.azEncoderOffset);
     return CommandResult::Success;
 }
 

@@ -54,7 +54,7 @@
 
 // When the tonearm lifts up toward the center of the platter, it might bounce a little bit. This timeout represents the maximum
 // amount of time we allow for the tonearm to bounce, before it should level out.
-#define LIFT_BOUNCE_TIMEOUT_MICROS 1500000
+#define LIFT_BOUNCE_TIMEOUT_MICROS 1750000
 
 // How fast the tonearm should move when lifting.
 #define LIFT_UP_SPEED 10
@@ -91,7 +91,7 @@
 
 // When zeroing the azimuth encoder, this is the INITIAL offset when beginning the calibration routine. This value is compatible with an incorrect polarity,
 // because it's pretty close to the middle of both bounds.
-#define HOME_ZERO_OFFSET 7000
+#define HOME_ZERO_OFFSET 8000
 
 /**
  * Below here are Serial aliases to make it easier to identify the STM-01's serial ports on the back in the code.
