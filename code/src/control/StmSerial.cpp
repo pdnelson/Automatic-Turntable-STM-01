@@ -173,7 +173,7 @@ void StmSerial::processSetCustomSpeed(Stream& stream) {
 
 void StmSerial::processSetAzEncoderZero(Stream& stream) {
     uint16_t data1 = stream.read() & 0x00FF;
-    uint16_t data2 = stream.read() << 8 & 0xFF00;
+    uint16_t data2 = (stream.read() << 8) & 0xFF00;
 
     state->azEncoder.setZero(data1 | data2);
 }

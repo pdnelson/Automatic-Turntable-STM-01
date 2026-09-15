@@ -12,6 +12,7 @@
 #define EEPROM_7_IN_START_ADDR 8
 #define EEPROM_10_IN_START_ADDR 10
 #define EEPROM_12_IN_START_ADDR 12
+#define EEPROM_AZ_OFFSET 14
 
 class CalibrationValues {
     public:
