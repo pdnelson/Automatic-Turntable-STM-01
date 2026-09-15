@@ -39,10 +39,6 @@ TurntableState::TurntableState() :
     pinMode(Pin::Lift, INPUT_PULLUP);
     lastLiftStatus = digitalRead(Pin::Lift);
 
-    // Home
-    pinMode(Pin::HomeMount, INPUT_PULLUP);
-    lastHomeStatus = digitalRead(Pin::HomeMount);
-
     // Turn on the power LED
     outputShift.setValue(StmShiftPin::LedPower, true);
 
@@ -125,17 +121,13 @@ LiftStatus TurntableState::getLiftStatus() {
 }
 
 HomeStatus TurntableState::getHomeStatus() {
-    bool status = digitalRead(Pin::HomeMount);
+    uint16_t difference = abs((int16_t)azEncoder.getNormalizedPosition() - (int16_t)calibration.home);
 
-    if(status == lastHomeStatus) {
-        homeDebounce = clockMicros;
-        return (HomeStatus) status;
-    } else if(clockMicros - homeDebounce > HOME_DEBOUNCE_MICROS) {
-        lastHomeStatus = status;
-        return (HomeStatus) status;
-    } else {
-        return (HomeStatus) !status;
+    if(difference <= HOME_THRESHOLD) {
+        return HomeStatus::Homed;
     }
+
+    return HomeStatus::NotHomed;
 }
 
 uint16_t TurntableState::getVerticalEncoderPos() {

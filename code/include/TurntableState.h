@@ -62,9 +62,6 @@ class TurntableState {
         unsigned long liftDebounce = 0;
         uint8_t lastLiftStatus = LiftStatus::Lifted;
 
-        unsigned long homeDebounce = 0;
-        uint8_t lastHomeStatus = HomeStatus::Homed;
-
         void monitorCommandInput();
         void advanceCounts();
         void updateClockMicros();

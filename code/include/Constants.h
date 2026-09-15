@@ -50,7 +50,9 @@
 
 // If the tonearm is hovering over the "home" position, it should go down quickly, as opposed to slowly. This threshold
 // helps determine if it's over "home".
-#define VERTICAL_HOME_THRESHOLD 100
+#define HOME_THRESHOLD 100
+
+
 
 // When the tonearm lifts up toward the center of the platter, it might bounce a little bit. This timeout represents the maximum
 // amount of time we allow for the tonearm to bounce, before it should level out.

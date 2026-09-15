@@ -20,7 +20,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
     uint16_t difference = abs((int16_t)position - (int16_t)state->calibration.home);
     
     // If we're near the home position, go down quickly.
-    if(difference <= VERTICAL_HOME_THRESHOLD) {
+    if(difference <= HOME_THRESHOLD) {
         setDownSpeed = SET_DOWN_QUICKLY;
     }
 
