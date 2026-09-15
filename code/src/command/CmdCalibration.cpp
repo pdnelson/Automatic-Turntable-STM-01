@@ -66,7 +66,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
 
         // Calibrate the home mount position, then height
         ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, false, SubCommandId::CalibrateHome, StmShiftPin::Led33Rpm, state->calibration.home))
-        ->next(std::make_shared<SubCmdMoveUpUntilLifted>(state, SubCommandId::CalibrateHomeHeight, 1))
+        ->next(std::make_shared<SubCmdMoveUpUntilLifted>(state, SubCommandId::CalibrateHomeHeight, 3))
         ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint1))
 
@@ -77,7 +77,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
 
         // Calibrate the platter height
         ->next(std::make_shared<SubCmdCalibrateAzimuth>(state, false, SubCommandId::CalibratePlatterHeight, StmShiftPin::Led45Rpm, dummyValue))
-        ->next(std::make_shared<SubCmdMoveUpUntilLifted>(state, SubCommandId::CalibratePlatterHeight, 1))
+        ->next(std::make_shared<SubCmdMoveUpUntilLifted>(state, SubCommandId::CalibratePlatterHeight, 3))
         ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint2))
         ->next(std::make_shared<SubCmdCalibrateVerticalBounds>(state, referencePoint1, referencePoint2))
@@ -85,7 +85,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         // Go back to the home position
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, -200, 14, true))
-        ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_SLOWLY))
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_QUICKLY))
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
         ->next(std::make_shared<SubCmdToggleLight>(state, StmShiftPin::LedPlayStatus, false))
 
