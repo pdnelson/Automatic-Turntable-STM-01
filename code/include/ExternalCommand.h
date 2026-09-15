@@ -22,6 +22,7 @@ enum ExternalCommand {
     SetRotateSpeed = 34,
     SetClearActionCommand = 35,
     SetRotateSize = 36,
+    SetAzEncoderZero = 37,
 
     // Data retrieval commands (100+)
     GetVerticalEncoderPos = 100,

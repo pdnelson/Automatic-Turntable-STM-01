@@ -24,13 +24,13 @@ class StmEncoder {
         void monitor(unsigned long clockMicros);
         void zeroOutEncoder(uint16_t offset);
         uint16_t getNormalizedPosition();
+        uint16_t getPosition();
         void setPolarity(StmEncoderPolarity polarity);
-    private:
         /**
          * Sets the current position to "zero"
          */
         void setZero(uint16_t offset);
-        uint16_t getPosition();
+    private:
         void logData();
         void computeAverage();
 

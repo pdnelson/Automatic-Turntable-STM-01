@@ -77,7 +77,8 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetSize:                  state->updateSize((RecordSize)stream.read());       break;
                 case ExternalCommand::SetRotateSize:            state->rotateSize();                                break;
                 case ExternalCommand::SetClearActionCommand:    clearCommand();                                     break;
-                
+                case ExternalCommand::SetAzEncoderZero:         processSetAzEncoderZero(stream);                    break;
+
                 // Get Commands
                 case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);             break;
                 case ExternalCommand::GetVerticalEncoderPos:    processGetVerticalEncoderPos(stream);               break;
@@ -170,6 +171,13 @@ void StmSerial::processSetCustomSpeed(Stream& stream) {
     }
 }
 
+void StmSerial::processSetAzEncoderZero(Stream& stream) {
+    uint16_t data1 = stream.read() & 0x00FF;
+    uint16_t data2 = stream.read() << 8 & 0xFF00;
+
+    state->azEncoder.setZero(data1 | data2);
+}
+
 void StmSerial::processGetHorizontalEncoderPos(Stream& stream) {
     uint16_t horizontalPosition = state->azEncoder.getNormalizedPosition();
 
@@ -239,7 +247,7 @@ void StmSerial::processGetSpeedTarget(Stream& stream) {
 }
 
 void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
-    uint8_t dataSize = 22;
+    uint8_t dataSize = 24;
     byte data[dataSize];
 
     data[0] = SERIAL_ADVANCED_START_KEY;
@@ -249,7 +257,7 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
     data[1] = verticalPosition & 0x00FF;
     data[2] = (verticalPosition >> 8) & 0x00FF;
 
-    // Horizontal position
+    // Horizontal position (normalized)
     uint16_t horizontalPosition = state->azEncoder.getNormalizedPosition();
     data[3] = horizontalPosition & 0x00FF;
     data[4] = (horizontalPosition >> 8) & 0x00FF;
@@ -292,7 +300,12 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
     // Clutch status
     data[20] = state->clutchEngaged();
 
-    data[21] = SERIAL_ADVANCED_END_KEY;
+    // Horizontal position (actual)
+    uint16_t actualHorizontalPosition = state->azEncoder.getPosition();
+    data[21] = actualHorizontalPosition & 0x00FF;
+    data[22] = (actualHorizontalPosition >> 8) & 0x00FF;
+
+    data[23] = SERIAL_ADVANCED_END_KEY;
 
     stream.write(data, dataSize);
 }

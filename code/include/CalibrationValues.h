@@ -12,6 +12,10 @@ class CalibrationValues {
 
         void persist();
 
+        /**
+         * Calibration values
+         */
+
         // Basic tonearm setup
         uint16_t home = 0;
         uint16_t verticalUpperLimit = 0;

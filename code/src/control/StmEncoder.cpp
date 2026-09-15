@@ -111,7 +111,7 @@ void StmEncoder::computeAverage() {
 void StmEncoder::zeroOutEncoder(uint16_t offset) {
     // Zero out the existing offset before applying a new one
     setZero(offset);
-    setZero(getNormalizedPosition());
+    setZero(getPosition());
 }
 
 void StmEncoder::setZero(uint16_t offset) {

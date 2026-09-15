@@ -83,7 +83,6 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdCalibrateVerticalBounds>(state, referencePoint1, referencePoint2))
 
         // Go back to the home position
-        // to do: maybe calibrate the home position again here???
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, -200, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_SLOWLY))

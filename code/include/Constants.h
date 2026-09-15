@@ -91,7 +91,7 @@
 
 // When zeroing the azimuth encoder, this is the INITIAL offset when beginning the calibration routine. This value is compatible with an incorrect polarity,
 // because it's pretty close to the middle of both bounds.
-#define HOME_ZERO_OFFSET 8000
+#define HOME_ZERO_OFFSET 7000
 
 /**
  * Below here are Serial aliases to make it easier to identify the STM-01's serial ports on the back in the code.
