@@ -20,10 +20,10 @@ void BasePersistence::writeTwoByteValueIfChanged(uint8_t startAddress, uint16_t 
 void BasePersistence::writeFloatIfChanged(uint8_t startAddress, float newValue) {
     byte const* data = reinterpret_cast<byte const*>(&newValue);
 
-    writeOneByteValueIfChanged(startAddress, data[0] & 0xFF);
-    writeOneByteValueIfChanged(startAddress + 1, (data[1] >> 8) & 0xFF);
-    writeOneByteValueIfChanged(startAddress + 2, (data[2] >> 16) & 0xFF);
-    writeOneByteValueIfChanged(startAddress + 3, (data[3] >> 24) & 0xFF);
+    writeOneByteValueIfChanged(startAddress, data[0]);
+    writeOneByteValueIfChanged(startAddress + 1, data[1]);
+    writeOneByteValueIfChanged(startAddress + 2, data[2]);
+    writeOneByteValueIfChanged(startAddress + 3, data[3]);
 }
 
 uint16_t BasePersistence::readUInt16(uint8_t startAddress) {
@@ -33,9 +33,9 @@ uint16_t BasePersistence::readUInt16(uint8_t startAddress) {
 float BasePersistence::readFloat(uint8_t startAddress) {
 
     uint32_t dataCombined = (EEPROM.read(startAddress) & 0x000000FF) |
-        (EEPROM.read(startAddress + 1) & 0x0000FF00) |
-        (EEPROM.read(startAddress + 2) & 0x00FF0000) |
-        (EEPROM.read(startAddress + 3) & 0xFF000000);
+        ((EEPROM.read(startAddress + 1) << 8) & 0x0000FF00) |
+        ((EEPROM.read(startAddress + 2) << 16) & 0x00FF0000) |
+        ((EEPROM.read(startAddress + 3) << 24) & 0xFF000000);
 
     float* finalSpeed = reinterpret_cast<float*>((void*) &dataCombined);
 

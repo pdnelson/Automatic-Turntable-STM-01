@@ -105,7 +105,7 @@ void TurntableState::rotateSpeed() {
             updateSpeed(TurntableSpeed::Rpm33);
             break;
         case TurntableSpeed::RpmCustom:
-            updateSpeed(TurntableSpeed::RpmAuto);
+            updateSpeed(TurntableSpeed::Rpm33);
             break;
     }
 }
@@ -155,14 +155,13 @@ ClutchStatus TurntableState::clutchEngaged() {
 }
 
 void TurntableState::updateCustomSpeed(float newSpeed) {
-
-    if(settings.speed < 33.33333 && settings.speed > 33.3) {
+    if(newSpeed < 33.33333 && newSpeed > 33.3) {
         updateSpeed(TurntableSpeed::Rpm33);
-    } else if(settings.speed == 45.0) {
+    } else if(newSpeed == 45.0) {
         updateSpeed(TurntableSpeed::Rpm45);
-    } else if(settings.speed == 78.0) {
+    } else if(newSpeed == 78.0) {
         updateSpeed(TurntableSpeed::Rpm78);
-    } else if(settings.speed == 0.0) {
+    } else if(newSpeed == 0.0) {
         updateSpeed(TurntableSpeed::RpmAuto);
     } else {
         settings.speed = newSpeed;
@@ -178,26 +177,26 @@ void TurntableState::updateSpeed(TurntableSpeed newSpeed) {
     outputShift.setValue(StmShiftPin::LedAutoSpeed, false);
 
     switch(newSpeed) {
-    case TurntableSpeed::Rpm33:
-        settings.speed = 33.3333;
-        outputShift.setValue(StmShiftPin::Led33Rpm, true);
-        break;
-    case TurntableSpeed::Rpm45:
-        settings.speed = 45.0;
-        outputShift.setValue(StmShiftPin::Led45Rpm, true);
-        break;
-    case TurntableSpeed::Rpm78:
-        settings.speed = 78.0;
-        outputShift.setValue(StmShiftPin::Led78Rpm, true);
-        break;
-    case TurntableSpeed::RpmAuto:
-        // TODO: If playing a record, go based on the last-played size
+        case TurntableSpeed::Rpm33:
+            settings.speed = 33.3333;
+            outputShift.setValue(StmShiftPin::Led33Rpm, true);
+            break;
+        case TurntableSpeed::Rpm45:
+            settings.speed = 45.0;
+            outputShift.setValue(StmShiftPin::Led45Rpm, true);
+            break;
+        case TurntableSpeed::Rpm78:
+            settings.speed = 78.0;
+            outputShift.setValue(StmShiftPin::Led78Rpm, true);
+            break;
+        case TurntableSpeed::RpmAuto:
+            // TODO: If playing a record, go based on the last-played size
 
-        outputShift.setValue(StmShiftPin::LedAutoSpeed, true);
-        break;
-    case TurntableSpeed::RpmCustom:
-        /* do nothing */
-        break;
+            outputShift.setValue(StmShiftPin::LedAutoSpeed, true);
+            break;
+        case TurntableSpeed::RpmCustom:
+            /* do nothing */
+            break;
     }
 
     selectedSpeed = newSpeed;
