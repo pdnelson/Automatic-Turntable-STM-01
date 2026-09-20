@@ -12,6 +12,7 @@
 #include <ClutchStatus.h>
 #include <CalibrationValues.h>
 #include <Settings.h>
+#include <StmHStepper.h>
 
 #ifndef TurntableState_h
 #define TurntableState_h
@@ -26,6 +27,7 @@ class TurntableState {
         StmBasicStepper verticalStepper;
         StmBasicStepper clutchStepper;
         StmEncoder azEncoder;
+        StmHStepper horizontalStepper;
         CalibrationValues calibration;
         Settings settings;
         std::unique_ptr<BaseTurntableCommand> currentCommand;

@@ -27,7 +27,7 @@ class CalibrationValues : public BasePersistence {
         uint16_t home = 0;
         uint16_t verticalUpperLimit = 0;
         uint16_t verticalLowerLimit = 0;
-        StmPolarity motorPolarity = StmPolarity::Normal;
+        StmPolarity hStepperPolarity = StmPolarity::Normal;
         StmPolarity polarityH = StmPolarity::Normal;
         StmPolarity polarityV = StmPolarity::Normal;
         uint16_t azEncoderOffset = 0;
