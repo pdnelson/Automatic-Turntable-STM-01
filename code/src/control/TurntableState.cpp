@@ -29,7 +29,7 @@ TurntableState::TurntableState() :
     verticalStepper(Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
     clutchStepper(Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4),
     azEncoder(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
-    horizontalStepper(azEncoder, Pin::HorizontalEnable, Pin::HorizontalSleep, Pin::HorizontalStep, Pin::HorizontalDirection),
+    horizontalStepper(azEncoder, Pin::HorizontalSleep, Pin::HorizontalEnable, Pin::HorizontalStep, Pin::HorizontalDirection),
     calibration(),
     settings()
 {
@@ -55,6 +55,7 @@ TurntableState::TurntableState() :
     azEncoder.setPolarity(calibration.polarityH);
     azEncoder.zeroOutEncoder(calibration.azEncoderOffset);
     horizontalStepper.setPolarity(calibration.hStepperPolarity);
+    horizontalStepper.sleep();
 }
 
 void TurntableState::monitor() {
