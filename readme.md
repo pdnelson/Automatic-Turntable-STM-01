@@ -101,7 +101,8 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [x] External Commands
 - [x] Horizontal clutch mechanism
 - [x] Horizontal position tracking
-- [ ] "Specific Size" play routine
+- [x] Calibration routine
+- [x] "Specific Size" play routine
 - [ ] IR record/track detection
 - [ ] "Automatic" play routine
 - [ ] Automatic homing routine
