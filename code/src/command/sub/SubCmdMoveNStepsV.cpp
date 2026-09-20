@@ -18,12 +18,11 @@ SubCmdMoveNStepsV::SubCmdMoveNStepsV(TurntableState* state, int16_t steps, uint8
 
 void SubCmdMoveNStepsV::doInitialize() {
     state->verticalStepper.setDirection(direction);
-    state->verticalStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
     state->verticalStepper.setSpeed(this->speed);
 }
 
 CommandResult SubCmdMoveNStepsV::doExecute() {
-    if(state->verticalStepper.stepBlind(state->clockMicros)) {
+    if(state->verticalStepper.step(state->clockMicros)) {
         stepCount++;
     }
 

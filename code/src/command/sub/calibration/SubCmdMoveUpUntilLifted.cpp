@@ -15,14 +15,13 @@ SubCommandId SubCmdMoveUpUntilLifted::getSubCommandId() {
 void SubCmdMoveUpUntilLifted::doInitialize() {
     baseInitialize();
     state->verticalStepper.setDirection(VerticalDirection::Up);
-    state->verticalStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
 }
 
 CommandResult SubCmdMoveUpUntilLifted::doExecute() {
     if(digitalRead(Pin::Lift) == LiftStatus::Lifted) {
         return CommandResult::Success;
     } else {
-        if(state->verticalStepper.stepBlind(state->clockMicros)) {
+        if(state->verticalStepper.step(state->clockMicros)) {
             bool stalled = checkVerticalStall(VerticalDirection::Up, state->getVerticalEncoderPos());
 
             if(stalled) {

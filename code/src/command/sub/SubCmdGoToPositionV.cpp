@@ -6,7 +6,6 @@
 #include <TurntableState.h>
 #include <SubCommandId.h>
 #include <AzimuthDirection.h>
-#include <StmStepperResult.h>
 #include <CommandResult.h>
 
 SubCmdGoToPositionV::SubCmdGoToPositionV(TurntableState* state, uint16_t position, uint8_t speed) : BaseLiftSubCommand(state, speed) {
@@ -26,8 +25,6 @@ void SubCmdGoToPositionV::doInitialize() {
     }
 
     state->verticalStepper.setDirection(direction);
-    
-    state->verticalStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
 }
 
 CommandResult SubCmdGoToPositionV::doExecute() {
@@ -51,7 +48,7 @@ CommandResult SubCmdGoToPositionV::doExecute() {
             result = CommandResult::NotLifted;
         }
     } else {
-        if(state->verticalStepper.stepBlind(state->clockMicros)) {
+        if(state->verticalStepper.step(state->clockMicros)) {
             bool stalled = checkVerticalStall(direction, currentPosition);
 
             if(stalled) {

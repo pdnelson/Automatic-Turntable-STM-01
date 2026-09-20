@@ -6,7 +6,6 @@
 #include <TurntableState.h>
 #include <SubCommandId.h>
 #include <AzimuthDirection.h>
-#include <StmStepperResult.h>
 #include <CommandResult.h>
 
 SubCmdSetMovementVertical::SubCmdSetMovementVertical(TurntableState* state) : BaseTurntableSubCommand(state) {

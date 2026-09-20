@@ -20,7 +20,7 @@ void SubCmdEngageAzClutch::doInitialize() {
 }
 
 CommandResult SubCmdEngageAzClutch::doExecute() {
-    if(state->clutchStepper.stepBlind(state->clockMicros)) {
+    if(state->clutchStepper.step(state->clockMicros)) {
         if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
             stepsSinceStatusChange++;
         } else {

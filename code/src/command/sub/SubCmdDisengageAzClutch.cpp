@@ -19,7 +19,7 @@ void SubCmdDisengageAzClutch::doInitialize() {
 }
 
 CommandResult SubCmdDisengageAzClutch::doExecute() {
-    if(state->clutchStepper.stepBlind(state->clockMicros)) {
+    if(state->clutchStepper.step(state->clockMicros)) {
         totalSteps++;
     }
 
