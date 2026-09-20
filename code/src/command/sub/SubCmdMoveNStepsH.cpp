@@ -17,12 +17,13 @@ SubCmdMoveNStepsH::SubCmdMoveNStepsH(TurntableState* state, int16_t steps, uint8
 }
 
 void SubCmdMoveNStepsH::doInitialize() {
-    state->verticalStepper.setDirection(direction);
-    state->verticalStepper.setSpeed(this->speed);
+    state->horizontalStepper.setDirection(direction);
+    state->horizontalStepper.setSpeed(this->speed);
+    state->horizontalStepper.wake();
 }
 
 CommandResult SubCmdMoveNStepsH::doExecute() {
-    if(state->verticalStepper.step(state->clockMicros)) {
+    if(state->horizontalStepper.stepBlind(state->clockMicros)) {
         stepCount++;
     }
 
@@ -35,7 +36,7 @@ CommandResult SubCmdMoveNStepsH::doExecute() {
 
 void SubCmdMoveNStepsH::doUninitialize() {
     if(releaseCurrentAfterMovement) {
-        state->verticalStepper.releaseMotorCurrent();
+        state->horizontalStepper.sleep();
     }
 }
 
