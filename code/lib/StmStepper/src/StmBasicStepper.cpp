@@ -1,8 +1,8 @@
-#include <StmStepper.h>
+#include <StmBasicStepper.h>
 #include <Arduino.h>
 #include <StmStepperResult.h>
 
-StmStepper::StmStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4) {
+StmBasicStepper::StmBasicStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4) {
     this->pin1 = pin1;
     this->pin2 = pin2;
     this->pin3 = pin3;
@@ -14,31 +14,31 @@ StmStepper::StmStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4) {
     pinMode(pin4, OUTPUT);
 }
 
-void StmStepper::setSpeed(float speedRpm) {
+void StmBasicStepper::setSpeed(float speedRpm) {
     this->topSpeedTimeBetweenStepsMicros = 60000000L / STEPPER_STEPS_PER_REVOLUTION / speedRpm;
 }
 
-void StmStepper::setDirection(int8_t direction) {
+void StmBasicStepper::setDirection(int8_t direction) {
     this->direction = direction;
 }
 
-void StmStepper::calibrateDirection(int8_t positive, int8_t negative) {
+void StmBasicStepper::calibrateDirection(int8_t positive, int8_t negative) {
     positiveDirection = positive;
     negativeDirection = negative;
 }
 
-void StmStepper::setRampDownEncoderTicks(uint16_t rampDown) {
+void StmBasicStepper::setRampDownEncoderTicks(uint16_t rampDown) {
     rampDownEncoderTicks = rampDown;
 }
 
-void StmStepper::setEncoderRange(uint16_t start, uint16_t end, uint8_t tolerance) {
+void StmBasicStepper::setEncoderRange(uint16_t start, uint16_t end, uint8_t tolerance) {
     startEncoderPosition = start;
     destinationEncoderPosition = end;
     destinationEncoderPositionTolerance = tolerance;
     direction = (start < end) ? positiveDirection : negativeDirection;
 }
 
-StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEncoderPosition) {
+StmStepperResult StmBasicStepper::step(unsigned long clockMicros, uint16_t currentEncoderPosition) {
     StmStepperResult result = StmStepperResult();
 
     // The movement has completed.
@@ -66,7 +66,7 @@ StmStepperResult StmStepper::step(unsigned long clockMicros, uint16_t currentEnc
     return result;
 }
 
-bool StmStepper::stepBlind(unsigned long clockMicros) {
+bool StmBasicStepper::stepBlind(unsigned long clockMicros) {
     if(clockMicros - lastStepMicros > topSpeedTimeBetweenStepsMicros) {
         performStep();
         lastStepMicros = clockMicros;
@@ -76,7 +76,7 @@ bool StmStepper::stepBlind(unsigned long clockMicros) {
     return false;
 }
 
-void StmStepper::releaseMotorCurrent() {
+void StmBasicStepper::releaseMotorCurrent() {
     lastStepMicros = 0;
     digitalWrite(pin1, LOW);
     digitalWrite(pin2, LOW);
@@ -84,7 +84,7 @@ void StmStepper::releaseMotorCurrent() {
     digitalWrite(pin4, LOW);
 }
 
-uint16_t StmStepper::rampDownSpeed(uint16_t currentEncoderPosition) {
+uint16_t StmBasicStepper::rampDownSpeed(uint16_t currentEncoderPosition) {
     uint16_t ticksSoFar = ticksToBoundarySoFar(currentEncoderPosition, destinationEncoderPosition, rampDownEncoderTicks);
     
     uint16_t value = (((STEPPER_MAX_DELAY_BETWEEN_STEPS - topSpeedTimeBetweenStepsMicros) / (float)rampDownEncoderTicks) * ticksSoFar) + topSpeedTimeBetweenStepsMicros;
@@ -96,7 +96,7 @@ uint16_t StmStepper::rampDownSpeed(uint16_t currentEncoderPosition) {
     return value;
 }
 
-bool StmStepper::movementCompleted(uint16_t currentEncoderPosition) {
+bool StmBasicStepper::movementCompleted(uint16_t currentEncoderPosition) {
     // Negative movement
     return (direction == negativeDirection && currentEncoderPosition - destinationEncoderPositionTolerance <= destinationEncoderPosition) ||
         	
@@ -104,7 +104,7 @@ bool StmStepper::movementCompleted(uint16_t currentEncoderPosition) {
         (direction == positiveDirection && currentEncoderPosition + destinationEncoderPositionTolerance >= destinationEncoderPosition);
 }
 
-bool StmStepper::onBoundary(uint16_t currentEncoderPosition, uint16_t boundary, uint8_t tolerance) {
+bool StmBasicStepper::onBoundary(uint16_t currentEncoderPosition, uint16_t boundary, uint8_t tolerance) {
     uint16_t lowerToleranceBoundary = boundary - tolerance;
     uint16_t upperToleranceBoundary = boundary + tolerance;
 
@@ -114,7 +114,7 @@ bool StmStepper::onBoundary(uint16_t currentEncoderPosition, uint16_t boundary, 
 
 // Note: This only calculates ticks based on ramp down requirements. If the need ever arises to
 // also calculate ramp up ticks, the "rampEncoderTicks -" part of the calculation should be conditionally omitted.
-uint16_t StmStepper::ticksToBoundarySoFar(uint16_t currentEncoderPosition, uint16_t boundary, uint16_t rampEncoderTicks) {
+uint16_t StmBasicStepper::ticksToBoundarySoFar(uint16_t currentEncoderPosition, uint16_t boundary, uint16_t rampEncoderTicks) {
     if(direction == negativeDirection) {
         if(currentEncoderPosition <= boundary) {
             return rampEncoderTicks;
@@ -134,7 +134,7 @@ uint16_t StmStepper::ticksToBoundarySoFar(uint16_t currentEncoderPosition, uint1
     }
 }
 
-void StmStepper::performStep() {
+void StmBasicStepper::performStep() {
     currentStep += direction;
 
     if(currentStep == 4) {

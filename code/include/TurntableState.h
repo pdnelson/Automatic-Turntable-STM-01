@@ -1,5 +1,5 @@
 #include <InputMux.h>
-#include <StmStepper.h>
+#include <StmBasicStepper.h>
 #include <TurntableSpeed.h>
 #include <RecordSize.h>
 #include <LiftStatus.h>
@@ -23,8 +23,8 @@ class TurntableState {
         StmShift outputShift;
         StmSerial serialComm;
         InputMux inputMux;
-        StmStepper verticalStepper;
-        StmStepper clutchStepper;
+        StmBasicStepper verticalStepper;
+        StmBasicStepper clutchStepper;
         StmEncoder azEncoder;
         CalibrationValues calibration;
         Settings settings;

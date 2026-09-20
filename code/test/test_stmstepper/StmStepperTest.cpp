@@ -1,11 +1,11 @@
 #include "unity.h"
 #include <Arduino.h>
-#include <StmStepper.h>
+#include <StmBasicStepper.h>
 
 // Positive movement completed tests without tolerance
 
 void test_movementCompleted_movingPositiveNoToleranceBeforeDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -18,7 +18,7 @@ void test_movementCompleted_movingPositiveNoToleranceBeforeDestination_false() {
 }
 
 void test_movementCompleted_movingPositiveNoToleranceOnDestination_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -33,7 +33,7 @@ void test_movementCompleted_movingPositiveNoToleranceOnDestination_true() {
 // Negative movement completed tests without tolerance
 
 void test_movementCompleted_movingNegativeNoToleranceBeforeDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -46,7 +46,7 @@ void test_movementCompleted_movingNegativeNoToleranceBeforeDestination_false() {
 }
 
 void test_movementCompleted_movingNegativeNoToleranceOnDestination_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -60,7 +60,7 @@ void test_movementCompleted_movingNegativeNoToleranceOnDestination_true() {
 
 // Positive movement completed tests with tolerance
 void test_movementCompleted_movingPositiveWithToleranceBeforeDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -74,7 +74,7 @@ void test_movementCompleted_movingPositiveWithToleranceBeforeDestination_false()
 }
 
 void test_movementCompleted_movingPositiveWithToleranceOnDestinationLowerBoundary_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -92,7 +92,7 @@ void test_movementCompleted_movingPositiveWithToleranceOnDestinationLowerBoundar
 // can only move one direction at a time. So, no matter how far, if it has gone past
 // the destination, then the movement is complete.
 void test_movementCompleted_movingPositiveWithToleranceAfterDestination_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -106,7 +106,7 @@ void test_movementCompleted_movingPositiveWithToleranceAfterDestination_true() {
 }
 
 void test_movementCompleted_movingPositiveWithToleranceOnDestinationUpperBound_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -124,7 +124,7 @@ void test_movementCompleted_movingPositiveWithToleranceOnDestinationUpperBound_f
 // can only move one direction at a time. So, no matter how far, if it has gone past
 // the destination, then the movement is complete.
 void test_movementCompleted_movingNegativeWithToleranceBeforeDestination_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -138,7 +138,7 @@ void test_movementCompleted_movingNegativeWithToleranceBeforeDestination_true() 
 }
 
 void test_movementCompleted_movingNegativeWithToleranceOnDestinationLowerBoundary_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -153,7 +153,7 @@ void test_movementCompleted_movingNegativeWithToleranceOnDestinationLowerBoundar
 }
 
 void test_movementCompleted_movingNegativeWithToleranceAfterDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -167,7 +167,7 @@ void test_movementCompleted_movingNegativeWithToleranceAfterDestination_false() 
 }
 
 void test_movementCompleted_movingNegativeWithToleranceOnDestinationUpperBound_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -183,7 +183,7 @@ void test_movementCompleted_movingNegativeWithToleranceOnDestinationUpperBound_f
 // Positive boundary tests without tolerance
 
 void test_onBoundary_movingPositiveNoToleranceBeforeDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -196,7 +196,7 @@ void test_onBoundary_movingPositiveNoToleranceBeforeDestination_false() {
 }
 
 void test_onBoundary_movingPositiveNoToleranceOnDestination_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -211,7 +211,7 @@ void test_onBoundary_movingPositiveNoToleranceOnDestination_true() {
 // Negative boundary tests without tolerance
 
 void test_onBoundary_movingNegativeNoToleranceBeforeDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -224,7 +224,7 @@ void test_onBoundary_movingNegativeNoToleranceBeforeDestination_false() {
 }
 
 void test_onBoundary_movingNegativeNoToleranceOnDestination_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -238,7 +238,7 @@ void test_onBoundary_movingNegativeNoToleranceOnDestination_true() {
 
 // Positive boundary tests with tolerance
 void test_onBoundary_movingPositiveWithToleranceBeforeDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -252,7 +252,7 @@ void test_onBoundary_movingPositiveWithToleranceBeforeDestination_false() {
 }
 
 void test_onBoundary_movingPositiveWithToleranceOnDestinationLowerBoundary_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -267,7 +267,7 @@ void test_onBoundary_movingPositiveWithToleranceOnDestinationLowerBoundary_true(
 }
 
 void test_onBoundary_movingPositiveWithToleranceAfterDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -281,7 +281,7 @@ void test_onBoundary_movingPositiveWithToleranceAfterDestination_false() {
 }
 
 void test_onBoundary_movingPositiveWithToleranceOnDestinationUpperBound_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 100;
     uint16_t end = 200;
@@ -296,7 +296,7 @@ void test_onBoundary_movingPositiveWithToleranceOnDestinationUpperBound_false() 
 
 // Negative boundary tests with tolerance
 void test_onBoundary_movingNegativeWithToleranceBeforeDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -310,7 +310,7 @@ void test_onBoundary_movingNegativeWithToleranceBeforeDestination_false() {
 }
 
 void test_onBoundary_movingNegativeWithToleranceOnDestinationLowerBoundary_true() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -325,7 +325,7 @@ void test_onBoundary_movingNegativeWithToleranceOnDestinationLowerBoundary_true(
 }
 
 void test_onBoundary_movingNegativeWithToleranceAfterDestination_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -339,7 +339,7 @@ void test_onBoundary_movingNegativeWithToleranceAfterDestination_false() {
 }
 
 void test_onBoundary_movingNegativeWithToleranceOnDestinationUpperBound_false() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t start = 200;
     uint16_t end = 100;
@@ -354,7 +354,7 @@ void test_onBoundary_movingNegativeWithToleranceOnDestinationUpperBound_false() 
 
 // ticksToBoundarySoFar calculations (positive movement)
 void test_ticksToBoundarySoFar_beforeStartOfEncoderTicksPositiveMovement_zero() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t current = range - 1;
@@ -367,7 +367,7 @@ void test_ticksToBoundarySoFar_beforeStartOfEncoderTicksPositiveMovement_zero() 
 }
 
 void test_ticksToBoundarySoFar_atStartOfEncoderTicksPositiveMovement_zero() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t current = range;
@@ -380,7 +380,7 @@ void test_ticksToBoundarySoFar_atStartOfEncoderTicksPositiveMovement_zero() {
 }
 
 void test_ticksToBoundarySoFar_oneAboveStartOfEncoderTicksPositiveMovement_one() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t current = range + 1;
@@ -393,7 +393,7 @@ void test_ticksToBoundarySoFar_oneAboveStartOfEncoderTicksPositiveMovement_one()
 }
 
 void test_ticksToBoundarySoFar_twoAboveStartOfEncoderTicksPositiveMovement_two() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t current = range + 2;
@@ -406,7 +406,7 @@ void test_ticksToBoundarySoFar_twoAboveStartOfEncoderTicksPositiveMovement_two()
 }
 
 void test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksPositiveMovement_four() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t end = 10;
@@ -419,7 +419,7 @@ void test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksPositiveMovement_four()
 }
 
 void test_ticksToBoundarySoFar_atEndOfEncoderTicksPositiveMovement_max() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t end = 10;
@@ -432,7 +432,7 @@ void test_ticksToBoundarySoFar_atEndOfEncoderTicksPositiveMovement_max() {
 }
 
 void test_ticksToBoundarySoFar_beyondEncoderTicksPositiveMovement_max() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t end = 10;
@@ -446,7 +446,7 @@ void test_ticksToBoundarySoFar_beyondEncoderTicksPositiveMovement_max() {
 
 // ticksToBoundarySoFar calculations (negative movement)
 void test_ticksToBoundarySoFar_beforeStartOfEncoderTicksNegativeMovement_zero() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t current = range + 1;
@@ -460,7 +460,7 @@ void test_ticksToBoundarySoFar_beforeStartOfEncoderTicksNegativeMovement_zero() 
 }
 
 void test_ticksToBoundarySoFar_atStartOfEncoderTicksNegativeMovement_zero() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t end = 0;
@@ -474,7 +474,7 @@ void test_ticksToBoundarySoFar_atStartOfEncoderTicksNegativeMovement_zero() {
 }
 
 void test_ticksToBoundarySoFar_oneAboveStartOfEncoderTicksNegativeMovement_one() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t current = range - 1;
@@ -488,7 +488,7 @@ void test_ticksToBoundarySoFar_oneAboveStartOfEncoderTicksNegativeMovement_one()
 }
 
 void test_ticksToBoundarySoFar_twoAboveStartOfEncoderTicksNegativeMovement_two() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t current = range - 2;
@@ -502,7 +502,7 @@ void test_ticksToBoundarySoFar_twoAboveStartOfEncoderTicksNegativeMovement_two()
 }
 
 void test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksNegativeMovement_four() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t end = 0;
@@ -516,7 +516,7 @@ void test_ticksToBoundarySoFar_oneBeforeEndOfEncoderTicksNegativeMovement_four()
 }
 
 void test_ticksToBoundarySoFar_atEndOfEncoderTicksNegativeMovement_min() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t end = 0;
@@ -530,7 +530,7 @@ void test_ticksToBoundarySoFar_atEndOfEncoderTicksNegativeMovement_min() {
 }
 
 void test_ticksToBoundarySoFar_beyondEncoderTicksNegativeMovement_min() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
     
     uint16_t range = 5;
     uint16_t end = 1;
@@ -544,7 +544,7 @@ void test_ticksToBoundarySoFar_beyondEncoderTicksNegativeMovement_min() {
 }
 
 void test_rampDownSpeed_atBeginningOfRampDown_delayLowest() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t range = 200;
     uint16_t start = 0;
@@ -559,7 +559,7 @@ void test_rampDownSpeed_atBeginningOfRampDown_delayLowest() {
 }
 
 void test_rampDownSpeed_firstTickOfRampDown_delayIncreased() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t range = 200;
     uint16_t start = 0;
@@ -574,7 +574,7 @@ void test_rampDownSpeed_firstTickOfRampDown_delayIncreased() {
 }
 
 void test_rampDownSpeed_secondTickOfRampDown_delayIncreased() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t range = 200;
     uint16_t start = 0;
@@ -589,7 +589,7 @@ void test_rampDownSpeed_secondTickOfRampDown_delayIncreased() {
 }
 
 void test_rampDownSpeed_oneBeforeLastTickOfRampDown_delayBelowHighest() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t range = 200;
     uint16_t start = 0;
@@ -604,7 +604,7 @@ void test_rampDownSpeed_oneBeforeLastTickOfRampDown_delayBelowHighest() {
 }
 
 void test_rampDownSpeed_lastTickOfRampDown_delayHighest() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t range = 200;
     uint16_t start = 0;
@@ -619,7 +619,7 @@ void test_rampDownSpeed_lastTickOfRampDown_delayHighest() {
 }
 
 void test_rampDownSpeed_lastTickPlusOneOfRampDown_delayHighest() {
-    StmStepper stepper = StmStepper(0, 0, 0, 0);
+    StmBasicStepper stepper = StmBasicStepper(0, 0, 0, 0);
 
     uint16_t range = 200;
     uint16_t start = 0;

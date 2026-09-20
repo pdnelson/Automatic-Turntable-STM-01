@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <StmStepperResult.h>
 
-#ifndef STMSTEPPER_H
-#define STMSTEPPER_H
+#ifndef STMBASICSTEPPER_H
+#define STMBASICSTEPPER_H
 
 #define STEPPER_STEPS_PER_REVOLUTION 2048
 
@@ -11,9 +11,9 @@
  */
 #define STEPPER_MAX_DELAY_BETWEEN_STEPS 60000 // 0.5 RPM
 
-class StmStepper {
+class StmBasicStepper {
     public:
-        StmStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4);
+        StmBasicStepper(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4);
 
         void setSpeed(float speedRpm);
 
