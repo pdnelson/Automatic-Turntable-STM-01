@@ -3,7 +3,6 @@
 #include <BaseTurntableSubCommand.h>
 #include <Constants.h>
 #include <Pin.h>
-#include <MovementAxis.h>
 #include <TurntableState.h>
 
 BaseLiftSubCommand::BaseLiftSubCommand(TurntableState* state, uint8_t speed): BaseTurntableSubCommand(state) {
@@ -33,7 +32,6 @@ bool BaseLiftSubCommand::checkVerticalStall(VerticalDirection direction, int cur
 }
 
 void BaseLiftSubCommand::baseInitialize() {
-    digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
     verticalStallPosition = state->getVerticalEncoderPos();
-    state->movementStepper.setSpeed(speed);
+    state->verticalStepper.setSpeed(speed);
 }

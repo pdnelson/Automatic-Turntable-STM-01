@@ -3,7 +3,7 @@
 #include <VerticalDirection.h>
 #include <AzimuthDirection.h>
 #include <EEPROM.h>
-#include <StmEncoderPolarity.h>
+#include <StmPolarity.h>
 #include <BasePersistence.h>
 
 CalibrationValues::CalibrationValues() : BasePersistence() {
@@ -14,8 +14,8 @@ void CalibrationValues::load() {
     home = readUInt16(EEPROM_HOME_START_ADDR);
     verticalUpperLimit = readUInt16(EEPROM_V_UPPER_LIMIT_START_ADDR);
     verticalLowerLimit = readUInt16(EEPROM_V_LOWER_LIMIT_START_ADDR);
-    polarityH = (StmEncoderPolarity)EEPROM.read(EEPROM_POLARITY_H_ADDR);
-    polarityV = (StmEncoderPolarity)EEPROM.read(EEPROM_POLARITY_V_ADDR);
+    polarityH = (StmPolarity)EEPROM.read(EEPROM_POLARITY_H_ADDR);
+    polarityV = (StmPolarity)EEPROM.read(EEPROM_POLARITY_V_ADDR);
     azEncoderOffset = readUInt16(EEPROM_AZ_OFFSET);
     in7 = readUInt16(EEPROM_7_IN_START_ADDR);
     in10 = readUInt16(EEPROM_10_IN_START_ADDR);

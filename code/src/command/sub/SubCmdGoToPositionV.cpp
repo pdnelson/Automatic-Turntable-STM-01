@@ -4,7 +4,6 @@
 #include <CommandResult.h>
 #include <Constants.h>
 #include <TurntableState.h>
-#include <MovementAxis.h>
 #include <SubCommandId.h>
 #include <AzimuthDirection.h>
 #include <StmStepperResult.h>
@@ -26,9 +25,9 @@ void SubCmdGoToPositionV::doInitialize() {
         direction = VerticalDirection::Down;
     }
 
-    state->movementStepper.setDirection(direction);
+    state->verticalStepper.setDirection(direction);
     
-    state->movementStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
+    state->verticalStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
 }
 
 CommandResult SubCmdGoToPositionV::doExecute() {
@@ -52,7 +51,7 @@ CommandResult SubCmdGoToPositionV::doExecute() {
             result = CommandResult::NotLifted;
         }
     } else {
-        if(state->movementStepper.stepBlind(state->clockMicros)) {
+        if(state->verticalStepper.stepBlind(state->clockMicros)) {
             bool stalled = checkVerticalStall(direction, currentPosition);
 
             if(stalled) {
@@ -69,7 +68,7 @@ CommandResult SubCmdGoToPositionV::doExecute() {
 }
 
 void SubCmdGoToPositionV::doUninitialize() {
-    state->movementStepper.releaseMotorCurrent();
+    state->verticalStepper.releaseMotorCurrent();
 }
 
 SubCommandId SubCmdGoToPositionV::getSubCommandId() {

@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <StmEncoderPolarity.h>
+#include <StmPolarity.h>
 #include <BasePersistence.h>
 
 #ifndef CalibrationValues_h
@@ -27,8 +27,9 @@ class CalibrationValues : public BasePersistence {
         uint16_t home = 0;
         uint16_t verticalUpperLimit = 0;
         uint16_t verticalLowerLimit = 0;
-        StmEncoderPolarity polarityH = StmEncoderPolarity::NORMAL;
-        StmEncoderPolarity polarityV = StmEncoderPolarity::NORMAL;
+        StmPolarity motorPolarity = StmPolarity::Normal;
+        StmPolarity polarityH = StmPolarity::Normal;
+        StmPolarity polarityV = StmPolarity::Normal;
         uint16_t azEncoderOffset = 0;
 
         // Record sizes

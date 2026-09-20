@@ -18,7 +18,7 @@
 #include <CmdProtoPlay.h>
 #include <StmEncoder.h>
 #include <ClutchStatus.h>
-#include <StmEncoderPolarity.h>
+#include <StmPolarity.h>
 #include <CmdGoToPositionH.h>
 #include <CmdCalibration.h>
 
@@ -26,7 +26,7 @@ TurntableState::TurntableState() :
     outputShift(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
     serialComm(this),
     inputMux(Pin::InputMuxA, Pin::InputMuxB, Pin::InputMuxC, Pin::InputMuxResult, MUX_POLL_INTERVAL, BUTTON_HOLD_INTERVAL, BUTTON_DEBOUNCE_INTERVAL),
-    movementStepper(Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
+    verticalStepper(Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
     clutchStepper(Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4),
     azEncoder(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
     calibration(),
@@ -131,7 +131,7 @@ HomeStatus TurntableState::getHomeStatus() {
 }
 
 uint16_t TurntableState::getVerticalEncoderPos() {
-    if(calibration.polarityV == StmEncoderPolarity::NORMAL) {
+    if(calibration.polarityV == StmPolarity::Normal) {
         return analogRead(Pin::VerticalPosition);
     } else {
         return V_ENCODER_MAX_VALUE - analogRead(Pin::VerticalPosition);
@@ -245,7 +245,6 @@ void TurntableState::pauseOrUnPause() {
 }
 
 void TurntableState::playOrReturn() {
-    // TO DO: Make this use the calibrated home position to determine this
     if(getHomeStatus() == HomeStatus::Homed) {
         uint16_t position = 0;
 

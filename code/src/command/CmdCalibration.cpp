@@ -15,12 +15,11 @@
 #include <SubCmdMoveNStepsV.h>
 #include <SubCmdMoveNStepsH.h>
 #include <SubCmdToggleLight.h>
-#include <SubCmdSetPolarity.h>
+#include <SubCmdSetVerticalPolarity.h>
 #include <SubCmdMoveUpUntilLifted.h>
 #include <SubCmdCalibrateVerticalBounds.h>
-#include <MovementAxis.h>
 #include <SubCmdGoToPositionV.h>
-#include <StmEncoderPolarity.h>
+#include <StmPolarity.h>
 #include <SubCmdEngageAzClutch.h>
 #include <SubCmdDisengageAzClutch.h>
 #include <SubCmdZeroAzEncoder.h>
@@ -46,7 +45,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdMoveNStepsV>(state, 200, 14, true))
         ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint2))
-        ->next(std::make_shared<SubCmdSetPolarity>(state, MovementAxis::Vertical, referencePoint1, referencePoint2, state->calibration.polarityV))
+        ->next(std::make_shared<SubCmdSetVerticalPolarity>(state, referencePoint1, referencePoint2, state->calibration.polarityV))
 
         // Exercise the full range of the vertical movement. This should NOT fail out at this point. Consider this a "test" of the polarity check above.
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, 14))
@@ -60,7 +59,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, 200, 14, true))
         ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateHorizontalPolarity>(state, referencePoint2))
-        ->next(std::make_shared<SubCmdSetPolarity>(state, MovementAxis::Horizontal, referencePoint1, referencePoint2, state->calibration.polarityH))
+        // ->next(std::make_shared<SubCmdSetPolarity>(state, referencePoint1, referencePoint2, state->calibration.polarityH)) TO DO: Set horizontal motor and encoder polarity
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, -250, 14, true)) // Move back to the home mount
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, 14))
 
@@ -103,8 +102,8 @@ void CmdCalibration::doInitialize() {
     state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
     outputShiftValues = state->outputShift.getValues();
-    state->calibration.polarityH = StmEncoderPolarity::NORMAL;
-    state->calibration.polarityV = StmEncoderPolarity::NORMAL;
+    state->calibration.polarityH = StmPolarity::Normal;
+    state->calibration.polarityV = StmPolarity::Normal;
     state->azEncoder.setPolarity(state->calibration.polarityH);
 
     state->outputShift.setValues(0);

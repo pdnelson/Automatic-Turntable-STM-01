@@ -4,7 +4,6 @@
 #include <CommandResult.h>
 #include <Constants.h>
 #include <TurntableState.h>
-#include <MovementAxis.h>
 #include <SubCommandId.h>
 #include <AzimuthDirection.h>
 #include <StmStepperResult.h>
@@ -22,22 +21,21 @@ void SubCmdGoToPositionH::doInitialize() {
     uint16_t currentPosition = state->azEncoder.getNormalizedPosition();
 
     // Immediately succeed the command if we're on the boundary
-    if(state->movementStepper.onBoundary(currentPosition, destinationEncoderPosition, encoderTolerance)) {
+    if(state->verticalStepper.onBoundary(currentPosition, destinationEncoderPosition, encoderTolerance)) {
         setCommandResult(CommandResult::Success);
     } 
     
     // Otherwise, carry out the movement
     else {
-        digitalWrite(Pin::MovementSelect, MovementAxis::Horizontal);
-        state->movementStepper.setSpeed(speed);
-        state->movementStepper.setEncoderRange(currentPosition, destinationEncoderPosition, encoderTolerance);
-        state->movementStepper.setRampDownEncoderTicks(rampDownEncoderTicks);
-        state->movementStepper.calibrateDirection(AzimuthDirection::Clockwise, AzimuthDirection::CounterClockwise);
+        state->verticalStepper.setSpeed(speed);
+        state->verticalStepper.setEncoderRange(currentPosition, destinationEncoderPosition, encoderTolerance);
+        state->verticalStepper.setRampDownEncoderTicks(rampDownEncoderTicks);
+        state->verticalStepper.calibrateDirection(AzimuthDirection::Clockwise, AzimuthDirection::CounterClockwise);
     }
 }
 
 CommandResult SubCmdGoToPositionH::doExecute() {
-    StmStepperResult result = state->movementStepper.step(state->clockMicros, state->azEncoder.getNormalizedPosition());
+    StmStepperResult result = state->verticalStepper.step(state->clockMicros, state->azEncoder.getNormalizedPosition());
 
     if(result.movementCompleted) {
         return CommandResult::Success;
@@ -48,7 +46,7 @@ CommandResult SubCmdGoToPositionH::doExecute() {
 }
 
 void SubCmdGoToPositionH::doUninitialize() {
-    state->movementStepper.releaseMotorCurrent();
+    state->verticalStepper.releaseMotorCurrent();
 }
 
 SubCommandId SubCmdGoToPositionH::getSubCommandId() {

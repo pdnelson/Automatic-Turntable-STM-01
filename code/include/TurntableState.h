@@ -23,7 +23,7 @@ class TurntableState {
         StmShift outputShift;
         StmSerial serialComm;
         InputMux inputMux;
-        StmStepper movementStepper;
+        StmStepper verticalStepper;
         StmStepper clutchStepper;
         StmEncoder azEncoder;
         CalibrationValues calibration;

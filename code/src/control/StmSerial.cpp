@@ -356,5 +356,5 @@ void StmSerial::clearCommand() {
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
     state->outputShift.setValue(StmShiftPin::AudioCutOff, true);
     state->outputShift.setValue(StmShiftPin::LedHeadshellIR, false);
-    state->movementStepper.releaseMotorCurrent();
+    state->verticalStepper.releaseMotorCurrent();
 }

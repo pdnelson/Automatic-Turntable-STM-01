@@ -4,7 +4,7 @@
 #define AZIMUTHDIRECTION_H
 
 enum AzimuthDirection {
-    Clockwise = -1,
+    Clockwise = 0,
     CounterClockwise = 1
 };
 

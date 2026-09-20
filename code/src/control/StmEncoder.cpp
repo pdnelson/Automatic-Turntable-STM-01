@@ -26,14 +26,14 @@ void StmEncoder::monitor(unsigned long clockMicros) {
 }
 
 uint16_t StmEncoder::getNormalizedPosition() {
-    if(polarity == StmEncoderPolarity::NORMAL) {
+    if(polarity == StmPolarity::Normal) {
         return rollingDataAvg;
     } else {
         return H_ENCODER_MAX_VALUE - rollingDataAvg;
     }
 }
 
-void StmEncoder::setPolarity(StmEncoderPolarity polarity) {
+void StmEncoder::setPolarity(StmPolarity polarity) {
     this->polarity = polarity;
 }
 

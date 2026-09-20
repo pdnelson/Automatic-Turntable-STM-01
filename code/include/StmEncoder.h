@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <StmEncoderPolarity.h>
+#include <StmPolarity.h>
 
 #ifndef STMENCODER_H
 #define STMENCODER_H
@@ -25,7 +25,7 @@ class StmEncoder {
         void zeroOutEncoder(uint16_t offset);
         uint16_t getNormalizedPosition();
         uint16_t getPosition();
-        void setPolarity(StmEncoderPolarity polarity);
+        void setPolarity(StmPolarity polarity);
         /**
          * Sets the current position to "zero"
          */
@@ -38,7 +38,7 @@ class StmEncoder {
         unsigned long dataAvgCounter = 0;
         uint16_t rollingDataAvg = 0;
         uint16_t data[ENCODER_AVG_RESOLUTION] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        StmEncoderPolarity polarity = StmEncoderPolarity::NORMAL;
+        StmPolarity polarity = StmPolarity::Normal;
 };
 
 #endif

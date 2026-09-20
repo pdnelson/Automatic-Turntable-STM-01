@@ -1,18 +1,17 @@
 #include <CommandResult.h>
 #include <SubCommandId.h>
-#include <StmEncoderPolarity.h>
+#include <StmPolarity.h>
 #include <BaseTurntableSubCommand.h>
 #include <Arduino.h>
-#include <MovementAxis.h>
 
-#ifndef SubCmdSetPolarity_h
-#define SubCmdSetPolarity_h
+#ifndef SubCmdSetVerticalPolarity_h
+#define SubCmdSetVerticalPolarity_h
 class TurntableState;
 class CmdCalibration;
 
-class SubCmdSetPolarity : public BaseTurntableSubCommand {
+class SubCmdSetVerticalPolarity : public BaseTurntableSubCommand {
     public:
-        SubCmdSetPolarity(TurntableState* state, MovementAxis axis, uint16_t &lowerReferencePoint, uint16_t &upperReferencePoint, StmEncoderPolarity &destination);
+        SubCmdSetVerticalPolarity(TurntableState* state, uint16_t &lowerReferencePoint, uint16_t &upperReferencePoint, StmPolarity &destination);
         SubCommandId getSubCommandId() override;
 
     private:
@@ -20,10 +19,9 @@ class SubCmdSetPolarity : public BaseTurntableSubCommand {
         CommandResult doExecute() override;
         void doUninitialize() override;
 
-        MovementAxis axis;
         uint16_t &lowerReferencePoint;
         uint16_t &upperReferencePoint;
-        StmEncoderPolarity &destination;
+        StmPolarity &destination;
 };
 
 #endif

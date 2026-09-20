@@ -4,7 +4,6 @@
 #include <CommandResult.h>
 #include <Constants.h>
 #include <TurntableState.h>
-#include <MovementAxis.h>
 #include <SubCommandId.h>
 #include <AzimuthDirection.h>
 #include <StmStepperResult.h>
@@ -15,7 +14,6 @@ SubCmdSetMovementVertical::SubCmdSetMovementVertical(TurntableState* state) : Ba
 }
 
 void SubCmdSetMovementVertical::doInitialize() {
-    digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
 }
 
 CommandResult SubCmdSetMovementVertical::doExecute() {

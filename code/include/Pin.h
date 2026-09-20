@@ -16,7 +16,7 @@ enum Pin : uint8_t {
     MovementStep3 = 9,
     MovementStep2 = 10,
     MovementStep1 = 11,
-    MovementSelect = 12,
+    HorizontalStep = 12,
     PowerOnStatusIn = 13,
     Serial5Tx = 14,
     Serial5Rx = 15,
@@ -30,6 +30,8 @@ enum Pin : uint8_t {
     VerticalPosition = 23,
     ReservedI2CScl = 24, // Wire2
     ReservedI2CSda = 25, // Wire2
+    HorizontalEnable = 26,
+    HorizontalDirection = 27,
     Serial3Rx = 28,
     Serial3Tx = 29,
     Lift = 30,
@@ -41,8 +43,6 @@ enum Pin : uint8_t {
     HorizontalClutchStep1 = 41,
 
     // Unused pins
-    Unused26 = 26,
-    Unused27 = 27,
     Unused31 = 31,
     Unused32 = 32,
     Unused33 = 33,

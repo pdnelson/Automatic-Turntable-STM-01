@@ -5,7 +5,6 @@
 #include <CommandResult.h>
 #include <Constants.h>
 #include <TurntableState.h>
-#include <MovementAxis.h>
 #include <SubCommandId.h>
 
 SubCmdMoveNStepsV::SubCmdMoveNStepsV(TurntableState* state, int16_t steps, uint8_t speed, bool releaseCurrentAfterMovement) : BaseTurntableSubCommand(state) {
@@ -18,14 +17,13 @@ SubCmdMoveNStepsV::SubCmdMoveNStepsV(TurntableState* state, int16_t steps, uint8
 }
 
 void SubCmdMoveNStepsV::doInitialize() {
-    digitalWrite(Pin::MovementSelect, MovementAxis::Vertical);
-    state->movementStepper.setDirection(direction);
-    state->movementStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
-    state->movementStepper.setSpeed(this->speed);
+    state->verticalStepper.setDirection(direction);
+    state->verticalStepper.calibrateDirection(VerticalDirection::Up, VerticalDirection::Down);
+    state->verticalStepper.setSpeed(this->speed);
 }
 
 CommandResult SubCmdMoveNStepsV::doExecute() {
-    if(state->movementStepper.stepBlind(state->clockMicros)) {
+    if(state->verticalStepper.stepBlind(state->clockMicros)) {
         stepCount++;
     }
 
@@ -38,7 +36,7 @@ CommandResult SubCmdMoveNStepsV::doExecute() {
 
 void SubCmdMoveNStepsV::doUninitialize() {
     if(releaseCurrentAfterMovement) {
-        state->movementStepper.releaseMotorCurrent();
+        state->verticalStepper.releaseMotorCurrent();
     }
 }
 
