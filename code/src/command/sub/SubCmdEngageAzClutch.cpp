@@ -17,6 +17,7 @@ SubCmdEngageAzClutch::SubCmdEngageAzClutch(TurntableState* state) : BaseTurntabl
 void SubCmdEngageAzClutch::doInitialize() {
     state->clutchStepper.setSpeed(CLUTCH_SPEED);
     state->clutchStepper.setDirection(ClutchDirection::Engage);
+    state->horizontalStepper.wake();
 }
 
 CommandResult SubCmdEngageAzClutch::doExecute() {

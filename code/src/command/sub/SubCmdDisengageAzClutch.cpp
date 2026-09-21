@@ -34,6 +34,7 @@ CommandResult SubCmdDisengageAzClutch::doExecute() {
 
 void SubCmdDisengageAzClutch::doUninitialize() {
     state->clutchStepper.releaseMotorCurrent();
+    state->horizontalStepper.sleep();
 }
 
 SubCommandId SubCmdDisengageAzClutch::getSubCommandId() {

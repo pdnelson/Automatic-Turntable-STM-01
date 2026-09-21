@@ -19,7 +19,6 @@ SubCmdMoveNStepsH::SubCmdMoveNStepsH(TurntableState* state, int16_t steps, uint8
 void SubCmdMoveNStepsH::doInitialize() {
     state->horizontalStepper.setDirection(direction);
     state->horizontalStepper.setSpeed(this->speed);
-    state->horizontalStepper.wake();
 }
 
 CommandResult SubCmdMoveNStepsH::doExecute() {
@@ -35,9 +34,7 @@ CommandResult SubCmdMoveNStepsH::doExecute() {
 }
 
 void SubCmdMoveNStepsH::doUninitialize() {
-    if(releaseCurrentAfterMovement) {
-        state->horizontalStepper.sleep();
-    }
+    // Do nothing
 }
 
 SubCommandId SubCmdMoveNStepsH::getSubCommandId() {
