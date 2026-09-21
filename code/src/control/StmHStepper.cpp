@@ -6,7 +6,13 @@ StmHStepper::StmHStepper(StmEncoder &hEncoder, Pin sleepPin, Pin enablePin, Pin 
     this->enablePin = enablePin;
     this->stepPin = stepPin;
     this->directionPin = directionPin;
+    this->sleepPin = sleepPin;
     this->polarity = StmPolarity::Normal;
+
+    pinMode(enablePin, OUTPUT);
+    pinMode(stepPin, OUTPUT);
+    pinMode(sleepPin, OUTPUT);
+    pinMode(directionPin, OUTPUT);
 }
 
 void StmHStepper::setPolarity(StmPolarity polarity) {
@@ -19,19 +25,22 @@ void StmHStepper::setDirection(AzimuthDirection direction) {
     } else {
         this->direction = (AzimuthDirection)!direction;
     }
+
+    digitalWrite(directionPin, this->direction);
 }
 
 void StmHStepper::setSpeed(float speed) {
-    this->topSpeedTimeBetweenStepsMicros = 60000000L / STEPS_PER_REVOLUTION / speed;
+    this->topSpeedTimeBetweenStepsMicros = (unsigned long)((float)60000000L / (float)STEPS_PER_REVOLUTION / speed);
 }
 
 bool StmHStepper::stepBlind(unsigned long clockMicros) {
-    if(!takingStep && clockMicros - lastStepMicros > topSpeedTimeBetweenStepsMicros) {
+    if(!takingStep && clockMicros - lastStepMicros >= topSpeedTimeBetweenStepsMicros) {
         performStep();
         lastStepMicros = clockMicros;
         return true;
-    } else if(takingStep && clockMicros - lastStepMicros > PULSE_WIDTH_MICROS) {
+    } else if(takingStep && clockMicros - lastStepMicros >= PULSE_WIDTH_MICROS) {
         takingStep = false;
+        digitalWrite(stepPin, LOW);
     }
 
     return false;
