@@ -12,7 +12,6 @@
 
 #define ENCODER_AVG_RESOLUTION 20
 #define ENCODER_DATA_POINT_INTERVAL_MICROS 25000
-#define ENCODER_AVG_INTERVAL_MICROS 25000
 
 #define H_ENCODER_MAX_VALUE 16384
 #define V_ENCODER_MAX_VALUE 1023
@@ -35,7 +34,6 @@ class StmEncoder {
         void computeAverage();
 
         unsigned long dataCollectCounter = 0;
-        unsigned long dataAvgCounter = 0;
         uint16_t rollingDataAvg = 0;
         uint16_t data[ENCODER_AVG_RESOLUTION] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         StmPolarity polarity = StmPolarity::Normal;

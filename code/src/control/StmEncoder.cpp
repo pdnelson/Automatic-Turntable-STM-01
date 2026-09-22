@@ -17,10 +17,6 @@ void StmEncoder::monitor(unsigned long clockMicros) {
     if(clockMicros - dataCollectCounter > ENCODER_DATA_POINT_INTERVAL_MICROS) {
         dataCollectCounter = clockMicros;
         logData();
-    }
-
-    if(clockMicros - dataAvgCounter > ENCODER_AVG_INTERVAL_MICROS) {
-        dataAvgCounter = clockMicros;
         computeAverage();
     }
 }
