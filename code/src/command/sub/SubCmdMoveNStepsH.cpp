@@ -17,12 +17,11 @@ SubCmdMoveNStepsH::SubCmdMoveNStepsH(TurntableState* state, int16_t steps, uint8
 }
 
 void SubCmdMoveNStepsH::doInitialize() {
-    state->horizontalStepper.setDirection(direction);
-    state->horizontalStepper.setSpeed(this->speed);
+    state->horizontalStepper.setMovementProfile(direction, speed, steps);
 }
 
 CommandResult SubCmdMoveNStepsH::doExecute() {
-    if(state->horizontalStepper.stepBlind(state->clockMicros)) {
+    if(state->horizontalStepper.stepTrapezoidally(state->clockMicros)) {
         stepCount++;
     }
 

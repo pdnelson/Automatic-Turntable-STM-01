@@ -11,6 +11,7 @@
 #include <SubCmdMoveNStepsH.h>
 #include <TurntableState.h>
 #include <Constants.h>
+#include <SubCmdDelay.h>
 
 CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuthSpeed) : BaseTurntableCommand(state) {
 
@@ -22,6 +23,8 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         
         // Move CW or CCW
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, steps, azimuthSpeed, true))
+
+        ->next(std::make_shared<SubCmdDelay>(state, 200))
         
         // Disengage the clutch
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
