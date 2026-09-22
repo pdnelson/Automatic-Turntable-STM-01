@@ -24,6 +24,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         // Move CW or CCW
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, steps, azimuthSpeed, true))
 
+        // Wait some time so the tonearm doesn't overshoot its target
         ->next(std::make_shared<SubCmdDelay>(state, 200))
         
         // Disengage the clutch

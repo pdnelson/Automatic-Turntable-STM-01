@@ -39,7 +39,7 @@ void StmHStepper::setMovementProfile(AzimuthDirection direction, float speed, ui
     setDirection(direction);
     destinationMovementSteps = steps;
     currentMovementSteps = 0;
-    currSpeedBetweenStepsMicros = topSpeedTimeBetweenStepsMicros + (TRAPEZOIDAL_PROFILE_STEPS * 100);
+    currSpeedBetweenStepsMicros = topSpeedTimeBetweenStepsMicros + (TRAPEZOIDAL_PROFILE_STEPS * TRAPEZOIDAL_PROFILE_INTERVAL);
 }
 
 
@@ -49,12 +49,12 @@ bool StmHStepper::stepTrapezoidally(unsigned long clockMicros) {
     if(didStep) {
         // Ramp up
         if(currentMovementSteps <= TRAPEZOIDAL_PROFILE_STEPS && destinationMovementSteps > (TRAPEZOIDAL_PROFILE_STEPS * 2)) {
-            currSpeedBetweenStepsMicros -= 100;
+            currSpeedBetweenStepsMicros -= TRAPEZOIDAL_PROFILE_INTERVAL;
         } 
         
         // Ramp down
         else if(currentMovementSteps + TRAPEZOIDAL_PROFILE_STEPS > destinationMovementSteps) {
-            currSpeedBetweenStepsMicros += 100;
+            currSpeedBetweenStepsMicros += TRAPEZOIDAL_PROFILE_INTERVAL;
         }
 
         currentMovementSteps++;
