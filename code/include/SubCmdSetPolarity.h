@@ -9,6 +9,9 @@
 class TurntableState;
 class CmdCalibration;
 
+// The number of encoder ticks that the reference points must differ by to allow successful calibration
+#define DIFFERENCE_BUFFER 25
+
 class SubCmdSetPolarity : public BaseTurntableSubCommand {
     public:
         SubCmdSetPolarity(TurntableState* state, uint16_t &lowerReferencePoint, uint16_t &upperReferencePoint, bool isVertical, StmPolarity &destination);

@@ -19,9 +19,9 @@ void SubCmdSetPolarity::doInitialize() {
 }
 
 CommandResult SubCmdSetPolarity::doExecute() {
-    if(lowerReferencePoint < upperReferencePoint) {
+    if(lowerReferencePoint + DIFFERENCE_BUFFER < upperReferencePoint) {
         destination = StmPolarity::Normal;
-    } else if(lowerReferencePoint > upperReferencePoint) {
+    } else if(lowerReferencePoint - DIFFERENCE_BUFFER > upperReferencePoint) {
         destination = StmPolarity::Reversed;
     } else if(isVertical) {
         return CommandResult::FailedToSetVerticalPolarity;

@@ -28,11 +28,11 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         // Wait some time so the tonearm doesn't overshoot its target
         ->next(std::make_shared<SubCmdDelay>(state, 200))
         
-        // Disengage the clutch
-        ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
-        
         // Set down
-        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, SET_DOWN_SLOWLY, false));
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, SET_DOWN_SLOWLY, false))
+        
+        // Disengage the clutch
+        ->next(std::make_shared<SubCmdDisengageAzClutch>(state));
 }
 
 CommandId CmdProtoPlay::getCommandId() {
