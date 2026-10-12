@@ -28,6 +28,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
     subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false)
 
         // Engage the clutch
+        ->next(std::make_shared<SubCmdDisengageAzClutch>(state)) // Disengage first so position is known
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         
         // Move to specific position

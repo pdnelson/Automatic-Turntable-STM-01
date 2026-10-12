@@ -28,6 +28,11 @@ CommandResult SubCmdSetPolarity::doExecute() {
     } else {
         return CommandResult::FailedToSetHorizontalPolarity;
     }
+
+    // If horizontal, also set the encoder's polarity
+    if(!isVertical) {
+        state->azEncoder.setPolarity(destination);
+    }
     
     return CommandResult::Success;
 }

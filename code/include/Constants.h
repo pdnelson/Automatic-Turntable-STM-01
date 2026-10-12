@@ -79,7 +79,7 @@
 
 // If the clutch switch doesn't release after this number of steps, the clutch movement failed.
 // Similarly, if the clutch switch doesn't press after this value + CLUTCH_ENGAGE_STEPS, the clutch movement failed.
-#define CLUTCH_TIMEOUT_STEPS 100
+#define CLUTCH_TIMEOUT_STEPS 200
 
 /**
  * Calibration constants

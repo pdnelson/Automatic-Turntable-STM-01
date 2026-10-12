@@ -19,6 +19,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
     subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false)
 
         // Engage the clutch
+        ->next(std::make_shared<SubCmdDisengageAzClutch>(state)) // Disengage first so position is known
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         
         // Move CW or CCW

@@ -52,6 +52,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
 
         // Calibrate horizontal motor polarity
+        ->next(std::make_shared<SubCmdDisengageAzClutch>(state)) // First disengage the clutch (even if it's already disengaged) just in case it was in an unusual position before
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
         ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, false, SubCommandId::SetHMotorPolarity, StmShiftPin::Led33Rpm, referencePoint1))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, 1000, 30, true))
