@@ -75,7 +75,7 @@
 #define CLUTCH_SPEED 14
 
 // The number of steps for the clutch to engage, after the limit switch is released.
-#define CLUTCH_ENGAGE_STEPS 250
+#define CLUTCH_ENGAGE_STEPS 500
 
 // If the clutch switch doesn't release after this number of steps, the clutch movement failed.
 // Similarly, if the clutch switch doesn't press after this value + CLUTCH_ENGAGE_STEPS, the clutch movement failed.
