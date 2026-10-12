@@ -15,7 +15,7 @@
 #include <SubCmdMoveNStepsV.h>
 #include <SubCmdMoveNStepsH.h>
 #include <SubCmdToggleLight.h>
-#include <SubCmdSetVerticalPolarity.h>
+#include <SubCmdSetPolarity.h>
 #include <SubCmdMoveUpUntilLifted.h>
 #include <SubCmdCalibrateVerticalBounds.h>
 #include <SubCmdGoToPositionV.h>
@@ -23,6 +23,7 @@
 #include <SubCmdEngageAzClutch.h>
 #include <SubCmdDisengageAzClutch.h>
 #include <SubCmdZeroAzEncoder.h>
+#include <SubCmdSetHMotorPolarity.h>
 
 CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
 
@@ -45,22 +46,30 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdMoveNStepsV>(state, 200, 14, true))
         ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateVerticalPoint>(state, referencePoint2))
-        ->next(std::make_shared<SubCmdSetVerticalPolarity>(state, referencePoint1, referencePoint2, state->calibration.polarityV))
+        ->next(std::make_shared<SubCmdSetPolarity>(state, referencePoint1, referencePoint2, true, state->calibration.polarityV))
 
         // Exercise the full range of the vertical movement. This should NOT fail out at this point. Consider this a "test" of the polarity check above.
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, 14, false))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
 
-        // Calibrate the horizontal polarity by going counterclockwise, logging a point, then clockwise, and logging another point.
+        // Calibrate horizontal motor polarity
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
-        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -200, 14, true))
-        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateHorizontalPolarity>(state, referencePoint1))
-        ->next(std::make_shared<SubCmdMoveNStepsH>(state, 200, 14, true))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, 1000, 30, true))
         ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCalibrateHorizontalPolarity>(state, referencePoint2))
-        // ->next(std::make_shared<SubCmdSetPolarity>(state, referencePoint1, referencePoint2, state->calibration.polarityH)) TO DO: Set horizontal motor and encoder polarity
-        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -250, 14, true)) // Move back to the home mount
+        ->next(std::make_shared<SubCmdSetHMotorPolarity>(state, referencePoint1, referencePoint2, state->calibration.hStepperPolarity))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -1050, 30, true))
+
+        // Calibrate the horizontal polarity by going counterclockwise, logging a point, then clockwise, and logging another point.
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -1000, 30, true))
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
+        ->next(std::make_shared<SubCmdCalibrateHorizontalPolarity>(state, referencePoint1))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, 1000, 30, true))
+        ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
+        ->next(std::make_shared<SubCmdCalibrateHorizontalPolarity>(state, referencePoint2))
+        ->next(std::make_shared<SubCmdSetPolarity>(state, referencePoint1, referencePoint2, false, state->calibration.polarityH))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -1050, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, 14, false))
 
         // Calibrate the home mount position, then height
@@ -71,7 +80,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
 
         // Go to the middle of the platter
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
-        ->next(std::make_shared<SubCmdMoveNStepsH>(state, 150, 14, true))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, 2500, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_SLOWLY, false))
 
         // Calibrate the platter height
@@ -83,7 +92,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
 
         // Go back to the home position
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
-        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -200, 14, true))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -2550, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_QUICKLY, false))
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
         ->next(std::make_shared<SubCmdToggleLight>(state, StmShiftPin::LedPlayStatus, false))
@@ -102,8 +111,10 @@ void CmdCalibration::doInitialize() {
     state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
     outputShiftValues = state->outputShift.getValues();
+    state->calibration.hStepperPolarity = StmPolarity::Normal;
     state->calibration.polarityH = StmPolarity::Normal;
     state->calibration.polarityV = StmPolarity::Normal;
+    state->horizontalStepper.setPolarity(state->calibration.hStepperPolarity);
     state->azEncoder.setPolarity(state->calibration.polarityH);
 
     state->outputShift.setValues(0);
@@ -112,5 +123,6 @@ void CmdCalibration::doInitialize() {
 void CmdCalibration::doUninitialize() {
     state->outputShift.setValues(outputShiftValues);
     state->azEncoder.setPolarity(state->calibration.polarityH);
+    state->horizontalStepper.setPolarity(state->calibration.hStepperPolarity);
     state->calibration.persist();
 }

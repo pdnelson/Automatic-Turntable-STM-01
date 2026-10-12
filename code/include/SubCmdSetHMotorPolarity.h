@@ -4,14 +4,14 @@
 #include <BaseTurntableSubCommand.h>
 #include <Arduino.h>
 
-#ifndef SubCmdSetVerticalPolarity_h
-#define SubCmdSetVerticalPolarity_h
+#ifndef SubCmdSetHMotorPolarity_h
+#define SubCmdSetHMotorPolarity_h
 class TurntableState;
 class CmdCalibration;
 
-class SubCmdSetVerticalPolarity : public BaseTurntableSubCommand {
+class SubCmdSetHMotorPolarity : public BaseTurntableSubCommand {
     public:
-        SubCmdSetVerticalPolarity(TurntableState* state, uint16_t &lowerReferencePoint, uint16_t &upperReferencePoint, StmPolarity &destination);
+        SubCmdSetHMotorPolarity(TurntableState* state, uint16_t &lowerReferencePoint, uint16_t &upperReferencePoint, StmPolarity &destination);
         SubCommandId getSubCommandId() override;
 
     private:

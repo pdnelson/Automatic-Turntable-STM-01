@@ -23,7 +23,8 @@ enum SubCommandId {
     CalibratePlatterHeight = 17,
     CalibrateHomeHeight = 18,
     CalibrateVerticalBounds = 19,
-    ZeroAzEncoder = 20
+    ZeroAzEncoder = 20,
+    SetHMotorPolarity = 21
 };
 
 #endif
