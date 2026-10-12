@@ -14,6 +14,7 @@ void CalibrationValues::load() {
     home = readUInt16(EEPROM_HOME_START_ADDR);
     verticalUpperLimit = readUInt16(EEPROM_V_UPPER_LIMIT_START_ADDR);
     verticalLowerLimit = readUInt16(EEPROM_V_LOWER_LIMIT_START_ADDR);
+    hStepperPolarity = (StmPolarity)EEPROM.read(EEPROM_POLARITY_H_MOTOR_ADDR);
     polarityH = (StmPolarity)EEPROM.read(EEPROM_POLARITY_H_ADDR);
     polarityV = (StmPolarity)EEPROM.read(EEPROM_POLARITY_V_ADDR);
     azEncoderOffset = readUInt16(EEPROM_AZ_OFFSET);
@@ -26,6 +27,7 @@ void CalibrationValues::persist() {
     writeTwoByteValueIfChanged(EEPROM_HOME_START_ADDR, home);
     writeTwoByteValueIfChanged(EEPROM_V_UPPER_LIMIT_START_ADDR, verticalUpperLimit);
     writeTwoByteValueIfChanged(EEPROM_V_LOWER_LIMIT_START_ADDR, verticalLowerLimit);
+    writeOneByteValueIfChanged(EEPROM_POLARITY_H_MOTOR_ADDR, hStepperPolarity);
     writeOneByteValueIfChanged(EEPROM_POLARITY_H_ADDR, polarityH);
     writeOneByteValueIfChanged(EEPROM_POLARITY_V_ADDR, polarityV);
     writeTwoByteValueIfChanged(EEPROM_AZ_OFFSET, azEncoderOffset);

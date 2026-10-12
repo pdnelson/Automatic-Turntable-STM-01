@@ -14,6 +14,7 @@
 #define EEPROM_10_IN_START_ADDR 10
 #define EEPROM_12_IN_START_ADDR 12
 #define EEPROM_AZ_OFFSET 14
+#define EEPROM_POLARITY_H_MOTOR_ADDR 16
 
 class CalibrationValues : public BasePersistence {
     public:
