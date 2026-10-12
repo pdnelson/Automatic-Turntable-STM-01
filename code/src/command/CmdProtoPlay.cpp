@@ -16,7 +16,7 @@
 CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuthSpeed) : BaseTurntableCommand(state) {
 
     // Lift up
-    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED)
+    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false)
 
         // Engage the clutch
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
@@ -31,7 +31,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
         
         // Set down
-        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, SET_DOWN_SLOWLY));
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, SET_DOWN_SLOWLY, false));
 }
 
 CommandId CmdProtoPlay::getCommandId() {

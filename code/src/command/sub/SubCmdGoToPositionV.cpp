@@ -8,8 +8,9 @@
 #include <AzimuthDirection.h>
 #include <CommandResult.h>
 
-SubCmdGoToPositionV::SubCmdGoToPositionV(TurntableState* state, uint16_t position, uint8_t speed) : BaseLiftSubCommand(state, speed) {
+SubCmdGoToPositionV::SubCmdGoToPositionV(TurntableState* state, uint16_t position, uint8_t speed, bool skipLiftCheck) : BaseLiftSubCommand(state, speed) {
     destinationEncoderPosition = position;
+    this->skipLiftCheck = skipLiftCheck;
 }
 
 void SubCmdGoToPositionV::doInitialize() {
@@ -42,7 +43,7 @@ CommandResult SubCmdGoToPositionV::doExecute() {
     } else if(reachedLimit) {
         // Verify the tonearm is truly lifted once we've reached the limit. It can sometimes bounce a bit after lifting,
         // so allow some time for it to stop doing that.
-        if(direction == VerticalDirection::Down || state->getLiftStatus() == LiftStatus::Lifted) {
+        if(skipLiftCheck || direction == VerticalDirection::Down || state->getLiftStatus() == LiftStatus::Lifted) {
             result = CommandResult::Success;
         } else if(state->clockMicros - timeLimitReached > LIFT_BOUNCE_TIMEOUT_MICROS) {
             result = CommandResult::NotLifted;

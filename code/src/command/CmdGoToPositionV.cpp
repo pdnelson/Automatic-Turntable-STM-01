@@ -12,7 +12,7 @@
 
 CmdGoToPositionV::CmdGoToPositionV(TurntableState* state, uint16_t position, uint8_t speed) : BaseTurntableCommand(state) {
     this->state = state;
-    subCommands = std::make_shared<SubCmdGoToPositionV>(state, position, speed);
+    subCommands = std::make_shared<SubCmdGoToPositionV>(state, position, speed, true);
 }
 
 CommandId CmdGoToPositionV::getCommandId() {

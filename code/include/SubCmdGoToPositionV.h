@@ -9,7 +9,7 @@ class TurntableState;
 
 class SubCmdGoToPositionV : public BaseLiftSubCommand {
     public:
-        SubCmdGoToPositionV(TurntableState* state, uint16_t position, uint8_t speed);
+        SubCmdGoToPositionV(TurntableState* state, uint16_t position, uint8_t speed, bool skipLiftCheck);
         SubCommandId getSubCommandId() override;
 
     private:
@@ -17,6 +17,7 @@ class SubCmdGoToPositionV : public BaseLiftSubCommand {
         bool reachedLimit = false;
         unsigned long timeLimitReached = 0;
         VerticalDirection direction;
+        bool skipLiftCheck = false;
 
         void doInitialize() override;
         CommandResult doExecute() override;

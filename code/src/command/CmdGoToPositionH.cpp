@@ -25,7 +25,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
     }
 
     // Lift up
-    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED)
+    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false)
 
         // Engage the clutch
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
@@ -51,7 +51,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_shared<SubCmdDelay>(state, 1000))
 
         // Set down
-        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, setDownSpeed))
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, setDownSpeed, false))
 
         // Disengage the clutch
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state));
