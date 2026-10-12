@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <SubCmdCalibrateAzimuth.h>
+#include <SubCmdCollectHorizontalPosition.h>
 #include <CmdCalibration.h>
 #include <SubCommandId.h>
 #include <CommandResult.h>
@@ -11,7 +11,7 @@
 #include <StmShiftPin.h>
 #include <SubCommandId.h>
 
-SubCmdCalibrateAzimuth::SubCmdCalibrateAzimuth(TurntableState* state, bool waitForUserInput, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination) : 
+SubCmdCollectHorizontalPosition::SubCmdCollectHorizontalPosition(TurntableState* state, bool waitForUserInput, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination) : 
     BaseTurntableSubCommand(state),
     destination(destination) {
 
@@ -20,17 +20,17 @@ SubCmdCalibrateAzimuth::SubCmdCalibrateAzimuth(TurntableState* state, bool waitF
     this->pinToFlash = pinToFlash;
 }
 
-SubCommandId SubCmdCalibrateAzimuth::getSubCommandId() {
+SubCommandId SubCmdCollectHorizontalPosition::getSubCommandId() {
     return subCommandId;
 }
 
-void SubCmdCalibrateAzimuth::doInitialize() {
+void SubCmdCollectHorizontalPosition::doInitialize() {
     if(waitForUserInput) {
         state->outputShift.setValues(0);
     }
 }
 
-CommandResult SubCmdCalibrateAzimuth::doExecute() {
+CommandResult SubCmdCollectHorizontalPosition::doExecute() {
     if(!waitForUserInput) {
         updateDestination();
         return CommandResult::Success;
@@ -53,10 +53,10 @@ CommandResult SubCmdCalibrateAzimuth::doExecute() {
     }
 }
 
-void SubCmdCalibrateAzimuth::doUninitialize() {
+void SubCmdCollectHorizontalPosition::doUninitialize() {
     // do nothing
 }
 
-void SubCmdCalibrateAzimuth::updateDestination() {
+void SubCmdCollectHorizontalPosition::updateDestination() {
     destination = state->azEncoder.getNormalizedPosition();
 }

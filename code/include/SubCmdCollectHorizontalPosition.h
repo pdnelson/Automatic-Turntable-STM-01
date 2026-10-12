@@ -4,13 +4,13 @@
 #include <RecordSize.h>
 #include <StmShiftPin.h>
 
-#ifndef SubCmdCalibrateAzimuth_h
-#define SubCmdCalibrateAzimuth_h
+#ifndef SubCmdCollectHorizontalPosition_h
+#define SubCmdCollectHorizontalPosition_h
 class TurntableState;
 
-class SubCmdCalibrateAzimuth : public BaseTurntableSubCommand {
+class SubCmdCollectHorizontalPosition : public BaseTurntableSubCommand {
     public:
-        SubCmdCalibrateAzimuth(TurntableState* state, bool waitForUserInput, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination);
+        SubCmdCollectHorizontalPosition(TurntableState* state, bool waitForUserInput, SubCommandId subCommandId, StmShiftPin pinToFlash, uint16_t &destination);
         SubCommandId getSubCommandId() override;
 
     private:

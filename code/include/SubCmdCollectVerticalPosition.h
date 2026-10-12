@@ -1,17 +1,15 @@
 #include <Arduino.h>
 #include <CommandResult.h>
 #include <SubCommandId.h>
-#include <CmdCalibration.h>
-#include <RecordSize.h>
 #include <BaseTurntableSubCommand.h>
 
-#ifndef SubCmdCalibrateHorizontalPolarity_h
-#define SubCmdCalibrateHorizontalPolarity_h
+#ifndef SubCmdCollectVerticalPosition_h
+#define SubCmdCollectVerticalPosition_h
 class TurntableState;
 
-class SubCmdCalibrateHorizontalPolarity : public BaseTurntableSubCommand {
+class SubCmdCollectVerticalPosition : public BaseTurntableSubCommand {
     public:
-        SubCmdCalibrateHorizontalPolarity(TurntableState* state, uint16_t &destination);
+        SubCmdCollectVerticalPosition(TurntableState* state, uint16_t &destination);
         SubCommandId getSubCommandId() override;
 
     private:
