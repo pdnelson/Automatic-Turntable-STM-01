@@ -8,10 +8,25 @@
 
 BaseHorizontalMovementSubCommand::BaseHorizontalMovementSubCommand(TurntableState* state, uint8_t speed): BaseTurntableSubCommand(state) {
     this->speed = speed;
+
+    stepsBetweenPolling = (STEPS_BETWEEN_POLLING_REF * speed) / SPEED_REF;
+    ticksPerPoll = (TICKS_PER_POLL_REF * speed) / SPEED_REF;
 }
 
 bool BaseHorizontalMovementSubCommand::checkStall(AzimuthDirection direction) {
-    // to do: stall detect. this runs once every step
+    stallCounter++;
+
+    if(stallCounter > stepsBetweenPolling) {
+        uint16_t stepsSinceLastPoll = calculateTravelDistance(lastPosition);
+
+        if(stepsSinceLastPoll < ticksPerPoll) {
+            return true;
+        }
+
+        stallCounter = 0;
+        lastPosition = state->azEncoder.getNormalizedPosition();
+    }
+
     return false;
 }
 

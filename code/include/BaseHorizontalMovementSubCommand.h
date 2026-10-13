@@ -5,6 +5,11 @@
 #define BaseHorizontalMovementSubCommand_h
 class TurntableState;
 
+// to do: scale these values based on speed. these were arrived at based on the speed 25
+#define STEPS_BETWEEN_POLLING_REF 850
+#define TICKS_PER_POLL_REF 600
+#define SPEED_REF 25
+
 class BaseHorizontalMovementSubCommand : public BaseTurntableSubCommand {
     public:
         BaseHorizontalMovementSubCommand(TurntableState* state, uint8_t speed);
@@ -18,8 +23,10 @@ class BaseHorizontalMovementSubCommand : public BaseTurntableSubCommand {
         void baseUninitialize();
 
     private:
-        int16_t stallCounter = 0;
-        int16_t stallPosition = 0;
+        uint16_t stallCounter = 0;
+        uint16_t lastPosition = 0;
+        uint16_t stepsBetweenPolling = 0;
+        uint16_t ticksPerPoll = 0;
 };
 
 #endif
