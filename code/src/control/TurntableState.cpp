@@ -264,7 +264,8 @@ void TurntableState::playOrReturn() {
             // to do: implement automatic size routine
         }
     } else {
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 15, 25);
+        // Subtract 10 from home position so we don't hit into the home mount
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home + 10, 15, 25);
     }
 }
 
