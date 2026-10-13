@@ -11,7 +11,7 @@
 #include <Constants.h>
 #include <memory>
 #include <SubCmdDelay.h>
-#include <SubCmdSetMovementVertical.h>
+#include <SubCmdErrorCorrectHPosition.h>
 
 CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed) : BaseTurntableCommand(state) {
     this->state = state;
@@ -30,32 +30,26 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         // Engage the clutch
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state)) // Disengage first so position is known
         ->next(std::make_shared<SubCmdEngageAzClutch>(state))
+
+        // Delay, just in case the clutch moved the tonearm at all
+        ->next(std::make_shared<SubCmdDelay>(state, 25))
         
         // Move to specific position
-        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, speed, 800))
+        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, speed))
+        ->next(std::make_shared<SubCmdDelay>(state, 100))
 
         // Error correction
+        ->next(std::make_shared<SubCmdErrorCorrectHPosition>(state, position, tolerance, 1))
         ->next(std::make_shared<SubCmdDelay>(state, 100))
-        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        ->next(std::make_shared<SubCmdDelay>(state, 100))
-        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        ->next(std::make_shared<SubCmdDelay>(state, 100))
-        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        ->next(std::make_shared<SubCmdDelay>(state, 100))
-        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        ->next(std::make_shared<SubCmdDelay>(state, 100))
-        ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, 0.5, 0))
-        
-        // Set to vertical, with a delay, so we don't accidentally send any steps to the H stepper
+        ->next(std::make_shared<SubCmdErrorCorrectHPosition>(state, position, tolerance, 1))
         ->next(std::make_shared<SubCmdDelay>(state, 25))
-        ->next(std::make_shared<SubCmdSetMovementVertical>(state))
-        ->next(std::make_shared<SubCmdDelay>(state, 1000))
 
         // Set down
         ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, setDownSpeed, false))
-
+        
         // Disengage the clutch
         ->next(std::make_shared<SubCmdDisengageAzClutch>(state));
+;
 }
 
 CommandId CmdGoToPositionH::getCommandId() {

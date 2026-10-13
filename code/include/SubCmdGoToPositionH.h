@@ -8,14 +8,15 @@ class TurntableState;
 
 class SubCmdGoToPositionH : public BaseTurntableSubCommand {
     public:
-        SubCmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed, uint16_t rampDownTicks);
+        SubCmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed);
         SubCommandId getSubCommandId() override;
 
     private:
         uint8_t speed = 0;
         uint16_t destinationEncoderPosition = 0;
         uint8_t encoderTolerance = 0;
-        uint16_t rampDownEncoderTicks = 0;
+        uint16_t stepCount = 0;
+        uint16_t stepsToTake = 0;
 
         void doInitialize() override;
         CommandResult doExecute() override;

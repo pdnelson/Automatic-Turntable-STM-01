@@ -10,6 +10,8 @@
 #define PULSE_WIDTH_MICROS 25
 #define STEPS_PER_REVOLUTION 6400 // 1/16 step
 
+#define PROFILE_STEPS_MAX 350
+
 class StmHStepper {
     public:
         StmHStepper(StmEncoder &hEncoder, Pin enablePin, Pin sleepPin, Pin stepPin, Pin directionPin);

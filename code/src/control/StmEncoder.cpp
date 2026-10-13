@@ -14,7 +14,7 @@ StmEncoder::StmEncoder(uint8_t sda, uint8_t scl) {
 }
 
 void StmEncoder::monitor(unsigned long clockMicros) {
-    if(clockMicros - dataCollectCounter > ENCODER_DATA_POINT_INTERVAL_MICROS) {
+    if(clockMicros - dataCollectCounter > pollInterval) {
         dataCollectCounter = clockMicros;
         logData();
         computeAverage();
@@ -122,4 +122,12 @@ void StmEncoder::setZero(uint16_t offset) {
     Wire2.write(ENCODER_ZERO_LSB_ADDR);
     Wire2.write((uint8_t)(offset & 0x3F));
     Wire2.endTransmission();
+}
+
+void StmEncoder::setPollSpeed(EncoderPollSpeed newSpeed) {
+    switch(newSpeed) {
+        case EncoderPollSpeed::PollNormal: pollInterval = ENCODER_DATA_POINT_INTERVAL_MICROS_NORMAL; break;
+        case EncoderPollSpeed::PollHErrorCorrect: pollInterval = ENCODER_DATA_POINT_INTERVAL_MICROS_H_ERROR_CORRECT; break;
+        default: pollInterval = ENCODER_DATA_POINT_INTERVAL_MICROS_NORMAL;
+    }
 }

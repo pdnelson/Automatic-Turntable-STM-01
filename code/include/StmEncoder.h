@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <StmPolarity.h>
+#include <EncoderPollSpeed.h>
 
 #ifndef STMENCODER_H
 #define STMENCODER_H
@@ -11,7 +12,8 @@
 #define ENCODER_ZERO_LSB_ADDR 0x17
 
 #define ENCODER_AVG_RESOLUTION 20
-#define ENCODER_DATA_POINT_INTERVAL_MICROS 25000
+#define ENCODER_DATA_POINT_INTERVAL_MICROS_NORMAL 25000
+#define ENCODER_DATA_POINT_INTERVAL_MICROS_H_ERROR_CORRECT 1000
 
 #define H_ENCODER_MAX_VALUE 16384
 #define V_ENCODER_MAX_VALUE 1023
@@ -29,6 +31,8 @@ class StmEncoder {
          * Sets the current position to "zero"
          */
         void setZero(uint16_t offset);
+
+        void setPollSpeed(EncoderPollSpeed newSpeed);
     private:
         void logData();
         void computeAverage();
@@ -37,6 +41,7 @@ class StmEncoder {
         uint16_t rollingDataAvg = 0;
         uint16_t data[ENCODER_AVG_RESOLUTION] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         StmPolarity polarity = StmPolarity::Normal;
+        uint32_t pollInterval = ENCODER_DATA_POINT_INTERVAL_MICROS_NORMAL;
 };
 
 #endif

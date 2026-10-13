@@ -22,9 +22,10 @@ class BaseTurntableSubCommand : public std::enable_shared_from_this<BaseTurntabl
         std::shared_ptr<BaseTurntableSubCommand> next(std::shared_ptr<BaseTurntableSubCommand> nextSubCommand);
 
         bool uninitialized = false;
+        CommandResult result = CommandResult::Running;
     private:
         std::shared_ptr<BaseTurntableSubCommand>& nextEmptySubCommand(std::shared_ptr<BaseTurntableSubCommand>& nextSubCommand);
-        CommandResult result = CommandResult::Running;
+        
         virtual CommandResult doExecute() = 0;
         virtual void doInitialize() = 0;
         virtual void doUninitialize() = 0;

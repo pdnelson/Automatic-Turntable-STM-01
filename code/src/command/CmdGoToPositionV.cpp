@@ -8,7 +8,6 @@
 #include <Constants.h>
 #include <memory>
 #include <SubCmdDelay.h>
-#include <SubCmdSetMovementVertical.h>
 
 CmdGoToPositionV::CmdGoToPositionV(TurntableState* state, uint16_t position, uint8_t speed) : BaseTurntableCommand(state) {
     this->state = state;

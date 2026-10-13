@@ -39,7 +39,10 @@ void StmHStepper::setMovementProfile(AzimuthDirection direction, float speed, ui
     setDirection(direction);
     destinationMovementSteps = steps;
     currentMovementSteps = 0;
-    profileSteps = (350 * steps) / 1500;
+    profileSteps = (PROFILE_STEPS_MAX * steps) / 1500;
+    if(profileSteps > PROFILE_STEPS_MAX) {
+        profileSteps = PROFILE_STEPS_MAX;
+    }
     currSpeedBetweenStepsMicros = topSpeedTimeBetweenStepsMicros + profileSteps;
 }
 
