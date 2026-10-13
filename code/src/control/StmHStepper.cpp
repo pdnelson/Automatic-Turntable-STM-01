@@ -54,7 +54,7 @@ bool StmHStepper::stepTrapezoidally(unsigned long clockMicros) {
         
         // Ramp down
         else if(currentMovementSteps + profileSteps > destinationMovementSteps) {
-            currSpeedBetweenStepsMicros += 2;
+            currSpeedBetweenStepsMicros += 4;
         }
 
         currentMovementSteps++;
