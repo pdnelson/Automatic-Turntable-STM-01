@@ -22,6 +22,10 @@ void SubCmdMoveNStepsH::doInitialize() {
 CommandResult SubCmdMoveNStepsH::doExecute() {
     if(state->horizontalStepper.stepTrapezoidally(state->clockMicros)) {
         stepCount++;
+
+        if(checkStall(direction)) {
+            return stallResult(direction);
+        }
     }
 
     if(stepCount == steps) {

@@ -10,8 +10,8 @@ BaseHorizontalMovementSubCommand::BaseHorizontalMovementSubCommand(TurntableStat
     this->speed = speed;
 }
 
-bool BaseHorizontalMovementSubCommand::checkStall(AzimuthDirection direction, int currentPosition) {
-
+bool BaseHorizontalMovementSubCommand::checkStall(AzimuthDirection direction) {
+    // to do: stall detect. this runs once every step
     return false;
 }
 
@@ -27,6 +27,14 @@ AzimuthDirection BaseHorizontalMovementSubCommand::calculateDirection(uint16_t d
 
 uint16_t BaseHorizontalMovementSubCommand::calculateTravelDistance(uint16_t destination) {
     return abs((int32_t)destination - (int32_t)state->azEncoder.getNormalizedPosition());
+}
+
+CommandResult BaseHorizontalMovementSubCommand::stallResult(AzimuthDirection direction) {
+    if(direction == AzimuthDirection::Clockwise) {
+        return CommandResult::StalledMovingClockwise;
+    } else {
+        return CommandResult::StalledMovingCounterClockwise;
+    }
 }
 
 void BaseHorizontalMovementSubCommand::baseUninitialize() {

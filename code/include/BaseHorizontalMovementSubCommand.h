@@ -11,9 +11,10 @@ class BaseHorizontalMovementSubCommand : public BaseTurntableSubCommand {
 
         uint8_t speed = 0;
 
-        bool checkStall(AzimuthDirection direction, int currentPosition);
+        bool checkStall(AzimuthDirection direction);
         AzimuthDirection calculateDirection(uint16_t destination);
         uint16_t calculateTravelDistance(uint16_t destination);
+        CommandResult stallResult(AzimuthDirection direction);
         void baseUninitialize();
 
     private:

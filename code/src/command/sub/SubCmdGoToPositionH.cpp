@@ -17,7 +17,7 @@ SubCmdGoToPositionH::SubCmdGoToPositionH(TurntableState* state, uint16_t positio
 void SubCmdGoToPositionH::doInitialize() {
 
     // If the destination position is less than current, we are going CCW. Otherwise, go CW.
-    AzimuthDirection direction = calculateDirection(destinationEncoderPosition);
+    direction = calculateDirection(destinationEncoderPosition);
 
     // Calculate the steps to take relative to some values I determined through trial & error.
     // Approximately 1508 encoder ticks are traveled when 2000 steps are taken, which can be 
@@ -32,6 +32,10 @@ void SubCmdGoToPositionH::doInitialize() {
 CommandResult SubCmdGoToPositionH::doExecute() {
     if(state->horizontalStepper.stepTrapezoidally(state->clockMicros)) {
         stepCount++;
+
+        if(checkStall(direction)) {
+            return stallResult(direction);
+        }
     }
 
     if(stepCount == stepsToTake) {

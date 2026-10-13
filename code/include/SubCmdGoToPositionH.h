@@ -13,6 +13,7 @@ class SubCmdGoToPositionH : public BaseHorizontalMovementSubCommand {
         SubCommandId getSubCommandId() override;
 
     private:
+        AzimuthDirection direction = AzimuthDirection::Clockwise;
         uint16_t destinationEncoderPosition = 0;
         uint8_t encoderTolerance = 0;
         uint16_t stepCount = 0;

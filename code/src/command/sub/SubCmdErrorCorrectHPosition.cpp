@@ -31,7 +31,9 @@ void SubCmdErrorCorrectHPosition::doInitialize() {
 }
 
 CommandResult SubCmdErrorCorrectHPosition::doExecute() {
-    state->horizontalStepper.stepBlind(state->clockMicros);
+    if(state->horizontalStepper.stepBlind(state->clockMicros) && checkStall(direction)) {
+        return stallResult(direction);
+    }
 
     if(
         (direction == AzimuthDirection::Clockwise && state->azEncoder.getNormalizedPosition() >= destinationEncoderPosition) ||
