@@ -6,10 +6,9 @@
 #include <Constants.h>
 #include <TurntableState.h>
 #include <SubCommandId.h>
+#include <BaseHorizontalMovementSubCommand.h>
 
-SubCmdMoveNStepsH::SubCmdMoveNStepsH(TurntableState* state, int16_t steps, uint8_t speed, bool releaseCurrentAfterMovement) : BaseTurntableSubCommand(state) {
-    this->state = state;
-    this->speed = speed;
+SubCmdMoveNStepsH::SubCmdMoveNStepsH(TurntableState* state, int16_t steps, uint8_t speed, bool releaseCurrentAfterMovement) : BaseHorizontalMovementSubCommand(state, speed) {
     this->steps = abs(steps);
     stepCount = 0;
     this->releaseCurrentAfterMovement = releaseCurrentAfterMovement;
@@ -33,7 +32,7 @@ CommandResult SubCmdMoveNStepsH::doExecute() {
 }
 
 void SubCmdMoveNStepsH::doUninitialize() {
-    // Do nothing
+    baseUninitialize();
 }
 
 SubCommandId SubCmdMoveNStepsH::getSubCommandId() {

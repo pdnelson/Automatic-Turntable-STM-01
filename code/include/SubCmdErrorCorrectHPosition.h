@@ -2,18 +2,18 @@
 #include <BaseTurntableSubCommand.h>
 #include <SubCommandId.h>
 #include <AzimuthDirection.h>
+#include <BaseHorizontalMovementSubCommand.h>
 
 #ifndef SubCmdErrorCorrectHPosition_h
 #define SubCmdErrorCorrectHPosition_h
 class TurntableState;
 
-class SubCmdErrorCorrectHPosition : public BaseTurntableSubCommand {
+class SubCmdErrorCorrectHPosition : public BaseHorizontalMovementSubCommand {
     public:
         SubCmdErrorCorrectHPosition(TurntableState* state, uint16_t position, uint8_t tolerance, float speed);
         SubCommandId getSubCommandId() override;
 
     private:
-        uint8_t speed = 0;
         uint16_t destinationEncoderPosition = 0;
         uint8_t encoderTolerance = 0;
         uint16_t stepCount = 0;

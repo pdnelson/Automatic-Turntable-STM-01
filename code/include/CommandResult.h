@@ -14,7 +14,10 @@ enum CommandResult {
     ClutchFailedToDisengage = 6,
 
     FailedToSetVerticalPolarity = 7,
-    FailedToSetHorizontalPolarity = 8
+    FailedToSetHorizontalPolarity = 8,
+
+    StalledMovingClockwise = 9,
+    StalledMovingCounterClockwise = 10
 };
 
 #endif

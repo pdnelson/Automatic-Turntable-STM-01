@@ -1,4 +1,5 @@
 #include <SubCmdErrorCorrectHPosition.h>
+#include <BaseHorizontalMovementSubCommand.h>
 #include <Arduino.h>
 #include <Pin.h>
 #include <CommandResult.h>
@@ -9,26 +10,21 @@
 #include <CommandResult.h>
 #include <EncoderPollSpeed.h>
 
-SubCmdErrorCorrectHPosition::SubCmdErrorCorrectHPosition(TurntableState* state, uint16_t position, uint8_t tolerance, float speed) : BaseTurntableSubCommand(state) {
-    this->state = state;
-    this->speed = speed;
+SubCmdErrorCorrectHPosition::SubCmdErrorCorrectHPosition(TurntableState* state, uint16_t position, uint8_t tolerance, float speed) : BaseHorizontalMovementSubCommand(state, speed) {
     destinationEncoderPosition = position;
     encoderTolerance = tolerance;
     direction = AzimuthDirection::Clockwise; // This might get overwritten later depending on actual direction
 }
 
 void SubCmdErrorCorrectHPosition::doInitialize() {
-    uint16_t distanceFromDestination = abs((int32_t)destinationEncoderPosition - (int32_t)state->azEncoder.getNormalizedPosition());
+    uint16_t distanceFromDestination = calculateTravelDistance(destinationEncoderPosition);
 
     // If we are already within tolerance, ignore this command entirely
     if(distanceFromDestination <= encoderTolerance) {
         result = CommandResult::Success;
     }
 
-    // Otherwise set up the horizontal stepper's profile to do some non-profiled stepping
-    if(destinationEncoderPosition < state->azEncoder.getNormalizedPosition()) {
-        direction = AzimuthDirection::CounterClockwise;
-    }
+    direction = calculateDirection(destinationEncoderPosition);
 
     state->horizontalStepper.setDirection(direction);
     state->horizontalStepper.setSpeed(speed);
@@ -48,7 +44,7 @@ CommandResult SubCmdErrorCorrectHPosition::doExecute() {
 }
 
 void SubCmdErrorCorrectHPosition::doUninitialize() {
-    state->verticalStepper.releaseMotorCurrent();
+    baseUninitialize();
 }
 
 SubCommandId SubCmdErrorCorrectHPosition::getSubCommandId() {
