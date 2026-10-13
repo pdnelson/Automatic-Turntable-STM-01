@@ -10,9 +10,6 @@
 #define PULSE_WIDTH_MICROS 25
 #define STEPS_PER_REVOLUTION 6400 // 1/16 step
 
-#define TRAPEZOIDAL_PROFILE_STEPS 75
-#define TRAPEZOIDAL_PROFILE_INTERVAL 150
-
 class StmHStepper {
     public:
         StmHStepper(StmEncoder &hEncoder, Pin enablePin, Pin sleepPin, Pin stepPin, Pin directionPin);
@@ -41,6 +38,9 @@ class StmHStepper {
         unsigned long currSpeedBetweenStepsMicros = 0;
         uint16_t destinationMovementSteps = 0;
         uint16_t currentMovementSteps = 0;
+
+        uint16_t profileSteps = 0;
+        uint16_t rampDownInterval = 0;
 
 
         void performStep();
