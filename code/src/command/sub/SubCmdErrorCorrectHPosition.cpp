@@ -32,9 +32,6 @@ void SubCmdErrorCorrectHPosition::doInitialize() {
 
     state->horizontalStepper.setDirection(direction);
     state->horizontalStepper.setSpeed(speed);
-
-    // Need to increase the motor poll interval so we can more-accurately step to the current position
-    state->azEncoder.setPollSpeed(EncoderPollSpeed::PollHErrorCorrect);
 }
 
 CommandResult SubCmdErrorCorrectHPosition::doExecute() {
@@ -52,9 +49,6 @@ CommandResult SubCmdErrorCorrectHPosition::doExecute() {
 
 void SubCmdErrorCorrectHPosition::doUninitialize() {
     state->verticalStepper.releaseMotorCurrent();
-
-    // Return the poll speed to normal, because polling is a highly intensive operation
-    state->azEncoder.setPollSpeed(EncoderPollSpeed::PollNormal);
 }
 
 SubCommandId SubCmdErrorCorrectHPosition::getSubCommandId() {

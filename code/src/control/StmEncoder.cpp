@@ -128,6 +128,7 @@ void StmEncoder::setPollSpeed(EncoderPollSpeed newSpeed) {
     switch(newSpeed) {
         case EncoderPollSpeed::PollNormal: pollInterval = ENCODER_DATA_POINT_INTERVAL_MICROS_NORMAL; break;
         case EncoderPollSpeed::PollHErrorCorrect: pollInterval = ENCODER_DATA_POINT_INTERVAL_MICROS_H_ERROR_CORRECT; break;
+        case EncoderPollSpeed::PollHMovementStandard: pollInterval = ENCODER_DATA_POINT_INTERVAL_MICROS_H_MOVEMENT_STANDARD; break;
         default: pollInterval = ENCODER_DATA_POINT_INTERVAL_MICROS_NORMAL;
     }
 }

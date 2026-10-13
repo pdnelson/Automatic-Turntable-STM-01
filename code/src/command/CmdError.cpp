@@ -7,6 +7,7 @@
 #include <TurntableState.h>
 #include <Constants.h>
 #include <memory>
+#include <EncoderPollSpeed.h>
 
 CmdError::CmdError(TurntableState* state, CommandResult error) : BaseTurntableCommand(state) {
     this->state = state;
@@ -19,6 +20,10 @@ CommandId CmdError::getCommandId() {
 }
 
 void CmdError::doInitialize() {
+    state->azEncoder.setPollSpeed(EncoderPollSpeed::PollNormal);
+    state->verticalStepper.releaseMotorCurrent();
+    state->horizontalStepper.sleep();
+    
     state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
     outputShiftValues = state->outputShift.getValues();

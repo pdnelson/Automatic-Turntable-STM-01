@@ -12,6 +12,8 @@
 #include <memory>
 #include <SubCmdDelay.h>
 #include <SubCmdErrorCorrectHPosition.h>
+#include <SubCmdSetEncoderPollSpeed.h>
+#include <EncoderPollSpeed.h>
 
 CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed) : BaseTurntableCommand(state) {
     this->state = state;
@@ -35,13 +37,17 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_shared<SubCmdDelay>(state, 25))
         
         // Move to specific position
+        ->next(std::make_shared<SubCmdSetEncoderPollSpeed>(state, EncoderPollSpeed::PollHMovementStandard))
         ->next(std::make_shared<SubCmdGoToPositionH>(state, position, tolerance, speed))
-        ->next(std::make_shared<SubCmdDelay>(state, 100))
 
-        // Error correction
+        // Error correction. During this step, we update the poll rate of the encoder to be insanely fast, so that
+        // we can be sure it's giving us the most accurate, up-to-date information.
+        ->next(std::make_shared<SubCmdSetEncoderPollSpeed>(state, EncoderPollSpeed::PollHErrorCorrect))
+        ->next(std::make_shared<SubCmdDelay>(state, 200))
         ->next(std::make_shared<SubCmdErrorCorrectHPosition>(state, position, tolerance, 1))
-        ->next(std::make_shared<SubCmdDelay>(state, 100))
+        ->next(std::make_shared<SubCmdDelay>(state, 200))
         ->next(std::make_shared<SubCmdErrorCorrectHPosition>(state, position, tolerance, 1))
+        ->next(std::make_shared<SubCmdSetEncoderPollSpeed>(state, EncoderPollSpeed::PollNormal))
         ->next(std::make_shared<SubCmdDelay>(state, 25))
 
         // Set down

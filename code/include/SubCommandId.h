@@ -24,7 +24,8 @@ enum SubCommandId {
     CalibrateHomeHeight = 18,
     CalibrateVerticalBounds = 19,
     ZeroAzEncoder = 20,
-    SetHMotorPolarity = 21
+    SetHMotorPolarity = 21,
+    SetPollSpeed = 22
 };
 
 #endif

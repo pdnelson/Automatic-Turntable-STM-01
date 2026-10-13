@@ -17,6 +17,7 @@
 #include <StmShiftPin.h>
 #include <CmdGoToPositionV.h>
 #include <CmdMoveNStepsV.h>
+#include <EncoderPollSpeed.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -359,4 +360,5 @@ void StmSerial::clearCommand() {
     state->outputShift.setValue(StmShiftPin::LedHeadshellIR, false);
     state->verticalStepper.releaseMotorCurrent();
     state->horizontalStepper.sleep();
+    state->azEncoder.setPollSpeed(EncoderPollSpeed::PollHErrorCorrect);
 }

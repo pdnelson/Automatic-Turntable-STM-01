@@ -3,7 +3,8 @@
 
 enum EncoderPollSpeed {
     PollNormal = 0,
-    PollHErrorCorrect = 1
+    PollHErrorCorrect = 1,
+    PollHMovementStandard = 2
 };
 
 #endif
