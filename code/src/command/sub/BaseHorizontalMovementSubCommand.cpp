@@ -9,6 +9,8 @@
 BaseHorizontalMovementSubCommand::BaseHorizontalMovementSubCommand(TurntableState* state, uint8_t speed): BaseTurntableSubCommand(state) {
     this->speed = speed;
 
+    // Need to dynatically set this based on the speed, the az encoder polls slowly, so we can't stall check too quickly, or the value
+    // may not have updated
     stepsBetweenPolling = (STEPS_BETWEEN_POLLING_REF * speed) / SPEED_REF;
     ticksPerPoll = (TICKS_PER_POLL_REF * speed) / SPEED_REF;
 }
