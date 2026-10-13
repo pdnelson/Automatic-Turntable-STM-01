@@ -259,12 +259,12 @@ void TurntableState::playOrReturn() {
         }
 
         if(position != 0) {
-            currentCommand = std::make_unique<CmdGoToPositionH>(this, position, 2, 3);
+            currentCommand = std::make_unique<CmdGoToPositionH>(this, position, 1, 15);
         } else {
-            // to do: implement automatic routine
+            // to do: implement automatic size routine
         }
     } else {
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 10, 14);
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 15, 25);
     }
 }
 
