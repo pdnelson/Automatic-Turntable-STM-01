@@ -4,8 +4,7 @@
 enum SubCommandId {
     NoSubCommand = 0,
     ErrorSubCommand = 1,
-    DisengageAzClutch = 2,
-    EngageAzClutch = 3,
+    SetAzClutch = 2,
     SubMoveNStepsH = 6,
     SubGoToPosition = 7,
     SubDelay = 8,
@@ -25,7 +24,9 @@ enum SubCommandId {
     CalibrateVerticalBounds = 19,
     ZeroAzEncoder = 20,
     SetHMotorPolarity = 21,
-    SetPollSpeed = 22
+    SetPollSpeed = 22,
+    MoveClutchToHome = 23,
+    MoveClutchToLimit = 24
 };
 
 #endif

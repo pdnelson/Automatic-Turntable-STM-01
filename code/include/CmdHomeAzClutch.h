@@ -2,18 +2,17 @@
 #include <CommandId.h>
 #include <BaseTurntableCommand.h>
 
-#ifndef CmdToggleClutch_h
-#define CmdToggleClutch_h
+#ifndef CmdHomeAzClutch_h
+#define CmdHomeAzClutch_h
 class TurntableState;
 
-class CmdToggleClutch : public BaseTurntableCommand {
+class CmdHomeAzClutch : public BaseTurntableCommand {
     public:
-        CmdToggleClutch(TurntableState* state);
+        CmdHomeAzClutch(TurntableState* state);
 
         CommandId getCommandId() override;
         void doInitialize() override;
         void doUninitialize() override;
-        CommandResult error;
 };
 
 #endif

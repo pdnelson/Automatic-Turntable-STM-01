@@ -21,6 +21,8 @@
 #include <StmPolarity.h>
 #include <CmdGoToPositionH.h>
 #include <CmdCalibration.h>
+#include <CmdSetAzClutch.h>
+#include <CmdHomeAzClutch.h>
 
 TurntableState::TurntableState() : 
     outputShift(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
@@ -56,6 +58,9 @@ TurntableState::TurntableState() :
     azEncoder.zeroOutEncoder(calibration.azEncoderOffset);
     horizontalStepper.setPolarity(calibration.hStepperPolarity);
     horizontalStepper.sleep();
+
+    // Home the horizontal clutch as soon as the turntable turns on, so it's ready to be used
+    homeHorizontalClutch();
 }
 
 void TurntableState::monitor() {
@@ -80,7 +85,14 @@ void TurntableState::executeCommand() {
             // When coming out of the calibration command, go home (if we aren't already there)
             if(currentCommand->getCommandId() == CommandId::Calibration && getHomeStatus() != HomeStatus::Homed) {
                 currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 10, 14);
-            } else {
+            } 
+            
+            // When coming out of an error, home the horizontal clutch. Errors shouldn't happen often, so this extra assurance that
+            // the clutch wasn't the cause of the error is beneficial (probably).
+            else if(currentCommand->getCommandId() == CommandId::Error) {
+                homeHorizontalClutch();
+            } 
+            else {
                 currentCommand = nullptr;
             }
         } else if(result > CommandResult::Success) {
@@ -329,4 +341,12 @@ void TurntableState::blinkCustomSpeedIndicator() {
         customSpeedIndicatorCounter = clockMicros;
         outputShift.setValue(StmShiftPin::LedAutoSpeed, !outputShift.getValue(StmShiftPin::LedAutoSpeed));
     }
+}
+
+void TurntableState::homeHorizontalClutch() {
+    currentCommand = std::make_unique<CmdHomeAzClutch>(this);
+}
+
+void TurntableState::setClutch(ClutchStatus newClutchStatus) {
+    currentCommand = std::make_unique<CmdSetAzClutch>(this, newClutchStatus);
 }

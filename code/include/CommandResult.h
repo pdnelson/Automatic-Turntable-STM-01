@@ -10,8 +10,7 @@ enum CommandResult {
     // The tonearm "pause" routine finished, though the tonearm's status is not lifted.
     NotLifted = 4,
 
-    ClutchFailedToEngage = 5,
-    ClutchFailedToDisengage = 6,
+    ClutchFailedToHome = 5,
 
     FailedToSetVerticalPolarity = 7,
     FailedToSetHorizontalPolarity = 8,

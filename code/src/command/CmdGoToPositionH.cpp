@@ -5,8 +5,7 @@
 #include <BaseTurntableCommand.h>
 #include <SubCmdGoToPositionH.h>
 #include <SubCmdGoToPositionV.h>
-#include <SubCmdEngageAzClutch.h>
-#include <SubCmdDisengageAzClutch.h>
+#include <SubCmdSetAzClutch.h>
 #include <TurntableState.h>
 #include <Constants.h>
 #include <memory>
@@ -14,6 +13,7 @@
 #include <SubCmdErrorCorrectHPosition.h>
 #include <SubCmdSetEncoderPollSpeed.h>
 #include <EncoderPollSpeed.h>
+#include <ClutchStatus.h>
 
 CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed) : BaseTurntableCommand(state) {
     this->state = state;
@@ -30,8 +30,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
     subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false)
 
         // Engage the clutch
-        ->next(std::make_shared<SubCmdDisengageAzClutch>(state)) // Disengage first so position is known
-        ->next(std::make_shared<SubCmdEngageAzClutch>(state))
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged))
 
         // Delay, just in case the clutch moved the tonearm at all
         ->next(std::make_shared<SubCmdDelay>(state, 25))
@@ -54,7 +53,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, setDownSpeed, false))
         
         // Disengage the clutch
-        ->next(std::make_shared<SubCmdDisengageAzClutch>(state));
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Disengaged))
 ;
 }
 

@@ -1,4 +1,4 @@
-#include <SubCmdEngageAzClutch.h>
+#include <SubCmdMoveClutchToHome.h>
 #include <Arduino.h>
 #include <ClutchDirection.h>
 #include <ClutchStatus.h>
@@ -8,19 +8,19 @@
 #include <Constants.h>
 #include <SubCommandId.h>
 
-SubCmdEngageAzClutch::SubCmdEngageAzClutch(TurntableState* state) : BaseTurntableSubCommand(state) {
+SubCmdMoveClutchToHome::SubCmdMoveClutchToHome(TurntableState* state) : BaseTurntableSubCommand(state) {
     this->state = state;
     stepsBeforeStatusChange = 0;
     stepsSinceStatusChange = 0;
 }
 
-void SubCmdEngageAzClutch::doInitialize() {
+void SubCmdMoveClutchToHome::doInitialize() {
     state->clutchStepper.setSpeed(CLUTCH_SPEED);
     state->clutchStepper.setDirection(ClutchDirection::Engage);
     state->horizontalStepper.wake();
 }
 
-CommandResult SubCmdEngageAzClutch::doExecute() {
+CommandResult SubCmdMoveClutchToHome::doExecute() {
     if(state->clutchStepper.step(state->clockMicros)) {
         if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchStatus::Engaged) {
             stepsSinceStatusChange++;
@@ -28,10 +28,10 @@ CommandResult SubCmdEngageAzClutch::doExecute() {
             stepsBeforeStatusChange++;
         }
 
-        if(stepsSinceStatusChange >= CLUTCH_ENGAGE_STEPS) {
+        if(stepsSinceStatusChange >= CLUTCH_HOME_STEPS) {
             return CommandResult::Success;
         } else if(stepsBeforeStatusChange > CLUTCH_TIMEOUT_STEPS) {
-            return CommandResult::ClutchFailedToEngage;
+            return CommandResult::ClutchFailedToHome;
         } else {
             return CommandResult::Running;
         }
@@ -40,10 +40,10 @@ CommandResult SubCmdEngageAzClutch::doExecute() {
     }
 }
 
-void SubCmdEngageAzClutch::doUninitialize() {
+void SubCmdMoveClutchToHome::doUninitialize() {
     state->clutchStepper.releaseMotorCurrent();
 }
 
-SubCommandId SubCmdEngageAzClutch::getSubCommandId() {
-    return SubCommandId::EngageAzClutch;
+SubCommandId SubCmdMoveClutchToHome::getSubCommandId() {
+    return SubCommandId::MoveClutchToHome;
 }

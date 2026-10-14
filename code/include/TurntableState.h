@@ -42,6 +42,9 @@ class TurntableState {
         TurntableSpeed selectedSpeed = TurntableSpeed::RpmAuto;
         unsigned long customSpeedIndicatorCounter = 0;
 
+        // Various status
+        ClutchStatus clutchStatus = ClutchStatus::Disengaged;
+
         void monitor();
         void executeCommand();
         void rotateSpeed();
@@ -59,6 +62,8 @@ class TurntableState {
         float getTargetSpeed();
         uint16_t getVerticalEncoderPos();
         void saveSettings();
+        void homeHorizontalClutch();
+        void setClutch(ClutchStatus newClutchStatus);
 
     private:
         unsigned long liftDebounce = 0;

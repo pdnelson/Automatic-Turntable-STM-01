@@ -14,7 +14,9 @@ enum CommandId {
     StepHMotor =    9,
     GoToPositionH = 10,
     GoToPositionV = 11,
-    MoveNStepsV =   12
+    MoveNStepsV =   12,
+    HomeClutch =    13,
+    SetClutch =     14
 };
 
 #endif

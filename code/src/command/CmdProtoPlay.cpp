@@ -6,8 +6,7 @@
 #include <BaseTurntableCommand.h>
 #include <BaseTurntableSubCommand.h>
 #include <SubCmdGoToPositionV.h>
-#include <SubCmdEngageAzClutch.h>
-#include <SubCmdDisengageAzClutch.h>
+#include <SubCmdSetAzClutch.h>
 #include <SubCmdMoveNStepsH.h>
 #include <TurntableState.h>
 #include <Constants.h>
@@ -21,8 +20,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
     subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false)
 
         // Engage the clutch
-        ->next(std::make_shared<SubCmdDisengageAzClutch>(state)) // Disengage first so position is known
-        ->next(std::make_shared<SubCmdEngageAzClutch>(state))
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged))
         
         // Move CW or CCW
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, steps, azimuthSpeed, true))
@@ -34,7 +32,7 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
         ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, SET_DOWN_SLOWLY, false))
         
         // Disengage the clutch
-        ->next(std::make_shared<SubCmdDisengageAzClutch>(state));
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Disengaged));
 }
 
 CommandId CmdProtoPlay::getCommandId() {

@@ -19,8 +19,8 @@
 #include <SubCmdCalibrateVerticalBounds.h>
 #include <SubCmdGoToPositionV.h>
 #include <StmPolarity.h>
-#include <SubCmdEngageAzClutch.h>
-#include <SubCmdDisengageAzClutch.h>
+#include <SubCmdSetAzClutch.h>
+#include <ClutchStatus.h>
 #include <SubCmdZeroAzEncoder.h>
 #include <SubCmdSetHMotorPolarity.h>
 
@@ -52,8 +52,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
 
         // Calibrate horizontal motor polarity
-        ->next(std::make_shared<SubCmdDisengageAzClutch>(state)) // First disengage the clutch (even if it's already disengaged) just in case it was in an unusual position before
-        ->next(std::make_shared<SubCmdEngageAzClutch>(state))
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged))
         ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, false, SubCommandId::SetHMotorPolarity, StmShiftPin::Led33Rpm, referencePoint1))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, 1000, 30, true))
         ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
@@ -94,7 +93,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, -2550, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_QUICKLY, false))
-        ->next(std::make_shared<SubCmdDisengageAzClutch>(state))
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Disengaged))
         ->next(std::make_shared<SubCmdToggleLight>(state, StmShiftPin::LedPlayStatus, false))
 
         // Now the user can calibrate the remaining record size positions

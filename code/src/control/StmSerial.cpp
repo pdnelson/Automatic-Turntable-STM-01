@@ -11,13 +11,13 @@
 #include <BaseTurntableCommand.h>
 #include <CommandId.h>
 #include <SubCommandId.h>
-#include <CmdToggleClutch.h>
 #include <CmdStepHorizontally.h>
 #include <CmdGoToPositionH.h>
 #include <StmShiftPin.h>
 #include <CmdGoToPositionV.h>
 #include <CmdMoveNStepsV.h>
 #include <EncoderPollSpeed.h>
+#include <SubCommandId.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -70,6 +70,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionCalibrate:          state->beginCalibrationRoutine();                   break;
                 case ExternalCommand::ActionGoToPositionV:      processGoToPositionV(stream);                       break;
                 case ExternalCommand::ActionMoveNStepsV:        processMoveNStepsV(stream);                         break;
+                case ExternalCommand::ActionHomeClutch:         state->homeHorizontalClutch();                      break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
@@ -92,7 +93,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::GetUpTime:                processGetUpTime(stream);                           break;
                 case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed);                 break;
                 case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream);                      break;
-                case ExternalCommand::GetSizeSetting:           stream.write(state->settings.size);                  break;
+                case ExternalCommand::GetSizeSetting:           stream.write(state->settings.size);                 break;
                 case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                break;
                 case ExternalCommand::GetCalibrationValues:     processGetCalibrationValues(stream);                break;
             }
@@ -118,7 +119,13 @@ void StmSerial::processProtoPlay(Stream& stream) {
 }
 
 void StmSerial::processToggleClutch() {
-    state->currentCommand = std::make_unique<CmdToggleClutch>(state);
+    ClutchStatus newStatus = ClutchStatus::Disengaged;
+
+    if(state->clutchStatus == newStatus) {
+        newStatus = ClutchStatus::Engaged;
+    }
+
+    state->setClutch(newStatus);
 }
 
 void StmSerial::processStepHorizontally(Stream& stream) {
@@ -349,7 +356,6 @@ int16_t StmSerial::readInt16(Stream& stream) {
 }
 
 void StmSerial::clearCommand() {
-    state->currentCommand = nullptr;
     state->updateSize(state->settings.size);
     state->updateSpeed(state->selectedSpeed);
     state->outputShift.setValue(StmShiftPin::LedPower, true);
@@ -361,4 +367,14 @@ void StmSerial::clearCommand() {
     state->verticalStepper.releaseMotorCurrent();
     state->horizontalStepper.sleep();
     state->azEncoder.setPollSpeed(EncoderPollSpeed::PollHErrorCorrect);
+
+    // If the current command is a clutch one, just replace the current command with re-homing the clutch. 
+    if(state->currentCommand != nullptr && state->currentCommand->currentSubCommandId() == SubCommandId::SetAzClutch) {
+        state->homeHorizontalClutch();
+    } 
+
+    // Otherwise, we're free to clear everything out.
+    else {
+        state->setClutch(ClutchStatus::Disengaged);
+    }
 }

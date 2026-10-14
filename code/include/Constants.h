@@ -74,8 +74,10 @@
 // The RPM at which the clutch stepper spins.
 #define CLUTCH_SPEED 14
 
+#define CLUTCH_ENGAGE_DISENGAGE_STEPS 200
+
 // The number of steps for the clutch to engage, after the limit switch is released.
-#define CLUTCH_ENGAGE_STEPS 500
+#define CLUTCH_HOME_STEPS (500 - CLUTCH_ENGAGE_DISENGAGE_STEPS)
 
 // If the clutch switch doesn't release after this number of steps, the clutch movement failed.
 // Similarly, if the clutch switch doesn't press after this value + CLUTCH_ENGAGE_STEPS, the clutch movement failed.
