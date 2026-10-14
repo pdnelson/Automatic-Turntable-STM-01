@@ -7,6 +7,8 @@
 #include <SubCmdGoToPositionV.h>
 #include <TurntableState.h>
 #include <Constants.h>
+#include <SubCmdSetAzClutch.h>
+#include <ClutchStatus.h>
 
 CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state) {
     uint16_t currentPosition = state->azEncoder.getNormalizedPosition();
@@ -18,7 +20,9 @@ CmdUnPause::CmdUnPause(TurntableState* state) : BaseTurntableCommand(state) {
         speed = SET_DOWN_QUICKLY;
     }
     
-    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, speed, false);
+    subCommands = std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged)
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, speed, false))
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Disengaged));
 }
 
 CommandId CmdUnPause::getCommandId() {

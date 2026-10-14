@@ -16,11 +16,11 @@ CmdProtoPlay::CmdProtoPlay(TurntableState* state, int16_t steps, uint8_t azimuth
 
 
     
-    // Lift up
-    subCommands = std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false)
+    // Engage the clutch
+    subCommands = std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged)
 
-        // Engage the clutch
-        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged))
+        // Lift up
+        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false))
         
         // Move CW or CCW
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, steps, azimuthSpeed, true))
