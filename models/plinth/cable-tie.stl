@@ -1,0 +1,282 @@
+solid cable-tie
+facet normal 0.0 -1.0 3.87745391350336e-016
+outer loop
+vertex 15.0 3.82856869892695e-015 14.0
+vertex 0.0 -4.88852145764093e-017 4.0
+vertex 15.0 -4.88852145764093e-017 4.0
+endloop
+endfacet
+facet normal 0.0 -1.0 3.87745391350336e-016
+outer loop
+vertex 0.0 -4.88852145764093e-017 4.0
+vertex 15.0 3.82856869892695e-015 14.0
+vertex 0.0 3.82856869892695e-015 14.0
+endloop
+endfacet
+facet normal 1.20186098817817e-032 1.0 -3.84962529689927e-016
+outer loop
+vertex 0.0 1.0 14.0
+vertex 2.0 1.0 6.0
+vertex 0.0 1.0 6.0
+endloop
+endfacet
+facet normal 1.20186098817817e-032 1.0 -3.84962529689927e-016
+outer loop
+vertex 2.0 1.0 6.0
+vertex 0.0 1.0 14.0
+vertex 13.0 1.0 6.0
+endloop
+endfacet
+facet normal 1.20186098817817e-032 1.0 -3.84962529689927e-016
+outer loop
+vertex 13.0 1.0 6.0
+vertex 0.0 1.0 14.0
+vertex 15.0 1.0 6.0
+endloop
+endfacet
+facet normal 1.20186098817817e-032 1.0 -3.84962529689927e-016
+outer loop
+vertex 15.0 1.0 6.0
+vertex 0.0 1.0 14.0
+vertex 15.0 1.0 14.0
+endloop
+endfacet
+facet normal 1.20186098817817e-032 1.0 -3.84962529689927e-016
+outer loop
+vertex 2.0 1.0 6.0
+vertex 13.0 1.0 4.0
+vertex 2.0 1.0 4.0
+endloop
+endfacet
+facet normal 1.20186098817817e-032 1.0 -3.84962529689927e-016
+outer loop
+vertex 13.0 1.0 4.0
+vertex 2.0 1.0 6.0
+vertex 13.0 1.0 6.0
+endloop
+endfacet
+facet normal 1.0 -0.0 -0.0
+outer loop
+vertex 15.0 -4.88852145764093e-017 4.0
+vertex 15.0 1.0 6.0
+vertex 15.0 3.82856869892695e-015 14.0
+endloop
+endfacet
+facet normal 1.0 -0.0 -0.0
+outer loop
+vertex 15.0 1.0 6.0
+vertex 15.0 -4.88852145764093e-017 4.0
+vertex 15.0 5.0 4.0
+endloop
+endfacet
+facet normal 1.0 -0.0 -0.0
+outer loop
+vertex 15.0 1.0 6.0
+vertex 15.0 5.0 4.0
+vertex 15.0 5.0 6.0
+endloop
+endfacet
+facet normal 1.0 -0.0 -0.0
+outer loop
+vertex 15.0 1.0 14.0
+vertex 15.0 3.82856869892695e-015 14.0
+vertex 15.0 1.0 6.0
+endloop
+endfacet
+facet normal 0.0 0.0 1.0
+outer loop
+vertex 15.0 3.82856869892695e-015 14.0
+vertex 0.0 1.0 14.0
+vertex 0.0 3.82856869892695e-015 14.0
+endloop
+endfacet
+facet normal 0.0 0.0 1.0
+outer loop
+vertex 0.0 1.0 14.0
+vertex 15.0 3.82856869892695e-015 14.0
+vertex 15.0 1.0 14.0
+endloop
+endfacet
+facet normal -1.0 0.0 0.0
+outer loop
+vertex 0.0 1.0 14.0
+vertex 0.0 1.0 6.0
+vertex 0.0 3.82856869892695e-015 14.0
+endloop
+endfacet
+facet normal -1.0 0.0 0.0
+outer loop
+vertex 0.0 -4.88852145764093e-017 4.0
+vertex 0.0 1.0 6.0
+vertex 0.0 5.0 4.0
+endloop
+endfacet
+facet normal -1.0 0.0 0.0
+outer loop
+vertex 0.0 1.0 6.0
+vertex 0.0 -4.88852145764093e-017 4.0
+vertex 0.0 3.82856869892695e-015 14.0
+endloop
+endfacet
+facet normal -1.0 0.0 0.0
+outer loop
+vertex 0.0 5.0 4.0
+vertex 0.0 1.0 6.0
+vertex 0.0 5.0 6.0
+endloop
+endfacet
+facet normal 2.23657716536636e-018 -3.13385486839499e-016 -1.0
+outer loop
+vertex 0.0 5.0 4.0
+vertex 2.0 3.0 4.0
+vertex 0.0 -4.88852145764093e-017 4.0
+endloop
+endfacet
+facet normal 2.23657716536636e-018 -3.13385486839499e-016 -1.0
+outer loop
+vertex 2.0 3.0 4.0
+vertex 0.0 5.0 4.0
+vertex 15.0 5.0 4.0
+endloop
+endfacet
+facet normal 2.23657716536636e-018 -3.13385486839499e-016 -1.0
+outer loop
+vertex 2.0 3.0 4.0
+vertex 15.0 5.0 4.0
+vertex 13.0 3.0 4.0
+endloop
+endfacet
+facet normal 2.23657716536636e-018 -3.13385486839499e-016 -1.0
+outer loop
+vertex 13.0 3.0 4.0
+vertex 15.0 5.0 4.0
+vertex 13.0 1.0 4.0
+endloop
+endfacet
+facet normal 2.23657716536636e-018 -3.13385486839499e-016 -1.0
+outer loop
+vertex 0.0 -4.88852145764093e-017 4.0
+vertex 2.0 1.0 4.0
+vertex 15.0 -4.88852145764093e-017 4.0
+endloop
+endfacet
+facet normal 2.23657716536636e-018 -3.13385486839499e-016 -1.0
+outer loop
+vertex 2.0 1.0 4.0
+vertex 0.0 -4.88852145764093e-017 4.0
+vertex 2.0 3.0 4.0
+endloop
+endfacet
+facet normal 2.23657716536636e-018 -3.13385486839499e-016 -1.0
+outer loop
+vertex 15.0 -4.88852145764093e-017 4.0
+vertex 2.0 1.0 4.0
+vertex 13.0 1.0 4.0
+endloop
+endfacet
+facet normal 2.23657716536636e-018 -3.13385486839499e-016 -1.0
+outer loop
+vertex 15.0 -4.88852145764093e-017 4.0
+vertex 13.0 1.0 4.0
+vertex 15.0 5.0 4.0
+endloop
+endfacet
+facet normal 1.40268165591956e-032 1.0 -7.04991620636974e-016
+outer loop
+vertex 0.0 5.0 6.0
+vertex 15.0 5.0 4.0
+vertex 0.0 5.0 4.0
+endloop
+endfacet
+facet normal 1.40268165591956e-032 1.0 -7.04991620636974e-016
+outer loop
+vertex 15.0 5.0 4.0
+vertex 0.0 5.0 6.0
+vertex 15.0 5.0 6.0
+endloop
+endfacet
+facet normal -1.0 0.0 0.0
+outer loop
+vertex 13.0 1.0 6.0
+vertex 13.0 3.0 4.0
+vertex 13.0 1.0 4.0
+endloop
+endfacet
+facet normal -1.0 0.0 0.0
+outer loop
+vertex 13.0 3.0 4.0
+vertex 13.0 1.0 6.0
+vertex 13.0 3.0 6.0
+endloop
+endfacet
+facet normal -4.17697347487225e-017 3.68518347151146e-016 1.0
+outer loop
+vertex 15.0 1.0 6.0
+vertex 13.0 3.0 6.0
+vertex 13.0 1.0 6.0
+endloop
+endfacet
+facet normal -4.17697347487225e-017 3.68518347151146e-016 1.0
+outer loop
+vertex 2.0 1.0 6.0
+vertex 0.0 5.0 6.0
+vertex 0.0 1.0 6.0
+endloop
+endfacet
+facet normal -4.17697347487225e-017 3.68518347151146e-016 1.0
+outer loop
+vertex 0.0 5.0 6.0
+vertex 2.0 1.0 6.0
+vertex 2.0 3.0 6.0
+endloop
+endfacet
+facet normal -4.17697347487225e-017 3.68518347151146e-016 1.0
+outer loop
+vertex 0.0 5.0 6.0
+vertex 2.0 3.0 6.0
+vertex 15.0 5.0 6.0
+endloop
+endfacet
+facet normal -4.17697347487225e-017 3.68518347151146e-016 1.0
+outer loop
+vertex 15.0 5.0 6.0
+vertex 2.0 3.0 6.0
+vertex 13.0 3.0 6.0
+endloop
+endfacet
+facet normal -4.17697347487225e-017 3.68518347151146e-016 1.0
+outer loop
+vertex 15.0 5.0 6.0
+vertex 13.0 3.0 6.0
+vertex 15.0 1.0 6.0
+endloop
+endfacet
+facet normal 1.0 -0.0 -0.0
+outer loop
+vertex 2.0 3.0 4.0
+vertex 2.0 1.0 6.0
+vertex 2.0 1.0 4.0
+endloop
+endfacet
+facet normal 1.0 -0.0 -0.0
+outer loop
+vertex 2.0 1.0 6.0
+vertex 2.0 3.0 4.0
+vertex 2.0 3.0 6.0
+endloop
+endfacet
+facet normal 0.0 -1.0 7.04991620636974e-016
+outer loop
+vertex 13.0 3.0 6.0
+vertex 2.0 3.0 4.0
+vertex 13.0 3.0 4.0
+endloop
+endfacet
+facet normal 0.0 -1.0 7.04991620636974e-016
+outer loop
+vertex 2.0 3.0 4.0
+vertex 13.0 3.0 6.0
+vertex 2.0 3.0 6.0
+endloop
+endfacet
+endsolid cable-tie
