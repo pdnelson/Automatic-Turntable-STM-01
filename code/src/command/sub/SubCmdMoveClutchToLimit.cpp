@@ -21,7 +21,7 @@ void SubCmdMoveClutchToLimit::doInitialize() {
 CommandResult SubCmdMoveClutchToLimit::doExecute() {
     if(digitalRead(Pin::HorizontalClutchSwitch) == ClutchHomeLimit::ClutchLimitClosed) {
         return CommandResult::Success;
-    } else if(totalSteps > (CLUTCH_HOME_STEPS + CLUTCH_TIMEOUT_STEPS)) {
+    } else if(totalSteps > (CLUTCH_HOME_STEPS + CLUTCH_ENGAGE_DISENGAGE_STEPS + CLUTCH_TIMEOUT_STEPS)) {
         return CommandResult::ClutchFailedToHome;
     } else {
         if(state->clutchStepper.step(state->clockMicros)) {
@@ -34,7 +34,6 @@ CommandResult SubCmdMoveClutchToLimit::doExecute() {
 
 void SubCmdMoveClutchToLimit::doUninitialize() {
     state->clutchStepper.releaseMotorCurrent();
-    state->horizontalStepper.sleep();
 }
 
 SubCommandId SubCmdMoveClutchToLimit::getSubCommandId() {

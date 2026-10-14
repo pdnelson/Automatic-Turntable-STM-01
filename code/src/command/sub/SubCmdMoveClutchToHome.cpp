@@ -17,7 +17,6 @@ SubCmdMoveClutchToHome::SubCmdMoveClutchToHome(TurntableState* state) : BaseTurn
 void SubCmdMoveClutchToHome::doInitialize() {
     state->clutchStepper.setSpeed(CLUTCH_SPEED);
     state->clutchStepper.setDirection(ClutchDirection::Engage);
-    state->horizontalStepper.wake();
 }
 
 CommandResult SubCmdMoveClutchToHome::doExecute() {
