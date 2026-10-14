@@ -53,8 +53,7 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalLowerLimit, setDownSpeed, false))
         
         // Disengage the clutch
-        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Disengaged))
-;
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Disengaged));
 }
 
 CommandId CmdGoToPositionH::getCommandId() {
