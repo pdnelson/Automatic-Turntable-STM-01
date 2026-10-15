@@ -12,9 +12,9 @@ class TurntableState;
 
 class BaseHorizontalMovementSubCommand : public BaseTurntableSubCommand {
     public:
-        BaseHorizontalMovementSubCommand(TurntableState* state, uint8_t speed);
+        BaseHorizontalMovementSubCommand(TurntableState* state, float speed);
 
-        uint8_t speed = 0;
+        float speed = 0;
 
         bool checkStall(AzimuthDirection direction);
         AzimuthDirection calculateDirection(uint16_t destination);

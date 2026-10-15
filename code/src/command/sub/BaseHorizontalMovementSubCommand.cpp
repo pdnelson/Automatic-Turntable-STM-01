@@ -6,7 +6,7 @@
 #include <TurntableState.h>
 #include <AzimuthDirection.h>
 
-BaseHorizontalMovementSubCommand::BaseHorizontalMovementSubCommand(TurntableState* state, uint8_t speed): BaseTurntableSubCommand(state) {
+BaseHorizontalMovementSubCommand::BaseHorizontalMovementSubCommand(TurntableState* state, float speed): BaseTurntableSubCommand(state) {
     this->speed = speed;
 
     // Need to dynatically set this based on the speed, the az encoder polls slowly, so we can't stall check too quickly, or the value
