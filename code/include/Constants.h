@@ -52,7 +52,9 @@
 // helps determine if it's over "home".
 #define HOME_THRESHOLD 100
 
-
+/**
+ * Lift constants -----------------------
+ */
 
 // When the tonearm lifts up toward the center of the platter, it might bounce a little bit. This timeout represents the maximum
 // amount of time we allow for the tonearm to bounce, before it should level out.
@@ -68,7 +70,14 @@
 #define SET_DOWN_QUICKLY 7
 
 /**
- * Constants related to the horizontal movement -----------
+ * Horizontal movement constants ---------------
+ */
+#define HOME_HORIZONTAL_SPEED 40
+
+#define PLAY_FROM_HOME_HORIZONTAL_SPEED 25
+
+/**
+ * Constants related to the horizontal movement clutch  -----------
  */
 
 // The RPM at which the clutch stepper spins.

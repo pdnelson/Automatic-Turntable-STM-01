@@ -157,10 +157,6 @@ bool TurntableState::isPaused() {
     return getVerticalEncoderPos() >= (calibration.verticalUpperLimit - PAUSE_ERROR);
 }
 
-ClutchStatus TurntableState::clutchEngaged() {
-    return (ClutchStatus)digitalRead(Pin::HorizontalClutchSwitch);
-}
-
 void TurntableState::updateCustomSpeed(float newSpeed) {
     if(newSpeed < 33.33333 && newSpeed > 33.3) {
         updateSpeed(TurntableSpeed::Rpm33);
@@ -271,13 +267,13 @@ void TurntableState::playOrReturn() {
         }
 
         if(position != 0) {
-            currentCommand = std::make_unique<CmdGoToPositionH>(this, position, 0, 15);
+            currentCommand = std::make_unique<CmdGoToPositionH>(this, position, 0, PLAY_FROM_HOME_HORIZONTAL_SPEED);
         } else {
             // to do: implement automatic size routine
         }
     } else {
         // Subtract 10 from home position so we don't hit into the home mount
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home + 10, 15, 25);
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home + 10, 15, HOME_HORIZONTAL_SPEED);
     }
 }
 

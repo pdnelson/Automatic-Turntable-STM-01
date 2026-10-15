@@ -7,7 +7,7 @@ class TurntableState;
 
 // to do: scale these values based on speed. these were arrived at based on the speed 25
 #define STEPS_BETWEEN_POLLING_REF 850
-#define TICKS_PER_POLL_REF 600
+#define TICKS_PER_POLL_REF 550
 #define SPEED_REF 25
 
 class BaseHorizontalMovementSubCommand : public BaseTurntableSubCommand {

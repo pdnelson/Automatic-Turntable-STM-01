@@ -23,6 +23,12 @@ void SubCmdGoToPositionH::doInitialize() {
     // Approximately 1508 encoder ticks are traveled when 2000 steps are taken, which can be 
     // scaled to any encoder position range.
     uint16_t travelDistance = calculateTravelDistance(destinationEncoderPosition);
+
+    if(travelDistance < MIN_TRAVEL_DISTANCE) {
+        result = CommandResult::Success;
+        return;
+    }
+
     uint16_t steps = 2000 * travelDistance / 1508;
 
     state->horizontalStepper.setMovementProfile(direction, speed, steps);

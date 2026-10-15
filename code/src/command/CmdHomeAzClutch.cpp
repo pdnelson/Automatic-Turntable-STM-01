@@ -23,5 +23,5 @@ void CmdHomeAzClutch::doInitialize() {
 }
 
 void CmdHomeAzClutch::doUninitialize() {
-    // Do nothing.
+    state->clutchStatus = ClutchStatus::Disengaged;
 }

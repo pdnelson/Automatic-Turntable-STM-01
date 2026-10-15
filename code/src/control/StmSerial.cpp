@@ -297,7 +297,7 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
     data[19] = state->settings.size;
 
     // Clutch status
-    data[20] = state->clutchEngaged();
+    data[20] = state->clutchStatus;
 
     // Horizontal position (actual)
     uint16_t actualHorizontalPosition = state->azEncoder.getPosition();

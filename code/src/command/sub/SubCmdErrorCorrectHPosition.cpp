@@ -50,5 +50,5 @@ void SubCmdErrorCorrectHPosition::doUninitialize() {
 }
 
 SubCommandId SubCmdErrorCorrectHPosition::getSubCommandId() {
-    return SubCommandId::SubGoToPosition;
+    return SubCommandId::HErrorCorrect;
 }

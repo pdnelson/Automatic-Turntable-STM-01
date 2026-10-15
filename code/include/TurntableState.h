@@ -51,7 +51,6 @@ class TurntableState {
         LiftStatus getLiftStatus();
         HomeStatus getHomeStatus();
         bool isPaused();
-        ClutchStatus clutchEngaged();
         void updateCustomSpeed(float newSpeed);
         void updateSpeed(TurntableSpeed newSpeed);
         void rotateSize();

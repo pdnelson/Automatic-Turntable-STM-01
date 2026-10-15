@@ -46,6 +46,8 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         ->next(std::make_shared<SubCmdErrorCorrectHPosition>(state, position, tolerance, 1))
         ->next(std::make_shared<SubCmdDelay>(state, 200))
         ->next(std::make_shared<SubCmdErrorCorrectHPosition>(state, position, tolerance, 1))
+        ->next(std::make_shared<SubCmdDelay>(state, 200))
+        ->next(std::make_shared<SubCmdErrorCorrectHPosition>(state, position, tolerance, 1))
         ->next(std::make_shared<SubCmdSetEncoderPollSpeed>(state, EncoderPollSpeed::PollNormal))
         ->next(std::make_shared<SubCmdDelay>(state, 25))
 

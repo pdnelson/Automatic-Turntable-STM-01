@@ -23,6 +23,7 @@
 #include <ClutchStatus.h>
 #include <SubCmdZeroAzEncoder.h>
 #include <SubCmdSetHMotorPolarity.h>
+#include <SubCmdSetEncoderPollSpeed.h>
 
 CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
 
@@ -52,6 +53,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
 
         // Calibrate horizontal motor polarity
+        ->next(std::make_shared<SubCmdSetEncoderPollSpeed>(state, EncoderPollSpeed::PollHMovementStandard))
         ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged))
         ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, false, SubCommandId::SetHMotorPolarity, StmShiftPin::Led33Rpm, referencePoint1))
         ->next(std::make_shared<SubCmdMoveNStepsH>(state, 1000, 30, true))
@@ -79,7 +81,7 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
 
         // Go to the middle of the platter
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
-        ->next(std::make_shared<SubCmdMoveNStepsH>(state, 2500, 14, true))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, 1500, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_SLOWLY, false))
 
         // Calibrate the platter height
@@ -91,10 +93,11 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
 
         // Go back to the home position
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 1023, 14, false))
-        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -2550, 14, true))
+        ->next(std::make_shared<SubCmdMoveNStepsH>(state, -1550, 14, true))
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_QUICKLY, false))
         ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Disengaged))
         ->next(std::make_shared<SubCmdToggleLight>(state, StmShiftPin::LedPlayStatus, false))
+        ->next(std::make_shared<SubCmdSetEncoderPollSpeed>(state, EncoderPollSpeed::PollNormal))
 
         // Now the user can calibrate the remaining record size positions
         ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, true, SubCommandId::Calibrate7In, StmShiftPin::Led7In, state->calibration.in7))

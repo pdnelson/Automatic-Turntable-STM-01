@@ -26,7 +26,8 @@ enum SubCommandId {
     SetHMotorPolarity = 21,
     SetPollSpeed = 22,
     MoveClutchToHome = 23,
-    MoveClutchToLimit = 24
+    MoveClutchToLimit = 24,
+    HErrorCorrect = 25
 };
 
 #endif

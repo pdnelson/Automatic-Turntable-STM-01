@@ -7,6 +7,9 @@
 #define SubCmdGoToPosition_h
 class TurntableState;
 
+// The minimum travel distance in order for this routine to be used. Otherwise, we can just rely on the error correction routines.
+#define MIN_TRAVEL_DISTANCE 20
+
 class SubCmdGoToPositionH : public BaseHorizontalMovementSubCommand {
     public:
         SubCmdGoToPositionH(TurntableState* state, uint16_t position, uint8_t tolerance, uint8_t speed);
