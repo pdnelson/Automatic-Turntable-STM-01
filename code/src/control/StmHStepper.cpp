@@ -1,17 +1,14 @@
 #include <StmHStepper.h>
 #include <HorizontalStepperEnableStatus.h>
-#include <HorizontalStepperSleepStatus.h>
 
-StmHStepper::StmHStepper(StmEncoder &hEncoder, Pin sleepPin, Pin enablePin, Pin stepPin, Pin directionPin) : hEncoder(hEncoder) {
+StmHStepper::StmHStepper(StmEncoder &hEncoder, Pin enablePin, Pin stepPin, Pin directionPin) : hEncoder(hEncoder) {
     this->enablePin = enablePin;
     this->stepPin = stepPin;
     this->directionPin = directionPin;
-    this->sleepPin = sleepPin;
     this->polarity = StmPolarity::Normal;
 
     pinMode(enablePin, OUTPUT);
     pinMode(stepPin, OUTPUT);
-    pinMode(sleepPin, OUTPUT);
     pinMode(directionPin, OUTPUT);
 }
 
@@ -80,12 +77,10 @@ bool StmHStepper::stepBlind(unsigned long clockMicros) {
 }
 
 void StmHStepper::wake() {
-    digitalWrite(sleepPin, HorizontalStepperSleepStatus::Awake);
     digitalWrite(enablePin, HorizontalStepperEnableStatus::Enabled);
 }
 
 void StmHStepper::sleep() {
-    digitalWrite(sleepPin, HorizontalStepperSleepStatus::Asleep);
     digitalWrite(enablePin, HorizontalStepperEnableStatus::Disabled);
 }
 

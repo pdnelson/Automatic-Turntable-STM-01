@@ -29,7 +29,7 @@ void SubCmdGoToPositionH::doInitialize() {
         return;
     }
 
-    uint16_t steps = 2000 * travelDistance / 1508;
+    uint16_t steps = H_STEPS_REF * travelDistance / H_TICKS_REF;
 
     state->horizontalStepper.setMovementProfile(direction, speed, steps);
     stepsToTake = steps;

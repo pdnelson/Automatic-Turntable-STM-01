@@ -31,7 +31,7 @@ TurntableState::TurntableState() :
     verticalStepper(Pin::MovementStep1, Pin::MovementStep3, Pin::MovementStep2, Pin::MovementStep4),
     clutchStepper(Pin::HorizontalClutchStep1, Pin::HorizontalClutchStep3, Pin::HorizontalClutchStep2, Pin::HorizontalClutchStep4),
     azEncoder(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
-    horizontalStepper(azEncoder, Pin::HorizontalSleep, Pin::HorizontalEnable, Pin::HorizontalStep, Pin::HorizontalDirection),
+    horizontalStepper(azEncoder, Pin::HorizontalEnable, Pin::HorizontalStep, Pin::HorizontalDirection),
     calibration(),
     settings()
 {
@@ -272,8 +272,7 @@ void TurntableState::playOrReturn() {
             // to do: implement automatic size routine
         }
     } else {
-        // Subtract 10 from home position so we don't hit into the home mount
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home + 10, 15, HOME_HORIZONTAL_SPEED);
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 15, HOME_HORIZONTAL_SPEED);
     }
 }
 

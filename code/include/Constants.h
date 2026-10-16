@@ -72,9 +72,15 @@
 /**
  * Horizontal movement constants ---------------
  */
-#define HOME_HORIZONTAL_SPEED 40
+#define HOME_HORIZONTAL_SPEED 20
 
-#define PLAY_FROM_HOME_HORIZONTAL_SPEED 25
+#define PLAY_FROM_HOME_HORIZONTAL_SPEED 18
+
+// The number of encoder ticks traveled per H_STEPS_REF steps
+#define H_TICKS_REF 1981
+
+// The number of steps taken in order to travel H_TICKS_REF encoder ticks
+#define H_STEPS_REF 2600
 
 /**
  * Constants related to the horizontal movement clutch  -----------

@@ -14,7 +14,7 @@
 
 class StmHStepper {
     public:
-        StmHStepper(StmEncoder &hEncoder, Pin enablePin, Pin sleepPin, Pin stepPin, Pin directionPin);
+        StmHStepper(StmEncoder &hEncoder, Pin enablePin, Pin stepPin, Pin directionPin);
 
         void setPolarity(StmPolarity polarity);
         void setDirection(AzimuthDirection direction);
@@ -29,7 +29,6 @@ class StmHStepper {
     private:
         StmEncoder &hEncoder;
         Pin enablePin;
-        Pin sleepPin;
         Pin stepPin;
         Pin directionPin;
         StmPolarity polarity = StmPolarity::Normal;

@@ -35,7 +35,6 @@ enum Pin : uint8_t {
     Serial3Rx = 28,
     Serial3Tx = 29,
     Lift = 30,
-    HorizontalSleep = 31,
     Serial4Rx = 34,
     Serial4Tx = 35,
     HorizontalClutchStep4 = 38,
@@ -44,6 +43,7 @@ enum Pin : uint8_t {
     HorizontalClutchStep1 = 41,
 
     // Unused pins
+    Unused31 = 31,
     Unused32 = 32,
     Unused33 = 33,
     Unused36 = 36,
