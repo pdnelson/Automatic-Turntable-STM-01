@@ -15,7 +15,7 @@
 #define SERIAL_SPEED 115200
 
 // The amount of time, in milliseconds, that a mux button must be held for the `ButtonResult::Held` status to be triggered.
-#define BUTTON_HOLD_INTERVAL 2000
+#define BUTTON_HOLD_INTERVAL 1000
 
 // The debounce interval, in milliseconds, for a mux button. I.e. the button cannot be pressed/released more than once within this duration.
 #define BUTTON_DEBOUNCE_INTERVAL 20

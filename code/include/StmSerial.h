@@ -2,6 +2,15 @@
 
 #ifndef STMSERIAL_H
 #define STMSERIAL_H
+
+// This data contains the following:
+// - start key
+// - current playlist index
+// - profile size
+// - playlist size
+// - end key
+#define PROFILE_PLAYLIST_KNOWN_DATA_SIZE 5
+
 class TurntableState;
 
 class StmSerial {
@@ -12,7 +21,7 @@ class StmSerial {
 
     private:
         TurntableState* state;
-        
+
         void readSerialData(Stream& stream);
 
         // Request processing methods
@@ -34,6 +43,7 @@ class StmSerial {
         void processGetSpeedTarget(Stream& stream);
         void processGetAdvancedSuiteData(Stream& stream);
         void processGetCalibrationValues(Stream& stream);
+        void processGetProfilePlaylist(Stream& stream);
         void clearCommand();
 
         int16_t readInt16(Stream& stream);

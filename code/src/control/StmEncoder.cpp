@@ -8,7 +8,7 @@ StmEncoder::StmEncoder(uint8_t sda, uint8_t scl) {
     Wire2.begin();
 
     // Fill out encoder data
-    for(int i = 0; i < ENCODER_AVG_RESOLUTION; i++) {
+    for(uint8_t i = 0; i < ENCODER_AVG_RESOLUTION; i++) {
         data[i] = getPosition();
     }
 }

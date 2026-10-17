@@ -26,14 +26,15 @@ CmdGoToPositionH::CmdGoToPositionH(TurntableState* state, uint16_t position, uin
         setDownSpeed = SET_DOWN_QUICKLY;
     }
 
-    // Engage the clutch
-    subCommands = std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged)
-
+    subCommands = 
         // Lift up
-        ->next(std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false))
-
+        std::make_shared<SubCmdGoToPositionV>(state, state->calibration.verticalUpperLimit, LIFT_UP_SPEED, false)
+        
+        // Engage the clutch
+        ->next(std::make_shared<SubCmdSetAzClutch>(state, ClutchStatus::Engaged))
+        
         // Delay, just in case the clutch moved the tonearm at all
-        ->next(std::make_shared<SubCmdDelay>(state, 25))
+        ->next(std::make_shared<SubCmdDelay>(state, 50))
         
         // Move to specific position
         ->next(std::make_shared<SubCmdSetEncoderPollSpeed>(state, EncoderPollSpeed::PollHMovementStandard))

@@ -7,23 +7,17 @@ RecordProfile::RecordProfile(TurntableState* state) {
 }
 
 void RecordProfile::clearPlaylist() {
-    for(int i = 0; i < PLAYLIST_MAX_SIZE; i++) {
+    for(uint8_t i = 0; i < PLAYLIST_MAX_SIZE; i++) {
         playlist[i] = -1;
     }
 }
 
 void RecordProfile::clearProfile() {
-    for(int i = 0; i < PROFILE_MAX_SIZE; i++) {
+    for(uint8_t i = 0; i < PROFILE_MAX_SIZE; i++) {
         normalizedProfile[i] = 0;
     }
 
-    lastProfileIndex = -1;
-
     clearPlaylist();
-}
-
-bool RecordProfile::profilePresent() {
-    return lastProfileIndex > -1;
 }
 
 bool RecordProfile::playlistEmpty() {
@@ -72,7 +66,7 @@ void RecordProfile::skipForward() {
 }
 
 void RecordProfile::skipBackward() {
-    if(playlistEmpty()) {
+    if(playlistEmpty() || currentPlaylistIndex == -1) {
         return;
     }
 

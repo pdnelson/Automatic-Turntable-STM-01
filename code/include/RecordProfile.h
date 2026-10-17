@@ -5,7 +5,7 @@
 
 #define PROFILE_MAX_SIZE 29
 #define PLAYLIST_MAX_SIZE 100
-#define AUTO_PICKUP_THRESHOLD 1
+#define AUTO_PICKUP_THRESHOLD 0
 #define AUTO_PICKUP_TIME_THRESHOLD_MICROS 500000
 
 class TurntableState;
@@ -23,11 +23,6 @@ class RecordProfile {
          * Clears the normalized and raw profiles.
          */
         void clearProfile();
-
-        /**
-         * Return `true` if there is a record profile present. `false`, otherwise.
-         */
-        bool profilePresent();
 
         /**
          * Return `true` if the playlist is empty. `false`, otherwise.
@@ -61,29 +56,30 @@ class RecordProfile {
 
         int8_t currentPlaylistIndex = -1;
 
-    private:
-        void playAtCurrentIndex();
-        void advancePlaylistIndex();
-        uint16_t nextLocation();
-
-        int8_t lastProfileIndex = -1;
-        unsigned long lastTimeNotInThreshold = 0;
-
-        TurntableState* state;
-
         /** The normalized record profile, AFTER the raw data has been separated out into individual track starts.
          * These will be horizontal tonearm start positions. Each start position (except for the first one) can also be
          * used as a pickup position, if the next track isn't on the playlist.
          * The last value (before a 0) is always a tonearm pickup position.
          */
         uint16_t normalizedProfile[PROFILE_MAX_SIZE] = { 9319, 9487, 9671, 9800, 9920, 10085, 10273, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        uint8_t normalizedProfileSize = 7;
 
         /**
          * This is the playlist that is traversed through, sequentially, by the turntable.
          * This list consists of normalizedProfile indexes.
          * The playlist is automatically cleared if the tonearm is moved outside the bounds
          */
-        int8_t playlist[PLAYLIST_MAX_SIZE] = { 4, 0, 2, 3, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+        int8_t playlist[PLAYLIST_MAX_SIZE] = { 0, 2, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+        uint8_t playlistSize = 4;
+    
+    private:
+        void playAtCurrentIndex();
+        void advancePlaylistIndex();
+        uint16_t nextLocation();
+
+        unsigned long lastTimeNotInThreshold = 0;
+
+        TurntableState* state;
 };
 
 #endif

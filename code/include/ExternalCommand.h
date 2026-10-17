@@ -39,7 +39,8 @@ enum ExternalCommand {
     GetSizeSetting = 109,
     GetCurrentSubCommand = 110,
     GetAdvancedSuiteData = 111,
-    GetCalibrationValues = 112
+    GetCalibrationValues = 112,
+    GetProfilePlaylist = 113
 };
 
 #endif

@@ -96,6 +96,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::GetSizeSetting:           stream.write(state->settings.size);                 break;
                 case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                break;
                 case ExternalCommand::GetCalibrationValues:     processGetCalibrationValues(stream);                break;
+                case ExternalCommand::GetProfilePlaylist:       processGetProfilePlaylist(stream);                  break;
             }
         }
     }
@@ -353,6 +354,40 @@ int16_t StmSerial::readInt16(Stream& stream) {
     int16_t data1 = stream.read() & 0x00FF;
     int16_t data2 = stream.read() << 8 & 0xFF00;
     return data1 | data2;
+}
+
+void StmSerial::processGetProfilePlaylist(Stream& stream) {
+    uint8_t profileSize = state->recordProfile.normalizedProfileSize << 1;
+    uint8_t dataSize = PROFILE_PLAYLIST_KNOWN_DATA_SIZE + profileSize + state->recordProfile.playlistSize;
+
+    byte data[dataSize];
+
+    data[0] = SERIAL_ADVANCED_START_KEY;
+
+    // Write the known data
+    data[1] = state->recordProfile.currentPlaylistIndex;
+    data[2] = state->recordProfile.normalizedProfileSize;
+    data[3] = state->recordProfile.playlistSize;
+
+    // Write the normalized profile data
+    uint8_t dataIndex = PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 2;
+    uint8_t profileIndex = 0;
+
+    while(state->recordProfile.normalizedProfileSize > profileIndex) {
+        data[dataIndex++] = state->recordProfile.normalizedProfile[profileIndex] & 0x00FF;
+        data[dataIndex++] = (state->recordProfile.normalizedProfile[profileIndex] >> 8) & 0x00FF;
+
+        profileIndex++;
+    }
+
+    // Write the playlist data
+    for(int i = (PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 1) + profileSize; i < state->recordProfile.playlistSize; i++) {
+        data[i] = state->recordProfile.playlist[i];
+    }
+
+    data[dataSize - 1] = SERIAL_ADVANCED_END_KEY;
+
+    stream.write(data, dataSize);
 }
 
 void StmSerial::clearCommand() {
