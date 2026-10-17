@@ -9,7 +9,7 @@
 // - profile size
 // - playlist size
 // - end key
-#define PROFILE_PLAYLIST_KNOWN_DATA_SIZE 5
+#define PROFILE_PLAYLIST_KNOWN_DATA_SIZE 7
 
 class TurntableState;
 

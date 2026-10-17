@@ -369,6 +369,10 @@ void StmSerial::processGetProfilePlaylist(Stream& stream) {
     data[2] = profileSize;
     data[3] = state->recordProfile.playlistSize;
 
+    uint16_t horizontalPosition = state->azEncoder.getNormalizedPosition();
+    data[4] = horizontalPosition & 0x00FF;
+    data[5] = (horizontalPosition >> 8) & 0x00FF;
+
     // Write the normalized profile data
     uint8_t dataIndex = PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 1;
     uint8_t profileIndex = 0;
