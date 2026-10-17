@@ -33,7 +33,8 @@ TurntableState::TurntableState() :
     azEncoder(Pin::ReservedI2CSda, Pin::ReservedI2CScl),
     horizontalStepper(azEncoder, Pin::HorizontalEnable, Pin::HorizontalStep, Pin::HorizontalDirection),
     calibration(),
-    settings()
+    settings(),
+    recordProfile(this)
 {
     pinMode(Pin::VerticalPosition, INPUT);
     pinMode(Pin::HorizontalClutchSwitch, INPUT_PULLUP);
@@ -67,6 +68,7 @@ void TurntableState::monitor() {
     updateClockMicros();
     advanceCounts();
     serialComm.monitor();
+    recordProfile.monitorAutoPickup();
     monitorCommandInput();
     executeCommand();
     azEncoder.monitor(clockMicros);
@@ -301,8 +303,16 @@ void TurntableState::monitorCommandInput() {
             playOrReturn();
         }
 
-        else if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnHold && inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnHold) {
+        else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnHold) {
             beginCalibrationRoutine();
+        }
+
+        else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnHold) {
+            recordProfile.skipForward();
+        }
+
+        else if(inputMux.getValue(MuxPin::BtnPause) == ButtonResult::OnHold) {
+            recordProfile.skipBackward();
         }
     }
 

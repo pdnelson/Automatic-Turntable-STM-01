@@ -13,6 +13,7 @@
 #include <CalibrationValues.h>
 #include <Settings.h>
 #include <StmHStepper.h>
+#include <RecordProfile.h>
 
 #ifndef TurntableState_h
 #define TurntableState_h
@@ -30,6 +31,8 @@ class TurntableState {
         StmHStepper horizontalStepper;
         CalibrationValues calibration;
         Settings settings;
+        RecordProfile recordProfile;
+
         std::unique_ptr<BaseTurntableCommand> currentCommand;
 
         unsigned long clockMicros = 0;

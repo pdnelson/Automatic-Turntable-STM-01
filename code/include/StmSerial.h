@@ -7,11 +7,12 @@ class TurntableState;
 class StmSerial {
     public:
         StmSerial(TurntableState* state);
-        TurntableState* state;
 
         void monitor();
 
     private:
+        TurntableState* state;
+        
         void readSerialData(Stream& stream);
 
         // Request processing methods
