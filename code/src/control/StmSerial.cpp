@@ -366,23 +366,26 @@ void StmSerial::processGetProfilePlaylist(Stream& stream) {
 
     // Write the known data
     data[1] = state->recordProfile.currentPlaylistIndex;
-    data[2] = state->recordProfile.normalizedProfileSize;
+    data[2] = profileSize;
     data[3] = state->recordProfile.playlistSize;
 
     // Write the normalized profile data
-    uint8_t dataIndex = PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 2;
+    uint8_t dataIndex = PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 1;
     uint8_t profileIndex = 0;
 
     while(state->recordProfile.normalizedProfileSize > profileIndex) {
-        data[dataIndex++] = state->recordProfile.normalizedProfile[profileIndex] & 0x00FF;
-        data[dataIndex++] = (state->recordProfile.normalizedProfile[profileIndex] >> 8) & 0x00FF;
+        data[dataIndex] = state->recordProfile.normalizedProfile[profileIndex] & 0x00FF;
+        data[dataIndex + 1] = (state->recordProfile.normalizedProfile[profileIndex] >> 8) & 0x00FF;
 
         profileIndex++;
+        dataIndex += 2;
     }
 
     // Write the playlist data
-    for(int i = (PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 1) + profileSize; i < state->recordProfile.playlistSize; i++) {
-        data[i] = state->recordProfile.playlist[i];
+    uint8_t playlistStart = (PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 1) + profileSize;
+
+    for(uint8_t i = playlistStart; i < playlistStart + state->recordProfile.playlistSize; i++) {
+        data[i] = state->recordProfile.playlist[i - playlistStart];
     }
 
     data[dataSize - 1] = SERIAL_ADVANCED_END_KEY;
