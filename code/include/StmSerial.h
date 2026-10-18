@@ -34,6 +34,7 @@ class StmSerial {
         void processGoToPositionV(Stream& stream);
         void processSetCustomSpeed(Stream& stream);
         void processSetAzEncoderZero(Stream& stream);
+        void processSetOverwriteRecordProfile(Stream& stream);
         void processGetHorizontalEncoderPos(Stream& stream);
         void processGetVerticalEncoderPos(Stream& stream);
         byte processGetCurrentCommand();

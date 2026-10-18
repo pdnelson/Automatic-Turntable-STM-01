@@ -87,6 +87,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetClearProfile:          state->recordProfile.clearProfile();                break;
                 case ExternalCommand::SetAddTrackAtPosition:    state->recordProfile.addProfileTrackAtPosition();   break;
                 case ExternalCommand::SetAddProfileToPlaylist:  state->recordProfile.addProfileToPlaylist();        break;
+                case ExternalCommand::SetOverwriteRecordProfile:processSetOverwriteRecordProfile(stream);           break;
 
                 // Get Commands
                 case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);             break;
@@ -182,6 +183,22 @@ void StmSerial::processSetAzEncoderZero(Stream& stream) {
     uint16_t data2 = (stream.read() << 8) & 0xFF00;
 
     state->azEncoder.setZero(data1 | data2);
+}
+
+void StmSerial::processSetOverwriteRecordProfile(Stream& stream) {
+    state->recordProfile.clearProfile();
+
+    uint8_t dataSize = stream.read();
+
+    // Must be greater than 2 so there is a start and end position
+    if(dataSize > 2) {
+        uint8_t dataIndex = 1;
+
+        while(dataIndex < dataSize - 1) {
+            state->recordProfile.addProfileTrack(readInt16(stream));
+            dataIndex += 2;
+        }
+    }
 }
 
 void StmSerial::processGetHorizontalEncoderPos(Stream& stream) {

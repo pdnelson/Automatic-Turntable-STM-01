@@ -19,6 +19,7 @@ class RecordProfile {
         bool playlistEmpty();
         void addProfileTrackAtPosition();
         void addProfileToPlaylist();
+        void addProfileTrack(uint16_t position);
 
         /**
          * Return `true` if we are running a custom profile. `false` if it was built by the IR sensor.
@@ -52,16 +53,16 @@ class RecordProfile {
          * used as a pickup position, if the next track isn't on the playlist.
          * The last value (before a 0) is always a tonearm pickup position.
          */
-        uint16_t normalizedProfile[PROFILE_MAX_SIZE] = { 9319, 9487, 9671, 9800, 9920, 10085, 10273, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        uint8_t normalizedProfileSize = 7;
+        uint16_t normalizedProfile[PROFILE_MAX_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        uint8_t normalizedProfileSize = 0;
 
         /**
          * This is the playlist that is traversed through, sequentially, by the turntable.
          * This list consists of normalizedProfile indexes.
          * The playlist is automatically cleared if the tonearm is moved outside the bounds
          */
-        int8_t playlist[PLAYLIST_MAX_SIZE] = { 0, 2, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-        uint8_t playlistSize = 4;
+        int8_t playlist[PLAYLIST_MAX_SIZE] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+        uint8_t playlistSize = 0;
     
     private:
         void playAtCurrentIndex();

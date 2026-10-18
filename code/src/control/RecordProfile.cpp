@@ -11,6 +11,7 @@ void RecordProfile::clearPlaylist() {
         playlist[i] = -1;
     }
     playlistSize = 0;
+    currentPlaylistIndex = -1;
 }
 
 void RecordProfile::clearProfile() {
@@ -27,8 +28,7 @@ bool RecordProfile::playlistEmpty() {
 }
 
 void RecordProfile::addProfileTrackAtPosition() {
-    normalizedProfile[normalizedProfileSize] = state->azEncoder.getNormalizedPosition();
-    normalizedProfileSize++;
+    addProfileTrack(state->azEncoder.getNormalizedPosition());
 }
 
 void RecordProfile::addProfileToPlaylist() {
@@ -42,6 +42,11 @@ void RecordProfile::addProfileToPlaylist() {
         playlist[playlistSize] = i;
         playlistSize++;
     }
+}
+
+void RecordProfile::addProfileTrack(uint16_t position) {
+    normalizedProfile[normalizedProfileSize] = position;
+    normalizedProfileSize++;
 }
 
 bool RecordProfile::customProfile() {
@@ -118,13 +123,13 @@ void RecordProfile::advancePlaylistIndex() {
     // If the next playlist index's value is +1 from the current one, then do not skip the track,
     // just quietly advance the playlist. This implies that the next playlist item is actually the
     // next track on the record.
-    if(playlist[currentPlaylistIndex] + 1 == playlist[currentPlaylistIndex + 1]) {
-        currentPlaylistIndex++;
-    }
+    if(state->currentCommand == nullptr) {
+        if(playlist[currentPlaylistIndex] + 1 == playlist[currentPlaylistIndex + 1]) {
+            currentPlaylistIndex++;
+        }
 
-    // Otherwise, skip forward
-    else {
-        if(state->currentCommand == nullptr) {
+        // Otherwise, skip forward
+        else {
             skipForward();
         }
     }
