@@ -14,20 +14,11 @@ class RecordProfile {
     public:
         RecordProfile(TurntableState* state);
 
-        /**
-         * Clears the playlist.
-         */
         void clearPlaylist();
-
-        /**
-         * Clears the normalized and raw profiles.
-         */
         void clearProfile();
-
-        /**
-         * Return `true` if the playlist is empty. `false`, otherwise.
-         */
         bool playlistEmpty();
+        void addProfileTrackAtPosition();
+        void addProfileToPlaylist();
 
         /**
          * Return `true` if we are running a custom profile. `false` if it was built by the IR sensor.

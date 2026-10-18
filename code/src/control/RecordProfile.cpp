@@ -26,6 +26,24 @@ bool RecordProfile::playlistEmpty() {
     return playlist[0] == -1;
 }
 
+void RecordProfile::addProfileTrackAtPosition() {
+    normalizedProfile[normalizedProfileSize] = state->azEncoder.getNormalizedPosition();
+    normalizedProfileSize++;
+}
+
+void RecordProfile::addProfileToPlaylist() {
+    // Do nothing if there are not at least two entries in the profile. This indicates
+    // the profile is not yet complete.
+    if(normalizedProfileSize < 2) {
+        return;
+    }
+
+    for(uint8_t i = 0; i < normalizedProfileSize - 1; i++) {
+        playlist[playlistSize] = i;
+        playlistSize++;
+    }
+}
+
 bool RecordProfile::customProfile() {
     return true; // to do: implement this for real when calculated profiles become available
 }
