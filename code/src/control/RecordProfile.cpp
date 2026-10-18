@@ -158,9 +158,12 @@ void RecordProfile::skipBackward() {
             // If we are past the last track, go back to the last track
             if(currentPosition >= normalizedProfile[normalizedProfileSize - 1]) {
                 goToPosition = normalizedProfile[normalizedProfileSize - 2];
-            } else {
+            } 
+            
+            // Only go back to a previous track if we aren't on the first track. If on the first track, we should go home.
+            else if(currentPosition > normalizedProfile[1]) {
                 // Iterate through the list until we get to the position the tonearm is past
-                for(uint8_t i = 1; i < normalizedProfileSize; i++) {
+                for(uint8_t i = 2; i < normalizedProfileSize; i++) {
                     if(currentPosition < normalizedProfile[i]) {
                         goToPosition = normalizedProfile[i - 2];
                         break;
