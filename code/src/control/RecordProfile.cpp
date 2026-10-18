@@ -57,6 +57,25 @@ void RecordProfile::addToPlaylist(uint8_t profileIndex) {
     }
 }
 
+void RecordProfile::removePlaylistTrack(uint8_t playlistIndex) {
+    // Don't let them delete the current index
+    if(playlistIndex != currentPlaylistIndex && playlistIndex < playlistSize) {
+        if(playlistIndex < currentPlaylistIndex) {
+            currentPlaylistIndex--;
+        }
+
+        playlistSize--;
+
+        for(uint8_t i = playlistIndex; i < playlistSize; i++) {
+            playlist[i] = playlist[i + 1];
+        }
+
+        if(playlistSize < PLAYLIST_MAX_SIZE) {
+            playlist[playlistSize] = -1;
+        }
+    }
+}
+
 bool RecordProfile::customProfile() {
     return true; // to do: implement this for real when calculated profiles become available
 }

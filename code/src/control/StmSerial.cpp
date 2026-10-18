@@ -58,53 +58,54 @@ void StmSerial::readSerialData(Stream& stream) {
 
             switch(incomingCommand) {
                 // Misc.
-                case ExternalCommand::ConnectionTest:           stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);    break;
+                case ExternalCommand::ConnectionTest:           stream.write(SERIAL_COMMAND_CONNECTION_SUCCESS);        break;
                 
                 // Action Commands
-                case ExternalCommand::ActionPauseUnPause:       state->pauseOrUnPause();                            break;
-                case ExternalCommand::ActionMoveNStepsH:        processProtoPlay(stream);                           break;
-                case ExternalCommand::ActionToggleClutch:       processToggleClutch();                              break;
-                case ExternalCommand::ActionStepHorizontally:   processStepHorizontally(stream);                    break;
-                case ExternalCommand::ActionGoToPositionH:      processGoToPositionH(stream);                       break;
-                case ExternalCommand::ActionPlayOrReturn:       state->playOrReturn();                              break;
-                case ExternalCommand::ActionCalibrate:          state->beginCalibrationRoutine();                   break;
-                case ExternalCommand::ActionGoToPositionV:      processGoToPositionV(stream);                       break;
-                case ExternalCommand::ActionMoveNStepsV:        processMoveNStepsV(stream);                         break;
-                case ExternalCommand::ActionHomeClutch:         state->homeHorizontalClutch();                      break;
-                case ExternalCommand::ActionSkipForward:        state->recordProfile.skipForward();                 break;
-                case ExternalCommand::ActionSkipBackward:       state->recordProfile.skipBackward();                break;
+                case ExternalCommand::ActionPauseUnPause:       state->pauseOrUnPause();                                break;
+                case ExternalCommand::ActionMoveNStepsH:        processProtoPlay(stream);                               break;
+                case ExternalCommand::ActionToggleClutch:       processToggleClutch();                                  break;
+                case ExternalCommand::ActionStepHorizontally:   processStepHorizontally(stream);                        break;
+                case ExternalCommand::ActionGoToPositionH:      processGoToPositionH(stream);                           break;
+                case ExternalCommand::ActionPlayOrReturn:       state->playOrReturn();                                  break;
+                case ExternalCommand::ActionCalibrate:          state->beginCalibrationRoutine();                       break;
+                case ExternalCommand::ActionGoToPositionV:      processGoToPositionV(stream);                           break;
+                case ExternalCommand::ActionMoveNStepsV:        processMoveNStepsV(stream);                             break;
+                case ExternalCommand::ActionHomeClutch:         state->homeHorizontalClutch();                          break;
+                case ExternalCommand::ActionSkipForward:        state->recordProfile.skipForward();                     break;
+                case ExternalCommand::ActionSkipBackward:       state->recordProfile.skipBackward();                    break;
                 
                 // Set Commands
-                case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
-                case ExternalCommand::SetRotateSpeed:           state->rotateSpeed();                               break;
-                case ExternalCommand::SetCustomSpeed:           processSetCustomSpeed(stream);                      break;
-                case ExternalCommand::SetSize:                  state->updateSize((RecordSize)stream.read());       break;
-                case ExternalCommand::SetRotateSize:            state->rotateSize();                                break;
-                case ExternalCommand::SetClearActionCommand:    clearCommand();                                     break;
-                case ExternalCommand::SetAzEncoderZero:         processSetAzEncoderZero(stream);                    break;
-                case ExternalCommand::SetSaveSettings:          state->saveSettings();                              break;
-                case ExternalCommand::SetClearPlaylist:         state->recordProfile.clearPlaylist();               break;
-                case ExternalCommand::SetClearProfile:          state->recordProfile.clearProfile();                break;
-                case ExternalCommand::SetAddTrackAtPosition:    state->recordProfile.addProfileTrackAtPosition();   break;
-                case ExternalCommand::SetAddProfileToPlaylist:  state->recordProfile.addProfileToPlaylist();        break;
-                case ExternalCommand::SetOverwriteRecordProfile:processSetOverwriteRecordProfile(stream);           break;
-                case ExternalCommand::SetAddToPlaylist:         state->recordProfile.addToPlaylist(stream.read());  break;
+                case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());      break;
+                case ExternalCommand::SetRotateSpeed:           state->rotateSpeed();                                   break;
+                case ExternalCommand::SetCustomSpeed:           processSetCustomSpeed(stream);                          break;
+                case ExternalCommand::SetSize:                  state->updateSize((RecordSize)stream.read());           break;
+                case ExternalCommand::SetRotateSize:            state->rotateSize();                                    break;
+                case ExternalCommand::SetClearActionCommand:    clearCommand();                                         break;
+                case ExternalCommand::SetAzEncoderZero:         processSetAzEncoderZero(stream);                        break;
+                case ExternalCommand::SetSaveSettings:          state->saveSettings();                                  break;
+                case ExternalCommand::SetClearPlaylist:         state->recordProfile.clearPlaylist();                   break;
+                case ExternalCommand::SetClearProfile:          state->recordProfile.clearProfile();                    break;
+                case ExternalCommand::SetAddTrackAtPosition:    state->recordProfile.addProfileTrackAtPosition();       break;
+                case ExternalCommand::SetAddProfileToPlaylist:  state->recordProfile.addProfileToPlaylist();            break;
+                case ExternalCommand::SetOverwriteRecordProfile:processSetOverwriteRecordProfile(stream);               break;
+                case ExternalCommand::SetAddToPlaylist:         state->recordProfile.addToPlaylist(stream.read());      break;
+                case ExternalCommand::SetRemovePlaylistTrack:   state->recordProfile.removePlaylistTrack(stream.read());break;
 
                 // Get Commands
-                case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);             break;
-                case ExternalCommand::GetVerticalEncoderPos:    processGetVerticalEncoderPos(stream);               break;
-                case ExternalCommand::GetLiftStatus:            stream.write(state->getLiftStatus());               break;
-                case ExternalCommand::GetHomeStatus:            stream.write(state->getHomeStatus());               break;
-                case ExternalCommand::GetCurrentCommand:        stream.write(processGetCurrentCommand());           break;
-                case ExternalCommand::GetCurrentSubCommand:     stream.write(processGetCurrentSubCommand());        break;
-                case ExternalCommand::GetCommandStatus:         stream.write(processGetCommandStatus());            break;
-                case ExternalCommand::GetUpTime:                processGetUpTime(stream);                           break;
-                case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed);                 break;
-                case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream);                      break;
-                case ExternalCommand::GetSizeSetting:           stream.write(state->settings.size);                 break;
-                case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                break;
-                case ExternalCommand::GetCalibrationValues:     processGetCalibrationValues(stream);                break;
-                case ExternalCommand::GetProfilePlaylist:       processGetProfilePlaylist(stream);                  break;
+                case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);                 break;
+                case ExternalCommand::GetVerticalEncoderPos:    processGetVerticalEncoderPos(stream);                   break;
+                case ExternalCommand::GetLiftStatus:            stream.write(state->getLiftStatus());                   break;
+                case ExternalCommand::GetHomeStatus:            stream.write(state->getHomeStatus());                   break;
+                case ExternalCommand::GetCurrentCommand:        stream.write(processGetCurrentCommand());               break;
+                case ExternalCommand::GetCurrentSubCommand:     stream.write(processGetCurrentSubCommand());            break;
+                case ExternalCommand::GetCommandStatus:         stream.write(processGetCommandStatus());                break;
+                case ExternalCommand::GetUpTime:                processGetUpTime(stream);                               break;
+                case ExternalCommand::GetSpeedSetting:          stream.write(state->selectedSpeed);                     break;
+                case ExternalCommand::GetSpeedTarget:           processGetSpeedTarget(stream);                          break;
+                case ExternalCommand::GetSizeSetting:           stream.write(state->settings.size);                     break;
+                case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                    break;
+                case ExternalCommand::GetCalibrationValues:     processGetCalibrationValues(stream);                    break;
+                case ExternalCommand::GetProfilePlaylist:       processGetProfilePlaylist(stream);                      break;
             }
         }
     }
