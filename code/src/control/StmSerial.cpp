@@ -88,6 +88,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetAddTrackAtPosition:    state->recordProfile.addProfileTrackAtPosition();   break;
                 case ExternalCommand::SetAddProfileToPlaylist:  state->recordProfile.addProfileToPlaylist();        break;
                 case ExternalCommand::SetOverwriteRecordProfile:processSetOverwriteRecordProfile(stream);           break;
+                case ExternalCommand::SetAddToPlaylist:         state->recordProfile.addToPlaylist(stream.read());  break;
 
                 // Get Commands
                 case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);             break;

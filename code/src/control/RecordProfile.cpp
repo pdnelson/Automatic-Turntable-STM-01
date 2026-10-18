@@ -49,6 +49,14 @@ void RecordProfile::addProfileTrack(uint16_t position) {
     normalizedProfileSize++;
 }
 
+void RecordProfile::addToPlaylist(uint8_t profileIndex) {
+    // Exclude the profile's pickup position. Who would want to add that to their playlist?!
+    if(profileIndex < normalizedProfileSize - 1) {
+        playlist[playlistSize] = profileIndex;
+        playlistSize++;
+    }
+}
+
 bool RecordProfile::customProfile() {
     return true; // to do: implement this for real when calculated profiles become available
 }

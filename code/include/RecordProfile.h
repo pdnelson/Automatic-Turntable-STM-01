@@ -20,6 +20,7 @@ class RecordProfile {
         void addProfileTrackAtPosition();
         void addProfileToPlaylist();
         void addProfileTrack(uint16_t position);
+        void addToPlaylist(uint8_t profileIndex);
 
         /**
          * Return `true` if we are running a custom profile. `false` if it was built by the IR sensor.

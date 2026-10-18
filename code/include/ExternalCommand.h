@@ -32,6 +32,7 @@ enum ExternalCommand {
     SetAddTrackAtPosition = 41,
     SetAddProfileToPlaylist = 42,
     SetOverwriteRecordProfile = 43,
+    SetAddToPlaylist = 44,
 
     // Data retrieval commands (100+)
     GetVerticalEncoderPos = 100,
