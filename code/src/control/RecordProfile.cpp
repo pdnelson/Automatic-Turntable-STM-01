@@ -67,8 +67,29 @@ void RecordProfile::monitorAutoPickup() {
 }
 
 void RecordProfile::skipForward() {
-    // If the playlist is empty, do nothing
-    if(playlistEmpty()) {
+    // If the playlist is empty, skip to the next track in the profile
+    if(playlistEmpty() && normalizedProfileSize > 1) {
+        uint16_t currentPosition = state->azEncoder.getNormalizedPosition();
+        uint16_t goToPosition = state->calibration.home;
+
+        // If the current position is before the first profile item, then go there.
+        if(currentPosition < normalizedProfile[0]) {
+            goToPosition = normalizedProfile[0];
+        } 
+        
+        // Otherwise, find the next track to go to, IF we are not on the last track
+        else if(currentPosition < normalizedProfile[normalizedProfileSize - 2]) {
+            // Iterate through the list until we get to the position the tonearm is past
+            for(uint8_t i = 0; i < normalizedProfileSize; i++) {
+                if(currentPosition < normalizedProfile[i]) {
+                    goToPosition = normalizedProfile[i];
+                    break;
+                }
+            }
+        }
+
+        state->currentCommand = std::make_unique<CmdGoToPositionH>(state, goToPosition, 0, 6);
+
         return;
     }
 
@@ -91,7 +112,31 @@ void RecordProfile::skipForward() {
 }
 
 void RecordProfile::skipBackward() {
-    if(playlistEmpty() || currentPlaylistIndex == -1) {
+    // If the playlist is empty, skip to the previous track in the profile
+    if(playlistEmpty() && normalizedProfileSize > 1) {
+        uint16_t currentPosition = state->azEncoder.getNormalizedPosition();
+
+        // Search for a track with a previous track, if we are at least at the first track, then there
+        // will be a previous track (previous from first track being home)
+        if(currentPosition >= normalizedProfile[0]) {
+            uint16_t goToPosition = state->calibration.home;
+
+            // If we are past the last track, go back to the last track
+            if(currentPosition >= normalizedProfile[normalizedProfileSize - 1]) {
+                goToPosition = normalizedProfile[normalizedProfileSize - 2];
+            } else {
+                // Iterate through the list until we get to the position the tonearm is past
+                for(uint8_t i = 1; i < normalizedProfileSize; i++) {
+                    if(currentPosition < normalizedProfile[i]) {
+                        goToPosition = normalizedProfile[i - 2];
+                        break;
+                    }
+                }
+            }
+
+            state->currentCommand = std::make_unique<CmdGoToPositionH>(state, goToPosition, 0, 6);
+        }
+
         return;
     }
 
