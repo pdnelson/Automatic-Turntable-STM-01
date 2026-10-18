@@ -71,6 +71,8 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionGoToPositionV:      processGoToPositionV(stream);                       break;
                 case ExternalCommand::ActionMoveNStepsV:        processMoveNStepsV(stream);                         break;
                 case ExternalCommand::ActionHomeClutch:         state->homeHorizontalClutch();                      break;
+                case ExternalCommand::ActionSkipForward:        state->recordProfile.skipForward();                 break;
+                case ExternalCommand::ActionSkipBackward:       state->recordProfile.skipBackward();                break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());  break;
