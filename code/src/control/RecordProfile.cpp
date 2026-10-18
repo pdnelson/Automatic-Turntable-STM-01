@@ -10,12 +10,14 @@ void RecordProfile::clearPlaylist() {
     for(uint8_t i = 0; i < PLAYLIST_MAX_SIZE; i++) {
         playlist[i] = -1;
     }
+    playlistSize = 0;
 }
 
 void RecordProfile::clearProfile() {
     for(uint8_t i = 0; i < PROFILE_MAX_SIZE; i++) {
         normalizedProfile[i] = 0;
     }
+    normalizedProfileSize = 0;
 
     clearPlaylist();
 }

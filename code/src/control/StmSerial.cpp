@@ -83,6 +83,8 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetClearActionCommand:    clearCommand();                                     break;
                 case ExternalCommand::SetAzEncoderZero:         processSetAzEncoderZero(stream);                    break;
                 case ExternalCommand::SetSaveSettings:          state->saveSettings();                              break;
+                case ExternalCommand::SetClearPlaylist:         state->recordProfile.clearPlaylist();               break;
+                case ExternalCommand::SetClearProfile:          state->recordProfile.clearProfile();                break;
 
                 // Get Commands
                 case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);             break;
