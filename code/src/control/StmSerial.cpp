@@ -90,6 +90,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetOverwriteRecordProfile:processSetOverwriteRecordProfile(stream);               break;
                 case ExternalCommand::SetAddToPlaylist:         state->recordProfile.addToPlaylist(stream.read());      break;
                 case ExternalCommand::SetRemovePlaylistTrack:   state->recordProfile.removePlaylistTrack(stream.read());break;
+                case ExternalCommand::SetPositionAtProfileIndex:processSetPositionAtProfileIndex(stream);               break;
 
                 // Get Commands
                 case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);                 break;
@@ -201,6 +202,13 @@ void StmSerial::processSetOverwriteRecordProfile(Stream& stream) {
             dataIndex += 2;
         }
     }
+}
+
+void StmSerial::processSetPositionAtProfileIndex(Stream& stream) {
+    uint8_t index = stream.read();
+    uint16_t newPosition = readInt16(stream);
+
+    state->recordProfile.setProfilePosition(index, newPosition);
 }
 
 void StmSerial::processGetHorizontalEncoderPos(Stream& stream) {

@@ -76,6 +76,12 @@ void RecordProfile::removePlaylistTrack(uint8_t playlistIndex) {
     }
 }
 
+void RecordProfile::setProfilePosition(uint8_t profileIndex, uint16_t position) {
+    if(normalizedProfile[profileIndex] != 0) {
+        normalizedProfile[profileIndex] = position;
+    }
+}
+
 bool RecordProfile::customProfile() {
     return true; // to do: implement this for real when calculated profiles become available
 }
