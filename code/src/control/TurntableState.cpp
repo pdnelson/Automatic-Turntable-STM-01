@@ -86,7 +86,7 @@ void TurntableState::executeCommand() {
 
             // When coming out of the calibration command, go home (if we aren't already there)
             if(currentCommand->getCommandId() == CommandId::Calibration && getHomeStatus() != HomeStatus::Homed) {
-                currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 10, 14);
+                currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 10, SPEED_AUTOMATIC);
             } 
             
             // When coming out of an error, home the horizontal clutch. Errors shouldn't happen often, so this extra assurance that
@@ -269,12 +269,12 @@ void TurntableState::playOrReturn() {
         }
 
         if(position != 0) {
-            currentCommand = std::make_unique<CmdGoToPositionH>(this, position, 0, PLAY_FROM_HOME_HORIZONTAL_SPEED);
+            currentCommand = std::make_unique<CmdGoToPositionH>(this, position, 0, SPEED_AUTOMATIC);
         } else {
             // to do: implement automatic size routine
         }
     } else {
-        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 15, HOME_HORIZONTAL_SPEED);
+        currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 15, SPEED_AUTOMATIC);
     }
 }
 

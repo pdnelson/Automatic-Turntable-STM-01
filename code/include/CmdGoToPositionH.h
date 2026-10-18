@@ -4,6 +4,7 @@
 
 #ifndef CmdGoToPositionH_h
 #define CmdGoToPositionH_h
+
 class TurntableState;
 
 class CmdGoToPositionH : public BaseTurntableCommand {

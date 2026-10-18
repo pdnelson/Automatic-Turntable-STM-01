@@ -1,6 +1,7 @@
 #include <RecordProfile.h>
 #include <TurntableState.h>
 #include <CmdGoToPositionH.h>
+#include <Constants.h>
 
 RecordProfile::RecordProfile(TurntableState* state) {
     this->state = state;
@@ -121,7 +122,7 @@ void RecordProfile::skipForward() {
             }
         }
 
-        state->currentCommand = std::make_unique<CmdGoToPositionH>(state, goToPosition, 0, 6);
+        state->currentCommand = std::make_unique<CmdGoToPositionH>(state, goToPosition, 0, SPEED_AUTOMATIC);
 
         return;
     }
@@ -167,7 +168,7 @@ void RecordProfile::skipBackward() {
                 }
             }
 
-            state->currentCommand = std::make_unique<CmdGoToPositionH>(state, goToPosition, 0, 6);
+            state->currentCommand = std::make_unique<CmdGoToPositionH>(state, goToPosition, 0, SPEED_AUTOMATIC);
         }
 
         return;
@@ -194,7 +195,7 @@ void RecordProfile::skipBackward() {
 void RecordProfile::playAtCurrentIndex() {
     // to do: go at different speeds depending on the distance between tracks
     uint16_t destination = normalizedProfile[playlist[currentPlaylistIndex]];
-    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, destination, 0, 6);
+    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, destination, 0, SPEED_AUTOMATIC);
 }
 
 void RecordProfile::advancePlaylistIndex() {

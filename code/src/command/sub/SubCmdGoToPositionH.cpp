@@ -31,7 +31,16 @@ void SubCmdGoToPositionH::doInitialize() {
 
     uint16_t steps = H_STEPS_REF * travelDistance / H_TICKS_REF;
 
-    state->horizontalStepper.setMovementProfile(direction, speed, steps);
+    uint8_t normalizedSpeed = speed;
+
+    // If the speed is the "automatic" speed, then determine the speed based on how 
+    if(speed == SPEED_AUTOMATIC) {
+        if(travelDistance > 1300) normalizedSpeed = H_MOVEMENT_FAST;
+        else if(travelDistance > 700) normalizedSpeed = H_MOVEMENT_MEDIUM;
+        else normalizedSpeed = H_MOVEMENT_SLOW;
+    }
+
+    state->horizontalStepper.setMovementProfile(direction, normalizedSpeed, steps);
     stepsToTake = steps;
 }
 
