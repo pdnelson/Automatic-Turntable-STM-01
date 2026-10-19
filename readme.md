@@ -106,7 +106,7 @@ This project has a lot of work that needs done to it. Here's what's been complet
 - [ ] IR record/track detection
 - [ ] "Automatic" play routine
 - [ ] Automatic homing routine
-- [ ] Track forward/backward routine
+- [x] Track forward/backward routine
 - [ ] Headshell capacitive touch sensor
 - [ ] Audio cut-off circuit
 - [ ] Prototype motor/3-phase belt-driven turntable setup
