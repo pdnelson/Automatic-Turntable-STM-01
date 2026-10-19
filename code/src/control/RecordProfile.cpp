@@ -189,7 +189,7 @@ void RecordProfile::skipBackward() {
     }
 
     // Otherwise, we are free to just decrement the playlist and go there
-    else {
+    else if(currentPlaylistIndex > 0) {
         currentPlaylistIndex--;
         playAtCurrentIndex();
     }
