@@ -46,8 +46,11 @@ void RecordProfile::addProfileToPlaylist() {
 }
 
 void RecordProfile::addProfileTrack(uint16_t position) {
-    normalizedProfile[normalizedProfileSize] = position;
-    normalizedProfileSize++;
+    // You can only add a profile track if it's larger than the last one
+    if(normalizedProfileSize == 0 || position > normalizedProfile[normalizedProfileSize - 1]) {
+        normalizedProfile[normalizedProfileSize] = position;
+        normalizedProfileSize++;
+    }
 }
 
 void RecordProfile::addToPlaylist(uint8_t profileIndex) {

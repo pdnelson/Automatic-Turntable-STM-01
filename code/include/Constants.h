@@ -61,7 +61,7 @@
 #define LIFT_BOUNCE_TIMEOUT_MICROS 1750000
 
 // How fast the tonearm should move when lifting.
-#define LIFT_UP_SPEED 7
+#define LIFT_UP_SPEED 5
 
 // How fast the tonearm should move when being set down gently.
 #define SET_DOWN_SLOWLY 3
