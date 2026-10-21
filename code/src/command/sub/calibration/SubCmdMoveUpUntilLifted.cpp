@@ -4,7 +4,7 @@
 #include <Pin.h>
 #include <LiftStatus.h>
 
-SubCmdMoveUpUntilLifted::SubCmdMoveUpUntilLifted(TurntableState* state, SubCommandId subCommandId, uint8_t speed) : BaseLiftSubCommand(state, speed) {
+SubCmdMoveUpUntilLifted::SubCmdMoveUpUntilLifted(TurntableState* state, SubCommandId subCommandId, uint8_t speed) : BaseLiftSubCommand(state, 0, speed, false) {
     this->subCommandId = subCommandId;
 }
 
