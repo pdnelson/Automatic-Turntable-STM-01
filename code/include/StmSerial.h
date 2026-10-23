@@ -9,7 +9,12 @@
 // - profile size
 // - playlist size
 // - end key
-#define PROFILE_PLAYLIST_KNOWN_DATA_SIZE 7
+// - current track progress
+// - current track progress 
+// - current playing track index
+// - current playlist progress
+// - current playlist progress max
+#define PROFILE_PLAYLIST_KNOWN_DATA_SIZE 20
 
 class TurntableState;
 

@@ -25,6 +25,26 @@ class RecordProfile {
         void setProfilePosition(uint8_t profileIndex, uint16_t position);
 
         /**
+         * Return's the current track's progress, in encoder ticks. This does not consider the playlist at all, only the positions around the current track.
+         */
+        uint16_t getCurrentTrackProgress();
+        uint16_t getCurrentTrackProgressMax();
+
+        /**
+         * The current track that the tonearm is sitting on. This does not consider the playlist at all, only the positions around the current track.
+         * -1 if not on any track.
+         */
+        int8_t getCurrentPlayingTrackIndex();
+
+        /**
+         * The playlist's progress.
+         */
+        uint32_t getPlaylistProgress();
+        uint32_t getPlaylistProgressMax();
+
+        void playAtTrackIndex(uint8_t index);
+
+        /**
          * Return `true` if we are running a custom profile. `false` if it was built by the IR sensor.
          */
         bool customProfile();
@@ -71,6 +91,7 @@ class RecordProfile {
         void playAtCurrentIndex();
         void advancePlaylistIndex();
         uint16_t nextLocation();
+        uint16_t trackRangeByIndex(uint8_t index);
 
         unsigned long lastTimeNotInThreshold = 0;
 

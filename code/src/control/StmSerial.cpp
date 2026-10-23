@@ -73,6 +73,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionHomeClutch:         state->homeHorizontalClutch();                          break;
                 case ExternalCommand::ActionSkipForward:        state->recordProfile.skipForward();                     break;
                 case ExternalCommand::ActionSkipBackward:       state->recordProfile.skipBackward();                    break;
+                case ExternalCommand::ActionPlayAtTrackIndex:   state->recordProfile.playAtTrackIndex(stream.read());   break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());      break;
@@ -402,9 +403,37 @@ void StmSerial::processGetProfilePlaylist(Stream& stream) {
     data[2] = profileSize;
     data[3] = state->recordProfile.playlistSize;
 
+    // horizontal position
     uint16_t horizontalPosition = state->azEncoder.getNormalizedPosition();
     data[4] = horizontalPosition & 0x00FF;
     data[5] = (horizontalPosition >> 8) & 0x00FF;
+
+    // current track progress
+    uint16_t currTrackProgress = state->recordProfile.getCurrentTrackProgress();
+    data[6] = currTrackProgress & 0x00FF;
+    data[7] = (currTrackProgress >> 8) & 0x00FF;
+
+    // current track progress max
+    uint16_t currTrackProgressMax = state->recordProfile.getCurrentTrackProgressMax();
+    data[8] = currTrackProgressMax & 0x00FF;
+    data[9] = (currTrackProgressMax >> 8) & 0x00FF;
+
+    // current playing track index
+    data[10] = state->recordProfile.getCurrentPlayingTrackIndex();
+
+    // playlist progress
+    uint32_t playlistProgress = state->recordProfile.getPlaylistProgress();
+    data[11] = playlistProgress & 0x00FF;
+    data[12] = (playlistProgress >> 8) & 0x00FF;
+    data[13] = (playlistProgress >> 16) & 0x00FF;
+    data[14] = (playlistProgress >> 24) & 0x00FF;
+
+    // playlist progress max
+    uint32_t playlistProgressMax = state->recordProfile.getPlaylistProgressMax();
+    data[15] = playlistProgressMax & 0x00FF;
+    data[16] = (playlistProgressMax >> 8) & 0x00FF;
+    data[17] = (playlistProgressMax >> 16) & 0x00FF;
+    data[18] = (playlistProgressMax >> 24) & 0x00FF;
 
     // Write the normalized profile data
     uint8_t dataIndex = PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 1;

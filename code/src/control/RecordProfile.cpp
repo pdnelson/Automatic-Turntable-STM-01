@@ -91,6 +91,7 @@ bool RecordProfile::customProfile() {
 }
 
 void RecordProfile::monitorAutoPickup() {
+
     if(currentPlaylistIndex > -1) {
         bool onOrPastThreshold = state->azEncoder.getNormalizedPosition() >= nextLocation() + AUTO_PICKUP_THRESHOLD;
 
@@ -100,7 +101,15 @@ void RecordProfile::monitorAutoPickup() {
         } else if(!onOrPastThreshold) {
             lastTimeNotInThreshold = state->clockMicros;
         }
-    } // to do: add else condition here for non-profile auto pickup
+    } else if(normalizedProfileSize > 1) {
+        bool onOrPastThreshold = state->azEncoder.getNormalizedPosition() > normalizedProfile[normalizedProfileSize - 1] + AUTO_PICKUP_THRESHOLD;
+
+        if(onOrPastThreshold && state->clockMicros - lastTimeNotInThreshold > AUTO_PICKUP_TIME_THRESHOLD_MICROS) {
+            advancePlaylistIndex();
+        } else if(!onOrPastThreshold) {
+            lastTimeNotInThreshold = state->clockMicros;
+        }
+    }
 }
 
 void RecordProfile::skipForward() {
@@ -199,9 +208,7 @@ void RecordProfile::skipBackward() {
 }
 
 void RecordProfile::playAtCurrentIndex() {
-    // to do: go at different speeds depending on the distance between tracks
-    uint16_t destination = normalizedProfile[playlist[currentPlaylistIndex]];
-    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, destination, 0, SPEED_AUTOMATIC);
+    playAtTrackIndex(playlist[currentPlaylistIndex]);
 }
 
 void RecordProfile::advancePlaylistIndex() {
@@ -223,4 +230,92 @@ void RecordProfile::advancePlaylistIndex() {
 uint16_t RecordProfile::nextLocation() {
     // The next location is the start of the track after the current one, on the record profile.
     return normalizedProfile[playlist[currentPlaylistIndex] + 1];
+}
+
+uint16_t RecordProfile::getCurrentTrackProgress() {
+    int8_t trackIndex = getCurrentPlayingTrackIndex();
+
+    if(trackIndex < 0) {
+        return 0;
+    } else {
+        return state->azEncoder.getNormalizedPosition() - normalizedProfile[trackIndex];
+    }
+}
+
+uint16_t RecordProfile::getCurrentTrackProgressMax() {
+    int8_t trackIndex = getCurrentPlayingTrackIndex();
+
+    if(trackIndex < 0) {
+        return 0;
+    } else {
+        return trackRangeByIndex(trackIndex);
+    }
+}
+
+int8_t RecordProfile::getCurrentPlayingTrackIndex() {
+    uint16_t currPos = state->azEncoder.getNormalizedPosition();
+
+    // If before the first track, or after the last track, return -1
+    if(normalizedProfileSize < 2 ||  currPos < normalizedProfile[0] || currPos >= normalizedProfile[normalizedProfileSize - 1] || state->currentCommand != nullptr) {
+        return -1;
+    }
+
+    for(uint8_t i = 0; i < normalizedProfileSize; i++) {
+
+        if(currPos >= normalizedProfile[i] && currPos < normalizedProfile[i + 1]) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+uint32_t RecordProfile::getPlaylistProgress() {
+    if(playlistSize == 0) {
+        return 0;
+    }
+
+    uint32_t progress = 0;
+
+    if(currentPlaylistIndex > -1) {
+
+        // Add up progress of completed tracks
+        for(uint8_t i = 0; i < currentPlaylistIndex; i++) {
+            progress += trackRangeByIndex(playlist[i]);
+        }
+
+        // Only add current track's progress if there is not a command running
+        if(state->currentCommand == nullptr) {
+            uint8_t trackIndex = playlist[currentPlaylistIndex];
+            int32_t currentTrackProgress = state->azEncoder.getNormalizedPosition() - normalizedProfile[trackIndex];
+
+            if(currentTrackProgress < 0 || currentTrackProgress > trackRangeByIndex(trackIndex)) {
+                currentTrackProgress = 0;
+            }
+            
+            progress += currentTrackProgress;
+        }
+    }
+
+    return progress;
+}
+
+uint32_t RecordProfile::getPlaylistProgressMax() {
+    uint32_t max = 0;
+
+    if(playlistSize > 0) {
+        for(uint8_t i = 0; i < playlistSize; i++) {
+            max += trackRangeByIndex(playlist[i]);
+        }   
+    }
+
+    return max;
+}
+
+void RecordProfile::playAtTrackIndex(uint8_t index) {
+    state->currentCommand = std::make_unique<CmdGoToPositionH>(state, normalizedProfile[index], 0, SPEED_AUTOMATIC);
+}
+
+uint16_t RecordProfile::trackRangeByIndex(uint8_t index) {
+    return normalizedProfile[index + 1] - normalizedProfile[index];
 }
