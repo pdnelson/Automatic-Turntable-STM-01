@@ -50,9 +50,9 @@ class RecordProfile {
         bool customProfile();
 
         /**
-         * This method monitors the auto-pickup routine. If there is a profile present
+         * This method monitors the auto-return routine. If there is a profile present
          */
-        void monitorAutoPickup();
+        void monitorAutoReturn();
 
         /**
          * Skip forward to the next playlist track.
@@ -86,6 +86,8 @@ class RecordProfile {
          */
         int8_t playlist[PLAYLIST_MAX_SIZE] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
         uint8_t playlistSize = 0;
+
+        bool autoReturn = true;
     
     private:
         void playAtCurrentIndex();

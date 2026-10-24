@@ -14,7 +14,7 @@
 // - current playing track index
 // - current playlist progress
 // - current playlist progress max
-#define PROFILE_PLAYLIST_KNOWN_DATA_SIZE 20
+#define PROFILE_PLAYLIST_KNOWN_DATA_SIZE 21
 
 class TurntableState;
 
@@ -41,6 +41,7 @@ class StmSerial {
         void processSetAzEncoderZero(Stream& stream);
         void processSetOverwriteRecordProfile(Stream& stream);
         void processSetPositionAtProfileIndex(Stream& stream);
+        void processSetToggleAutoReturn();
         void processGetHorizontalEncoderPos(Stream& stream);
         void processGetVerticalEncoderPos(Stream& stream);
         byte processGetCurrentCommand();

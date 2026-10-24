@@ -68,7 +68,7 @@ void TurntableState::monitor() {
     updateClockMicros();
     advanceCounts();
     serialComm.monitor();
-    recordProfile.monitorAutoPickup();
+    recordProfile.monitorAutoReturn();
     monitorCommandInput();
     executeCommand();
     azEncoder.monitor(clockMicros);

@@ -36,6 +36,7 @@ enum ExternalCommand {
     SetAddToPlaylist = 44,
     SetRemovePlaylistTrack = 45,
     SetPositionAtProfileIndex = 46,
+    SetToggleAutoReturn = 47,
 
     // Data retrieval commands (100+)
     GetVerticalEncoderPos = 100,

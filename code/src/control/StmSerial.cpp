@@ -92,6 +92,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::SetAddToPlaylist:         state->recordProfile.addToPlaylist(stream.read());      break;
                 case ExternalCommand::SetRemovePlaylistTrack:   state->recordProfile.removePlaylistTrack(stream.read());break;
                 case ExternalCommand::SetPositionAtProfileIndex:processSetPositionAtProfileIndex(stream);               break;
+                case ExternalCommand::SetToggleAutoReturn:      processSetToggleAutoReturn();                           break;
 
                 // Get Commands
                 case ExternalCommand::GetHorizontalEncoderPos:  processGetHorizontalEncoderPos(stream);                 break;
@@ -210,6 +211,10 @@ void StmSerial::processSetPositionAtProfileIndex(Stream& stream) {
     uint16_t newPosition = readInt16(stream);
 
     state->recordProfile.setProfilePosition(index, newPosition);
+}
+
+void StmSerial::processSetToggleAutoReturn() {
+    state->recordProfile.autoReturn = !state->recordProfile.autoReturn;
 }
 
 void StmSerial::processGetHorizontalEncoderPos(Stream& stream) {
@@ -434,6 +439,8 @@ void StmSerial::processGetProfilePlaylist(Stream& stream) {
     data[16] = (playlistProgressMax >> 8) & 0x00FF;
     data[17] = (playlistProgressMax >> 16) & 0x00FF;
     data[18] = (playlistProgressMax >> 24) & 0x00FF;
+
+    data[19] = state->recordProfile.autoReturn;
 
     // Write the normalized profile data
     uint8_t dataIndex = PROFILE_PLAYLIST_KNOWN_DATA_SIZE - 1;

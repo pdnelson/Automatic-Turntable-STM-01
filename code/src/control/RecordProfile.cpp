@@ -40,14 +40,13 @@ void RecordProfile::addProfileToPlaylist() {
     }
 
     for(uint8_t i = 0; i < normalizedProfileSize - 1; i++) {
-        playlist[playlistSize] = i;
-        playlistSize++;
+        addToPlaylist(i);
     }
 }
 
 void RecordProfile::addProfileTrack(uint16_t position) {
     // You can only add a profile track if it's larger than the last one
-    if(normalizedProfileSize == 0 || position > normalizedProfile[normalizedProfileSize - 1]) {
+    if((normalizedProfileSize == 0 || position > normalizedProfile[normalizedProfileSize - 1]) && normalizedProfileSize < PROFILE_MAX_SIZE) {
         normalizedProfile[normalizedProfileSize] = position;
         normalizedProfileSize++;
     }
@@ -55,7 +54,7 @@ void RecordProfile::addProfileTrack(uint16_t position) {
 
 void RecordProfile::addToPlaylist(uint8_t profileIndex) {
     // Exclude the profile's pickup position. Who would want to add that to their playlist?!
-    if(profileIndex < normalizedProfileSize - 1) {
+    if(profileIndex < normalizedProfileSize - 1 && playlistSize < PLAYLIST_MAX_SIZE) {
         playlist[playlistSize] = profileIndex;
         playlistSize++;
     }
@@ -90,24 +89,26 @@ bool RecordProfile::customProfile() {
     return true; // to do: implement this for real when calculated profiles become available
 }
 
-void RecordProfile::monitorAutoPickup() {
+void RecordProfile::monitorAutoReturn() {
 
-    if(currentPlaylistIndex > -1) {
-        bool onOrPastThreshold = state->azEncoder.getNormalizedPosition() >= nextLocation() + AUTO_PICKUP_THRESHOLD;
+    if(autoReturn) {
+        if(currentPlaylistIndex > -1) {
+            bool onOrPastThreshold = state->azEncoder.getNormalizedPosition() >= nextLocation() + AUTO_PICKUP_THRESHOLD;
 
-        // If we've reached the next location for AUTO_PICKUP_TIME_THRESHOLD_MICROS microseconds, advance the playlist index.
-        if(onOrPastThreshold && state->clockMicros - lastTimeNotInThreshold > AUTO_PICKUP_TIME_THRESHOLD_MICROS) {
-            advancePlaylistIndex();
-        } else if(!onOrPastThreshold) {
-            lastTimeNotInThreshold = state->clockMicros;
-        }
-    } else if(normalizedProfileSize > 1) {
-        bool onOrPastThreshold = state->azEncoder.getNormalizedPosition() > normalizedProfile[normalizedProfileSize - 1] + AUTO_PICKUP_THRESHOLD;
+            // If we've reached the next location for AUTO_PICKUP_TIME_THRESHOLD_MICROS microseconds, advance the playlist index.
+            if(onOrPastThreshold && state->clockMicros - lastTimeNotInThreshold > AUTO_PICKUP_TIME_THRESHOLD_MICROS) {
+                advancePlaylistIndex();
+            } else if(!onOrPastThreshold) {
+                lastTimeNotInThreshold = state->clockMicros;
+            }
+        } else if(normalizedProfileSize > 1) {
+            bool onOrPastThreshold = state->azEncoder.getNormalizedPosition() > normalizedProfile[normalizedProfileSize - 1] + AUTO_PICKUP_THRESHOLD;
 
-        if(onOrPastThreshold && state->clockMicros - lastTimeNotInThreshold > AUTO_PICKUP_TIME_THRESHOLD_MICROS) {
-            advancePlaylistIndex();
-        } else if(!onOrPastThreshold) {
-            lastTimeNotInThreshold = state->clockMicros;
+            if(onOrPastThreshold && state->clockMicros - lastTimeNotInThreshold > AUTO_PICKUP_TIME_THRESHOLD_MICROS) {
+                advancePlaylistIndex();
+            } else if(!onOrPastThreshold) {
+                lastTimeNotInThreshold = state->clockMicros;
+            }
         }
     }
 }
