@@ -290,8 +290,14 @@ uint32_t RecordProfile::getPlaylistProgress() {
             uint8_t trackIndex = playlist[currentPlaylistIndex];
             int32_t currentTrackProgress = state->azEncoder.getNormalizedPosition() - normalizedProfile[trackIndex];
 
-            if(currentTrackProgress < 0 || currentTrackProgress > trackRangeByIndex(trackIndex)) {
+            if(currentTrackProgress < 0) {
                 currentTrackProgress = 0;
+            } else {
+                uint16_t trackRange = trackRangeByIndex(trackIndex);
+
+                if(currentTrackProgress > trackRange) {
+                    currentTrackProgress = trackRange;
+                }
             }
             
             progress += currentTrackProgress;
