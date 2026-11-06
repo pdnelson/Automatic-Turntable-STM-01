@@ -286,7 +286,7 @@ void StmSerial::processGetSpeedTarget(Stream& stream) {
 }
 
 void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
-    uint8_t dataSize = 24;
+    uint8_t dataSize = 27;
     byte data[dataSize];
 
     data[0] = SERIAL_ADVANCED_START_KEY;
@@ -344,7 +344,15 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
     data[21] = actualHorizontalPosition & 0x00FF;
     data[22] = (actualHorizontalPosition >> 8) & 0x00FF;
 
-    data[23] = SERIAL_ADVANCED_END_KEY;
+    // Headshell photodiode value
+    uint16_t photoDiodeValue = state->getRecordSensorValue();
+    data[23] = photoDiodeValue & 0x00FF;
+    data[24] = (photoDiodeValue >> 8) & 0x00FF;
+
+    // Headshell LED status
+    data[25] = state->outputShift.getValue(StmShiftPin::LedHeadshellIR);
+
+    data[26] = SERIAL_ADVANCED_END_KEY;
 
     stream.write(data, dataSize);
 }

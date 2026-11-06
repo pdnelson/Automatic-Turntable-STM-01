@@ -66,6 +66,7 @@ class TurntableState {
         void saveSettings();
         void homeHorizontalClutch();
         void setClutch(ClutchStatus newClutchStatus);
+        uint16_t getRecordSensorValue();
 
     private:
         unsigned long liftDebounce = 0;

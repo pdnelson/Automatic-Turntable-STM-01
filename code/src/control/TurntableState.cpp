@@ -38,6 +38,7 @@ TurntableState::TurntableState() :
 {
     pinMode(Pin::VerticalPosition, INPUT);
     pinMode(Pin::HorizontalClutchSwitch, INPUT_PULLUP);
+    pinMode(Pin::HeadshellPhotoDiode, INPUT);
 
     // Lift
     pinMode(Pin::Lift, INPUT_PULLUP);
@@ -354,4 +355,8 @@ void TurntableState::homeHorizontalClutch() {
 
 void TurntableState::setClutch(ClutchStatus newClutchStatus) {
     currentCommand = std::make_unique<CmdSetAzClutch>(this, newClutchStatus);
+}
+
+uint16_t TurntableState::getRecordSensorValue() {
+    return 1024 - analogRead(Pin::HeadshellPhotoDiode);
 }
