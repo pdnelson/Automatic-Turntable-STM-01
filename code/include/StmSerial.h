@@ -52,6 +52,7 @@ class StmSerial {
         void processGetAdvancedSuiteData(Stream& stream);
         void processGetCalibrationValues(Stream& stream);
         void processGetProfilePlaylist(Stream& stream);
+        void processGetRecordSensorTab(Stream& stream);
         void clearCommand();
 
         int16_t readInt16(Stream& stream);

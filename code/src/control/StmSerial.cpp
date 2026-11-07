@@ -109,6 +109,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::GetAdvancedSuiteData:     processGetAdvancedSuiteData(stream);                    break;
                 case ExternalCommand::GetCalibrationValues:     processGetCalibrationValues(stream);                    break;
                 case ExternalCommand::GetProfilePlaylist:       processGetProfilePlaylist(stream);                      break;
+                case ExternalCommand::GetRecordSensorTab:       processGetRecordSensorTab(stream);                      break;
             }
         }
     }
@@ -468,6 +469,25 @@ void StmSerial::processGetProfilePlaylist(Stream& stream) {
     for(uint8_t i = playlistStart; i < playlistStart + state->recordProfile.playlistSize; i++) {
         data[i] = state->recordProfile.playlist[i - playlistStart];
     }
+
+    data[dataSize - 1] = SERIAL_ADVANCED_END_KEY;
+
+    stream.write(data, dataSize);
+}
+
+void StmSerial::processGetRecordSensorTab(Stream& stream) {
+    uint8_t dataSize = 5;
+    byte data[dataSize];
+
+    data[0] = SERIAL_ADVANCED_START_KEY;
+
+    // Headshell photodiode value
+    uint16_t photoDiodeValue = state->getRecordSensorValue();
+    data[1] = photoDiodeValue & 0x00FF;
+    data[2] = (photoDiodeValue >> 8) & 0x00FF;
+
+    // Headshell LED status
+    data[3] = state->outputShift.getValue(StmShiftPin::LedHeadshellIR);
 
     data[dataSize - 1] = SERIAL_ADVANCED_END_KEY;
 
