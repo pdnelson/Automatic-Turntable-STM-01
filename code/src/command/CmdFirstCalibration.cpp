@@ -99,7 +99,7 @@ CmdFirstCalibration::CmdFirstCalibration(TurntableState* state) : BaseTurntableC
 }
 
 CommandId CmdFirstCalibration::getCommandId() {
-    return CommandId::Calibration;
+    return CommandId::CalibrationFirst;
 }
 
 void CmdFirstCalibration::doInitialize() {

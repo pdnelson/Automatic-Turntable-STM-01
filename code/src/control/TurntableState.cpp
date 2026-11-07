@@ -87,7 +87,7 @@ void TurntableState::executeCommand() {
         if(result == CommandResult::Success) {
 
             // When coming out of the calibration command, go home (if we aren't already there)
-            if(currentCommand->getCommandId() == CommandId::Calibration && getHomeStatus() != HomeStatus::Homed) {
+            if((currentCommand->getCommandId() == CommandId::CalibrationFirst || currentCommand->getCommandId() == CommandId::CalibrationMaint) && getHomeStatus() != HomeStatus::Homed) {
                 currentCommand = std::make_unique<CmdGoToPositionH>(this, calibration.home, 10, SPEED_AUTOMATIC);
             } 
             
