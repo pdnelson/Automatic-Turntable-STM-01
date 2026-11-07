@@ -1,6 +1,8 @@
 # The Statimatic STM-01
 
-This is (going to be) a fully-automatic, modular turntable, called the Statimatic STM-01. The development of this turntable is being documented in the following YouTube series: [https://www.youtube.com/watch?v=k4UXI1rkMYs\&list=PL\_8A3xK4AntYpp8yXHuAbhb6lULQ2ivFA](https://www.youtube.com/playlist?list=PL_8A3xK4AntYpp8yXHuAbhb6lULQ2ivFA)
+This is (going to be) a fully-automatic, track selectable, modular turntable, called the Statimatic STM-01. 
+
+The development of this turntable is being documented in the following YouTube series: [https://www.youtube.com/watch?v=k4UXI1rkMYs\&list=PL\_8A3xK4AntYpp8yXHuAbhb6lULQ2ivFA](https://www.youtube.com/playlist?list=PL_8A3xK4AntYpp8yXHuAbhb6lULQ2ivFA)
 
 At this time, an AR-XA turntable (left) is being used as the fill-in "turntable" for the STM-01 (right) during development. Eventually, the STM-01 will get its own turtable
 <img width="4032" height="2268" alt="20260521_185642" src="https://github.com/user-attachments/assets/cd819c7b-82fa-4b46-9678-90f65ebb569b" />
@@ -13,18 +15,20 @@ Development is progressing on a breadboard, with questionable organization. Even
 
 ### Schematic
 
-This is the schematic as of 7 June 2026. The objective is to eliminate as much multiplexing as possible at the end of the project, if there are extra Teensy pins left over. The movement stepper demultiplexers (part `SN74LVC1G18DBVR`) will be the first to go. So far, it's looking like I may be able to eliminate these, as their use only saves me 3 pins. I'm not going to pull the trigger on this quite yet, though, because I may encounter other difficulties later on in the project, requiring the use of more pins. It's up in the air at this point.
-<img width="1590" height="1038" alt="schematic" src="https://github.com/user-attachments/assets/157d63a6-9e6b-4a52-a04b-6f32d3de2962" />
+This is the schematic as of 27 October 2026, which includes renders the tonearm mostly complete, at least in terms of movement.
+<img width="1410" height="1068" alt="new schematic" src="https://github.com/user-attachments/assets/d02bb762-91dd-4e72-8774-bcf7055cdce2" />
+
 
 
 ## Mechanisms
-The automatic tonerm's operation is facilitated by two mechanisms: One for vertical movement (right), and one for horizontal (left).
+The automatic tonearm's operation is facilitated by two mechanisms: One for vertical movement (right), and one for horizontal (left).
 
 The vertical axis has a stepper motor driving movement, and a 10k slide potentiometer acting as an absolute encoder, so its position can be monitored.
 
-The horizontal axis has a stepper motor driving horizontal movements, and another stepper motor to engage/disengage the horizontal motor for automatic movement. This mechanism is currently in progress, so there is some more work to do here.
+The horizontal axis has a stepper motor driving horizontal movements, and another stepper motor to engage/disengage the horizontal motor for automatic movement.
 
-<img width="4032" height="2268" alt="20260521_190203" src="https://github.com/user-attachments/assets/3c295208-4761-462c-82d0-73f3fe41d063" />
+<img width="1027" height="710" alt="image" src="https://github.com/user-attachments/assets/9b9b0f81-5177-483c-88d7-e01ee8bb9ecf" />
+
 
 ## Previous Turntable
 I designed a prototype turntable previously, separately from this repository, around late 2020/early 2021. That prototype lives in [another repository](https://github.com/pdnelson/Automatic-Record-Player). Though I'm no longer working on that project, much of the research, and many of the ideas I experimented with have made their way into this project.
@@ -33,11 +37,15 @@ I designed a prototype turntable previously, separately from this repository, ar
 The built-in features of this turntable will be kept to a minimum, so that development can go more quickly. These features will be able to be expanded using the 5 expansion ports on the back of the turntable.
 
 ### Commands
-Built-in, the plan is to have two commands: Play and pause. 
+Built-in, the plan is to have four commands: Play, pause, skip forward, and skip backward. 
 
 "Play" will move the tonearm from the "home" position to the outer edge of the record on the turntable. If the tonearm is not in the home position when "play" is pressed, then it will return home.
 
 "Pause" will lift the tonearm up if it's set down, and set the tonearm down if it's lifted. "Up" movement will be quick, while "down" movement will be slow, to keep records from being damaged.
+
+"Skip Forward" will automatically skip forward to the next track on the record.
+
+"Skip Backward" will automatically skip backward to the previous track on the record.
 
 ### Automatic pickup
 The turntable will be able to automatically detect the end of the record, and pick itself up when it reaches that point.
@@ -51,6 +59,9 @@ One caveat of using "auto" is that the record edge detection will likely be slow
 There will be four settings for speed selection: 33 1/3, 45, and 78 RPM. The fourth option is "auto," where the turntable will guess, based on the record size, what speed you want.
 
 For 12" records, the 33 1/3 RPM speed will be used. For 10" records, the 78 RPM speed will be used. For 7" records, the 45 RPM speed will be used. If an unusual size is detected, the fallback will be 78 RPM. Why? There are a lot of unusual 78-RPM record sizes out there, so I feel like this one's fitting.
+
+### Programming and Track Select
+The turntable will be capable of selecting specific tracks on a record, if multiple are present, and creating a playlist out of them. Though playlists cannot be set through the standard UI, they will be able to be set with external modules.
 
 ### Statistics
 The turntable will maintain a set of statistics that will be able to be viewed on the "Control Panel" module, or "Web Server" module.
@@ -81,6 +92,7 @@ These could be, for example:
 - Communication adapter to your favorite vintage computer from the '70s or '80s
 - Control panel
 - Web server
+- "Now Playing" progress bar
 
 ... And so on!
 
