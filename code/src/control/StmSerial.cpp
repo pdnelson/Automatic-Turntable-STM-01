@@ -112,6 +112,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::GetProfilePlaylist:       processGetProfilePlaylist(stream);                      break;
                 case ExternalCommand::GetRecordSensorTab:       processGetRecordSensorTab(stream);                      break;
                 case ExternalCommand::GetRecordProfile:         processGetRecordProfile(stream);                        break;
+                case ExternalCommand::GetRecordProfileBounds:   processGetRecordProfileBounds(stream);                  break;
             }
         }
     }
@@ -525,6 +526,23 @@ void StmSerial::processGetRecordProfile(Stream& stream) {
     
     data[dataSize - 1] = SERIAL_ADVANCED_END_KEY;
 
+    stream.write(data, dataSize);
+}
+
+void StmSerial::processGetRecordProfileBounds(Stream& stream) {
+    uint8_t dataSize = 4;
+    byte data[dataSize];
+
+    // Home position
+    uint16_t home = state->calibration.home;
+    data[0] = home & 0x00FF;
+    data[1] = (home >> 8) & 0x00FF;
+
+    // Scan end position
+    uint16_t scanEnd = state->calibration.scanEndPosition;
+    data[2] = scanEnd & 0x00FF;
+    data[3] = (scanEnd >> 8) & 0x00FF;
+    
     stream.write(data, dataSize);
 }
 

@@ -55,7 +55,8 @@ enum ExternalCommand {
     GetCalibrationValues = 112,
     GetProfilePlaylist = 113,
     GetRecordSensorTab = 114,
-    GetRecordProfile = 115
+    GetRecordProfile = 115,
+    GetRecordProfileBounds = 116
 };
 
 #endif
