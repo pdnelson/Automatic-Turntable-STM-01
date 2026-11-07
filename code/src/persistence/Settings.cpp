@@ -1,6 +1,7 @@
 #include <Settings.h>
 #include <EEPROM.h>
 #include <RecordSize.h>
+#include <EEPROMAddress.h>
 
 Settings::Settings() : BasePersistence() {
     // Do nothing (For now...)

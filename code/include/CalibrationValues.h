@@ -5,17 +5,6 @@
 #ifndef CalibrationValues_h
 #define CalibrationValues_h
 
-#define EEPROM_HOME_START_ADDR 0
-#define EEPROM_V_UPPER_LIMIT_START_ADDR 2
-#define EEPROM_V_LOWER_LIMIT_START_ADDR 4
-#define EEPROM_POLARITY_H_ADDR 6
-#define EEPROM_POLARITY_V_ADDR 7
-#define EEPROM_7_IN_START_ADDR 8
-#define EEPROM_10_IN_START_ADDR 10
-#define EEPROM_12_IN_START_ADDR 12
-#define EEPROM_AZ_OFFSET 14
-#define EEPROM_POLARITY_H_MOTOR_ADDR 21
-
 class CalibrationValues : public BasePersistence {
     public:
         CalibrationValues();

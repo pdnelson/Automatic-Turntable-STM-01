@@ -1,7 +1,5 @@
 #include <CalibrationValues.h>
-#include <Constants.h>
-#include <VerticalDirection.h>
-#include <AzimuthDirection.h>
+#include <EEPROMAddress.h>
 #include <EEPROM.h>
 #include <StmPolarity.h>
 #include <BasePersistence.h>

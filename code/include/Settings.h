@@ -5,9 +5,6 @@
 #ifndef Settings_h
 #define Settings_h
 
-#define EEPROM_SELECTED_SIZE_ADDR 16
-#define EEPROM_SELECTED_SPEED_START_ADDR 17
-
 class Settings : public BasePersistence {
     public:
         Settings();
