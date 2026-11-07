@@ -2,21 +2,22 @@
 #define COMMANDID_H
 
 enum CommandId {
-    NoCommand =     0,
-    Pause =         1,
-    UnPause =       2,
-    MoveNStepsH =   3,
-    Home =          4,
-    Calibration =   5,
-    TestMode =      6,
-    Error =         7,
-    ToggleClutch =  8,
-    StepHMotor =    9,
-    GoToPositionH = 10,
-    GoToPositionV = 11,
-    MoveNStepsV =   12,
-    HomeClutch =    13,
-    SetClutch =     14
+    NoCommand =         0,
+    Pause =             1,
+    UnPause =           2,
+    MoveNStepsH =       3,
+    Home =              4,
+    CalibrationFirst =  5,
+    TestMode =          6,
+    Error =             7,
+    ToggleClutch =      8,
+    StepHMotor =        9,
+    GoToPositionH =     10,
+    GoToPositionV =     11,
+    MoveNStepsV =       12,
+    HomeClutch =        13,
+    SetClutch =         14,
+    CalibrationMaint =  15
 };
 
 #endif

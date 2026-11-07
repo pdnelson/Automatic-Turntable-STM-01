@@ -74,6 +74,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionSkipForward:        state->recordProfile.skipForward();                     break;
                 case ExternalCommand::ActionSkipBackward:       state->recordProfile.skipBackward();                    break;
                 case ExternalCommand::ActionPlayAtTrackIndex:   state->recordProfile.playAtTrackIndex(stream.read());   break;
+                case ExternalCommand::ActionCalibrationMaint:   state->beginMaintCalibrationRoutine();                  break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());      break;

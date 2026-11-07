@@ -21,6 +21,7 @@
 #include <StmPolarity.h>
 #include <CmdGoToPositionH.h>
 #include <CmdFirstCalibration.h>
+#include <CmdMaintCalibration.h>
 #include <CmdSetAzClutch.h>
 #include <CmdHomeAzClutch.h>
 
@@ -283,6 +284,10 @@ void TurntableState::beginFirstCalibrationRoutine() {
     currentCommand = std::make_unique<CmdFirstCalibration>(this);
 }
 
+void TurntableState::beginMaintCalibrationRoutine() {
+    currentCommand = std::make_unique<CmdMaintCalibration>(this);
+}
+
 float TurntableState::getTargetSpeed() {
     if(getHomeStatus() == HomeStatus::NotHomed) {
         return settings.speed;
@@ -304,8 +309,12 @@ void TurntableState::monitorCommandInput() {
             playOrReturn();
         }
 
-        else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnHold) {
+        else if(inputMux.getValue(MuxPin::BtnSizeSelect) == ButtonResult::OnHold) {
             beginFirstCalibrationRoutine();
+        }
+
+        else if(inputMux.getValue(MuxPin::BtnSpeedSelect) == ButtonResult::OnHold) {
+            beginMaintCalibrationRoutine();
         }
 
         else if(inputMux.getValue(MuxPin::BtnPlay) == ButtonResult::OnHold) {

@@ -28,10 +28,6 @@ CmdFirstCalibration::CmdFirstCalibration(TurntableState* state) : BaseTurntableC
     // "Play" advances to the next calibration step, saving the calibration value
     // "Pause" skips the calibration step, saving nothing
 
-    // Dummy value used for when we don't want to capture a position for calibration, but we want to utilize every other
-    // feature of a subcommand.
-    uint16_t dummyValue = 0;
-
     // Calibrate the vertical polarity by going down, logging a point, then going up, and logging another point.
     // If the second point is greater than the first, then polarity is correct. Otherwise, we need to reverse it.
     subCommands = std::make_shared<SubCmdToggleLight>(state, StmShiftPin::LedPlayStatus, true)
@@ -82,7 +78,6 @@ CmdFirstCalibration::CmdFirstCalibration(TurntableState* state) : BaseTurntableC
         ->next(std::make_shared<SubCmdGoToPositionV>(state, 0, SET_DOWN_SLOWLY, false))
 
         // Calibrate the platter height
-        ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, false, SubCommandId::CalibratePlatterHeight, StmShiftPin::Led45Rpm, dummyValue))
         ->next(std::make_shared<SubCmdMoveUpUntilLifted>(state, SubCommandId::CalibratePlatterHeight, 3))
         ->next(std::make_shared<SubCmdDelay>(state, DELAY_BETWEEN_STEPS_MS))
         ->next(std::make_shared<SubCmdCollectVerticalPosition>(state, referencePoint2))

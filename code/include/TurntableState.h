@@ -61,6 +61,7 @@ class TurntableState {
         void pauseOrUnPause();
         void playOrReturn();
         void beginFirstCalibrationRoutine();
+        void beginMaintCalibrationRoutine();
         float getTargetSpeed();
         uint16_t getVerticalEncoderPos();
         void saveSettings();
