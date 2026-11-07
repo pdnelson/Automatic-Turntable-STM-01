@@ -16,6 +16,12 @@
 // - current playlist progress max
 #define PROFILE_PLAYLIST_KNOWN_DATA_SIZE 21
 
+// This data contains the following:
+// - start key
+// - end key
+// - profile size
+#define PROFILE_KNOWN_DATA_SIZE 4
+
 class TurntableState;
 
 class StmSerial {
@@ -53,6 +59,7 @@ class StmSerial {
         void processGetCalibrationValues(Stream& stream);
         void processGetProfilePlaylist(Stream& stream);
         void processGetRecordSensorTab(Stream& stream);
+        void processGetRecordProfile(Stream& stream);
         void clearCommand();
 
         int16_t readInt16(Stream& stream);

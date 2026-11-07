@@ -5,6 +5,7 @@
 
 RecordProfile::RecordProfile(TurntableState* state) {
     this->state = state;
+    clearProfile();
 }
 
 void RecordProfile::clearPlaylist() {
@@ -16,7 +17,12 @@ void RecordProfile::clearPlaylist() {
 }
 
 void RecordProfile::clearProfile() {
-    for(uint8_t i = 0; i < PROFILE_MAX_SIZE; i++) {
+    for(uint16_t i = 0; i < PROFILE_MAX_SIZE; i++) {
+        profile[i] = 0;
+        profilePollCount[i] = 0;
+    }
+    
+    for(uint8_t i = 0; i < NORMALIZED_PROFILE_MAX_SIZE; i++) {
         normalizedProfile[i] = 0;
     }
     normalizedProfileSize = 0;
@@ -46,7 +52,7 @@ void RecordProfile::addProfileToPlaylist() {
 
 void RecordProfile::addProfileTrack(uint16_t position) {
     // You can only add a profile track if it's larger than the last one
-    if((normalizedProfileSize == 0 || position > normalizedProfile[normalizedProfileSize - 1]) && normalizedProfileSize < PROFILE_MAX_SIZE) {
+    if((normalizedProfileSize == 0 || position > normalizedProfile[normalizedProfileSize - 1]) && normalizedProfileSize < NORMALIZED_PROFILE_MAX_SIZE) {
         normalizedProfile[normalizedProfileSize] = position;
         normalizedProfileSize++;
     }
@@ -206,6 +212,10 @@ void RecordProfile::skipBackward() {
         currentPlaylistIndex--;
         playAtCurrentIndex();
     }
+}
+
+uint16_t RecordProfile::getProfileDataPointMaxCount() {
+    return state->calibration.scanEndPosition - state->calibration.home;
 }
 
 void RecordProfile::playAtCurrentIndex() {

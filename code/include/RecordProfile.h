@@ -3,7 +3,8 @@
 #ifndef RECORDPROFILE_H
 #define RECORDPROFILE_H
 
-#define PROFILE_MAX_SIZE 29
+#define PROFILE_MAX_SIZE 2500
+#define NORMALIZED_PROFILE_MAX_SIZE 29
 #define PLAYLIST_MAX_SIZE 100
 #define AUTO_PICKUP_THRESHOLD 0
 #define AUTO_PICKUP_TIME_THRESHOLD_MICROS 300000
@@ -69,6 +70,8 @@ class RecordProfile {
          */
         void skipBackward();
 
+        uint16_t getProfileDataPointMaxCount();
+
         int8_t currentPlaylistIndex = -1;
 
         /** The normalized record profile, AFTER the raw data has been separated out into individual track starts.
@@ -76,7 +79,7 @@ class RecordProfile {
          * used as a pickup position, if the next track isn't on the playlist.
          * The last value (before a 0) is always a tonearm pickup position.
          */
-        uint16_t normalizedProfile[PROFILE_MAX_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        uint16_t normalizedProfile[NORMALIZED_PROFILE_MAX_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         uint8_t normalizedProfileSize = 0;
 
         /**
@@ -86,6 +89,9 @@ class RecordProfile {
          */
         int8_t playlist[PLAYLIST_MAX_SIZE] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
         uint8_t playlistSize = 0;
+
+        uint8_t profilePollCount[PROFILE_MAX_SIZE];
+        uint32_t profile[PROFILE_MAX_SIZE];
 
         bool autoReturn = true;
     

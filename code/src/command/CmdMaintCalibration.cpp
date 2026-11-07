@@ -15,7 +15,6 @@
 #include <SubCmdMoveUpUntilLifted.h>
 #include <SubCmdCalibrateVerticalBounds.h>
 #include <SubCmdGoToPositionV.h>
-#include <StmPolarity.h>
 #include <SubCmdSetAzClutch.h>
 #include <ClutchStatus.h>
 #include <SubCmdZeroAzEncoder.h>
@@ -75,18 +74,10 @@ void CmdMaintCalibration::doInitialize() {
     state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
     outputShiftValues = state->outputShift.getValues();
-    state->calibration.hStepperPolarity = StmPolarity::Normal;
-    state->calibration.polarityH = StmPolarity::Normal;
-    state->calibration.polarityV = StmPolarity::Normal;
-    state->horizontalStepper.setPolarity(state->calibration.hStepperPolarity);
-    state->azEncoder.setPolarity(state->calibration.polarityH);
-
     state->outputShift.setValues(0);
 }
 
 void CmdMaintCalibration::doUninitialize() {
     state->outputShift.setValues(outputShiftValues);
-    state->azEncoder.setPolarity(state->calibration.polarityH);
-    state->horizontalStepper.setPolarity(state->calibration.hStepperPolarity);
     state->calibration.persist();
 }

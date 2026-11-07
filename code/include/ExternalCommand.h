@@ -54,7 +54,8 @@ enum ExternalCommand {
     GetAdvancedSuiteData = 111,
     GetCalibrationValues = 112,
     GetProfilePlaylist = 113,
-    GetRecordSensorTab = 114
+    GetRecordSensorTab = 114,
+    GetRecordProfile = 115
 };
 
 #endif
