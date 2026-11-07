@@ -483,7 +483,7 @@ void StmSerial::processGetProfilePlaylist(Stream& stream) {
 }
 
 void StmSerial::processGetRecordSensorTab(Stream& stream) {
-    uint8_t dataSize = 5;
+    uint8_t dataSize = 7;
     byte data[dataSize];
 
     data[0] = SERIAL_ADVANCED_START_KEY;
@@ -495,6 +495,11 @@ void StmSerial::processGetRecordSensorTab(Stream& stream) {
 
     // Headshell LED status
     data[3] = state->outputShift.getValue(StmShiftPin::LedHeadshellIR);
+
+    // Current H Position
+    uint16_t horizontalPosition = state->azEncoder.getNormalizedPosition();
+    data[4] = horizontalPosition & 0x00FF;
+    data[5] = (horizontalPosition >> 8) & 0x00FF;
 
     data[dataSize - 1] = SERIAL_ADVANCED_END_KEY;
 
