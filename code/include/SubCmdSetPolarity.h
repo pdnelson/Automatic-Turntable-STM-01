@@ -7,7 +7,7 @@
 #ifndef SubCmdSetPolarity_h
 #define SubCmdSetPolarity_h
 class TurntableState;
-class CmdCalibration;
+class CmdFirstCalibration;
 
 // The number of encoder ticks that the reference points must differ by to allow successful calibration
 #define DIFFERENCE_BUFFER 25

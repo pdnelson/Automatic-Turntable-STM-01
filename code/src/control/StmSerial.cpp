@@ -67,7 +67,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionStepHorizontally:   processStepHorizontally(stream);                        break;
                 case ExternalCommand::ActionGoToPositionH:      processGoToPositionH(stream);                           break;
                 case ExternalCommand::ActionPlayOrReturn:       state->playOrReturn();                                  break;
-                case ExternalCommand::ActionCalibrate:          state->beginCalibrationRoutine();                       break;
+                case ExternalCommand::ActionCalibrateFirst:     state->beginFirstCalibrationRoutine();                  break;
                 case ExternalCommand::ActionGoToPositionV:      processGoToPositionV(stream);                           break;
                 case ExternalCommand::ActionMoveNStepsV:        processMoveNStepsV(stream);                             break;
                 case ExternalCommand::ActionHomeClutch:         state->homeHorizontalClutch();                          break;
@@ -359,7 +359,7 @@ void StmSerial::processGetAdvancedSuiteData(Stream& stream) {
 }
 
 void StmSerial::processGetCalibrationValues(Stream& stream) {
-    uint8_t dataSize = 17;
+    uint8_t dataSize = 19;
     byte data[dataSize];
 
     data[0] = SERIAL_ADVANCED_START_KEY;
@@ -393,7 +393,11 @@ void StmSerial::processGetCalibrationValues(Stream& stream) {
     data[14] = state->calibration.in12 & 0x00FF;
     data[15] = (state->calibration.in12 >> 8) & 0x00FF;
 
-    data[16] = SERIAL_ADVANCED_END_KEY;
+    // record scan end position
+    data[16] = state->calibration.scanEndPosition & 0x00FF;
+    data[17] = (state->calibration.scanEndPosition >> 8) & 0x00FF;
+
+    data[dataSize - 1] = SERIAL_ADVANCED_END_KEY;
 
     stream.write(data, dataSize);
 }

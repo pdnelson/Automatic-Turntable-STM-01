@@ -26,6 +26,9 @@ class CalibrationValues : public BasePersistence {
         uint16_t in7 = 0;
         uint16_t in10 = 0;
         uint16_t in12 = 0;
+
+        // Record sensor
+        uint16_t scanEndPosition = 0;
 };
 
 #endif

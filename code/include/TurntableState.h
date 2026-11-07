@@ -60,7 +60,7 @@ class TurntableState {
         void updateSize(RecordSize newSize);
         void pauseOrUnPause();
         void playOrReturn();
-        void beginCalibrationRoutine();
+        void beginFirstCalibrationRoutine();
         float getTargetSpeed();
         uint16_t getVerticalEncoderPos();
         void saveSettings();

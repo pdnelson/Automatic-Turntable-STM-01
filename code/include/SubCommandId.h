@@ -27,7 +27,8 @@ enum SubCommandId {
     SetPollSpeed = 22,
     MoveClutchToHome = 23,
     MoveClutchToLimit = 24,
-    HErrorCorrect = 25
+    HErrorCorrect = 25,
+    CalibrateRecordScanEndPosition = 26,
 };
 
 #endif

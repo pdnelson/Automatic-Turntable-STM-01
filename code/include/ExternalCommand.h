@@ -11,7 +11,7 @@ enum ExternalCommand {
     ActionStepHorizontally = 4,
     ActionGoToPositionH = 5,
     ActionPlayOrReturn = 6,
-    ActionCalibrate = 7,
+    ActionCalibrateFirst = 7,
     ActionGoToPositionV = 8,
     ActionMoveNStepsV = 9,
     ActionHomeClutch = 10,

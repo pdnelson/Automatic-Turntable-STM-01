@@ -19,6 +19,7 @@ void CalibrationValues::load() {
     in7 = readUInt16(EEPROM_7_IN_START_ADDR);
     in10 = readUInt16(EEPROM_10_IN_START_ADDR);
     in12 = readUInt16(EEPROM_12_IN_START_ADDR);
+    scanEndPosition = readUInt16(EEPROM_RECORD_SCAN_END_ADDR);
 }
 
 void CalibrationValues::persist() {
@@ -32,4 +33,5 @@ void CalibrationValues::persist() {
     writeTwoByteValueIfChanged(EEPROM_7_IN_START_ADDR, in7);
     writeTwoByteValueIfChanged(EEPROM_10_IN_START_ADDR, in10);
     writeTwoByteValueIfChanged(EEPROM_12_IN_START_ADDR, in12);
+    writeTwoByteValueIfChanged(EEPROM_RECORD_SCAN_END_ADDR, scanEndPosition);
 }

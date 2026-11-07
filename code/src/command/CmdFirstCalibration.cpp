@@ -1,13 +1,10 @@
-#include <CmdCalibration.h>
+#include <CmdFirstCalibration.h>
 #include <StmShiftPin.h>
-#include <CommandResult.h>
 #include <CommandId.h>
 #include <BaseTurntableCommand.h>
 #include <TurntableState.h>
 #include <Constants.h>
-#include <memory>
 #include <SubCmdCollectHorizontalPosition.h>
-#include <RecordSize.h>
 #include <SubCmdDelay.h>
 #include <SubCommandId.h>
 #include <SubCmdCollectVerticalPosition.h>
@@ -25,7 +22,7 @@
 #include <SubCmdSetHMotorPolarity.h>
 #include <SubCmdSetEncoderPollSpeed.h>
 
-CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(state) {
+CmdFirstCalibration::CmdFirstCalibration(TurntableState* state) : BaseTurntableCommand(state) {
 
     // Basic controls:
     // "Play" advances to the next calibration step, saving the calibration value
@@ -100,16 +97,17 @@ CmdCalibration::CmdCalibration(TurntableState* state) : BaseTurntableCommand(sta
         ->next(std::make_shared<SubCmdSetEncoderPollSpeed>(state, EncoderPollSpeed::PollNormal))
 
         // Now the user can calibrate the remaining record size positions
+        ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, true, SubCommandId::CalibrateRecordScanEndPosition, StmShiftPin::LedAutoSize, state->calibration.scanEndPosition))
         ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, true, SubCommandId::Calibrate7In, StmShiftPin::Led7In, state->calibration.in7))
         ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, true, SubCommandId::Calibrate10In, StmShiftPin::Led10In, state->calibration.in10))
         ->next(std::make_shared<SubCmdCollectHorizontalPosition>(state, true, SubCommandId::Calibrate12In, StmShiftPin::Led12In, state->calibration.in12));
 }
 
-CommandId CmdCalibration::getCommandId() {
+CommandId CmdFirstCalibration::getCommandId() {
     return CommandId::Calibration;
 }
 
-void CmdCalibration::doInitialize() {
+void CmdFirstCalibration::doInitialize() {
     state->outputShift.setValue(StmShiftPin::LedPauseStatus, false);
     state->outputShift.setValue(StmShiftPin::LedPlayStatus, false);
     outputShiftValues = state->outputShift.getValues();
@@ -122,7 +120,7 @@ void CmdCalibration::doInitialize() {
     state->outputShift.setValues(0);
 }
 
-void CmdCalibration::doUninitialize() {
+void CmdFirstCalibration::doUninitialize() {
     state->outputShift.setValues(outputShiftValues);
     state->azEncoder.setPolarity(state->calibration.polarityH);
     state->horizontalStepper.setPolarity(state->calibration.hStepperPolarity);

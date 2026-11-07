@@ -1,6 +1,5 @@
 #include <SubCmdCollectVerticalPosition.h>
 #include <TurntableState.h>
-#include <CmdCalibration.h>
 #include <Arduino.h>
 
 SubCmdCollectVerticalPosition::SubCmdCollectVerticalPosition(TurntableState* state, uint16_t &destination) : BaseTurntableSubCommand(state), destination(destination) {

@@ -13,5 +13,6 @@
 #define EEPROM_SELECTED_SIZE_ADDR 16        // RecordSize
 #define EEPROM_SELECTED_SPEED_START_ADDR 17 // float
 #define EEPROM_POLARITY_H_MOTOR_ADDR 21     // StmPolarity
+#define EEPROM_RECORD_SCAN_END_ADDR 22      //uint16_t
 
 #endif 

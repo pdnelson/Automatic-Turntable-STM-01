@@ -7,7 +7,7 @@
 #ifndef SubCmdSetHMotorPolarity_h
 #define SubCmdSetHMotorPolarity_h
 class TurntableState;
-class CmdCalibration;
+class CmdFirstCalibration;
 
 class SubCmdSetHMotorPolarity : public BaseTurntableSubCommand {
     public:
