@@ -30,7 +30,7 @@ void SubCmdGoToPositionVAndSetClutch::doInitialize() {
 
 CommandResult SubCmdGoToPositionVAndSetClutch::executeClutch() {
     if(state->clutchStatus == clutchStatus) {
-        result = CommandResult::Success;
+        return CommandResult::Success;
     }
     else if(state->clutchStepper.step(state->clockMicros)) {
         stepCount++;
