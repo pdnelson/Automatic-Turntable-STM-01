@@ -16,8 +16,6 @@ class SubCmdErrorCorrectHPosition : public BaseHorizontalMovementSubCommand {
     private:
         uint16_t destinationEncoderPosition = 0;
         uint8_t encoderTolerance = 0;
-        uint16_t stepCount = 0;
-        uint16_t stepsToTake = 0;
         AzimuthDirection direction;
 
         void doInitialize() override;

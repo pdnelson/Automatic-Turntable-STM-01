@@ -19,6 +19,7 @@ enum ExternalCommand {
     ActionSkipBackward = 12,
     ActionPlayAtTrackIndex = 13,
     ActionCalibrationMaint = 14,
+    ActionScanRecord = 15,
 
     // Data/setting set commands (31-100)
     SetSpeed = 31,

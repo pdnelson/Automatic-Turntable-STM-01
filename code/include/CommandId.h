@@ -17,7 +17,8 @@ enum CommandId {
     MoveNStepsV =       12,
     HomeClutch =        13,
     SetClutch =         14,
-    CalibrationMaint =  15
+    CalibrationMaint =  15,
+    ScanRecord =        16
 };
 
 #endif

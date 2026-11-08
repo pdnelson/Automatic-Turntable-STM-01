@@ -18,6 +18,7 @@
 #include <CmdMoveNStepsV.h>
 #include <EncoderPollSpeed.h>
 #include <SubCommandId.h>
+#include <CmdScanRecord.h>
 
 StmSerial::StmSerial(TurntableState* state) {
     this->state = state;
@@ -75,6 +76,7 @@ void StmSerial::readSerialData(Stream& stream) {
                 case ExternalCommand::ActionSkipBackward:       state->recordProfile.skipBackward();                    break;
                 case ExternalCommand::ActionPlayAtTrackIndex:   state->recordProfile.playAtTrackIndex(stream.read());   break;
                 case ExternalCommand::ActionCalibrationMaint:   state->beginMaintCalibrationRoutine();                  break;
+                case ExternalCommand::ActionScanRecord:         processScanRecord();                                    break;
                 
                 // Set Commands
                 case ExternalCommand::SetSpeed:                 state->updateSpeed((TurntableSpeed)stream.read());      break;
@@ -165,6 +167,10 @@ void StmSerial::processGoToPositionV(Stream& stream) {
     uint8_t speed = stream.read();
     
     state->currentCommand = std::make_unique<CmdGoToPositionV>(state, position, speed);
+}
+
+void StmSerial::processScanRecord() {
+    state->currentCommand = std::make_unique<CmdScanRecord>(state);
 }
 
 void StmSerial::processMoveNStepsV(Stream& stream) {

@@ -29,6 +29,7 @@ enum SubCommandId {
     MoveClutchToLimit = 24,
     HErrorCorrect = 25,
     CalibrateRecordScanEndPosition = 26,
+    SubScanRecord = 27
 };
 
 #endif

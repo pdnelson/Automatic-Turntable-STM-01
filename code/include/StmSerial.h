@@ -43,6 +43,7 @@ class StmSerial {
         void processStepHorizontally(Stream& stream);
         void processGoToPositionH(Stream& stream);
         void processGoToPositionV(Stream& stream);
+        void processScanRecord();
         void processSetCustomSpeed(Stream& stream);
         void processSetAzEncoderZero(Stream& stream);
         void processSetOverwriteRecordProfile(Stream& stream);

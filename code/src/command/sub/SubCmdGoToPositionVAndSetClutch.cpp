@@ -5,7 +5,6 @@
 #include <Constants.h>
 #include <TurntableState.h>
 #include <SubCommandId.h>
-#include <AzimuthDirection.h>
 #include <CommandResult.h>
 #include <ClutchDirection.h>
 #include <LiftStatus.h>
@@ -53,7 +52,9 @@ CommandResult SubCmdGoToPositionVAndSetClutch::doExecute() {
         }
     }
 
-    if(clutchResult == CommandResult::Running && (!waitUntilLiftedBeforeSettingClutch || liftHasChanged)) {
+    if(state->clutchStatus == clutchStatus) {
+        clutchResult = CommandResult::Success;
+    } else if(clutchResult == CommandResult::Running && (!waitUntilLiftedBeforeSettingClutch || liftHasChanged)) {
         clutchResult = executeClutch();
     }
 

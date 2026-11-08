@@ -72,6 +72,9 @@ class RecordProfile {
 
         uint16_t getProfileDataPointMaxCount();
 
+        void collectRawDataPoint();
+        void averageProfile();
+
         int8_t currentPlaylistIndex = -1;
 
         /** The normalized record profile, AFTER the raw data has been separated out into individual track starts.
@@ -90,7 +93,7 @@ class RecordProfile {
         int8_t playlist[PLAYLIST_MAX_SIZE] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
         uint8_t playlistSize = 0;
 
-        uint8_t profilePollCount[PROFILE_MAX_SIZE];
+        uint16_t profilePollCount[PROFILE_MAX_SIZE];
         uint32_t profile[PROFILE_MAX_SIZE];
 
         bool autoReturn = true;

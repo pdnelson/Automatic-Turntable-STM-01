@@ -218,6 +218,39 @@ uint16_t RecordProfile::getProfileDataPointMaxCount() {
     return state->calibration.scanEndPosition - state->calibration.home;
 }
 
+
+void RecordProfile::collectRawDataPoint() {
+    uint16_t offset = state->calibration.home;
+    uint16_t currPosition = state->azEncoder.getNormalizedPosition();
+
+    // Only allow data collection within the valid bounds
+    if(currPosition >= offset && currPosition <= state->calibration.scanEndPosition) {
+        profilePollCount[currPosition - offset]++;
+        profile[currPosition - offset] += state->getRecordSensorValue();
+    }
+}
+
+void RecordProfile::averageProfile() {
+    uint16_t profileRange = state->calibration.scanEndPosition - state->calibration.home;
+    for(uint16_t i = 0; i < profileRange; i++) {
+        if(profilePollCount[i] == 0) {
+            // Position 0 needs to look ahead to the first collected data point
+            if(i == 0) {
+                uint16_t lookAheadCounter = 0;
+                while(profilePollCount[lookAheadCounter] == 0) {
+                    lookAheadCounter++;
+                }
+
+                profile[0] = profile[lookAheadCounter] / profilePollCount[lookAheadCounter];
+            } else {
+                profile[i] = profile[i - 1];
+            }
+        } else {
+            profile[i] = profile[i] / profilePollCount[i];
+        }
+    }
+}
+
 void RecordProfile::playAtCurrentIndex() {
     playAtTrackIndex(playlist[currentPlaylistIndex]);
 }
